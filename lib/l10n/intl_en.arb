@@ -1,0 +1,43 @@
+{
+  "add": "Add",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "clear": "Clear",
+  "clearButton": "Clear",
+  "clearTitle": "Clear all player",
+  "clearPrompt": "Are you sure you want to remove all players?",
+  "resetScores": "Reset scores",
+  "resetScoresPrompt": "Are you sure you want to reset all scores?",
+  "reset": "Reset",
+  "ranked": "Ranked",
+  "deletePrompt": "Are you sure you want to delete this player?",
+  "delete": "Delete",
+  "addPlayer": "Add player",
+  "points": "Points",
+  "pointsError": "Enter the number of points",
+  "nameError": "Enter a name",
+  "player": "Player",
+  "scoreMissingError": "Enter the initial score",
+  "scoreInvalidError": "Enter a valid number",
+  "score": "Score",
+  "deleteUser": "Delete {userName}",
+  "@deleteUser": {
+    "description": "Delete with username template",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
+  "addPointsUser": "{userName} - Add points",
+  "@addPointsUser": {
+    "description": "Add points with included username",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  }
+}
