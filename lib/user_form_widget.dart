@@ -21,7 +21,7 @@ class UserFormWidget extends StatefulWidget {
 class UserFormWidgetState extends State<UserFormWidget> {
   final _formKey = GlobalKey<FormState>();
   final User _user = User(name: "");
-  final _scoreRegex = RegExp(r'-?[0-9]');
+  final _scoreRegex = RegExp(r'^-?[0-9]*');
 
   User? _submit() {
     if (_formKey.currentState!.validate()) {
@@ -58,7 +58,7 @@ class UserFormWidgetState extends State<UserFormWidget> {
                   prefixIcon: const Icon(Icons.person),
                   border: const OutlineInputBorder(),
                   labelText: locale.name,
-                  helperText: ""),
+                  hintText: ""),
             ),
           ),
           Container(
@@ -74,12 +74,13 @@ class UserFormWidgetState extends State<UserFormWidget> {
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(_scoreRegex)
               ],
+              keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale.scoreMissingError;
                 }
 
-                if (!_scoreRegex.hasMatch(value)) {
+                if (!_scoreRegex.hasMatch(value) || value == "-") {
                   return locale.scoreInvalidError;
                 }
                 return null;

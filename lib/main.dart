@@ -16,7 +16,7 @@ class ScoredApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'scored',
+      title: 'Scored',
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,

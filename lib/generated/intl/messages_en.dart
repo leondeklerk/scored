@@ -24,9 +24,6 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(userName) => "Delete ${userName}";
 
-  static String m2(userName) =>
-      "Confirmation dialog to remove player: ${userName}";
-
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Add"),
@@ -58,20 +55,18 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Enter a valid number"),
         "scoreMissingError":
             MessageLookupByLibrary.simpleMessage("Enter the initial score"),
-        "semanticAddPoints": MessageLookupByLibrary.simpleMessage(
-            "Input dialog to add new points to a player"),
-        "semanticAddUser": MessageLookupByLibrary.simpleMessage(
-            "Input dialog to add a new player"),
-        "semanticClearDialog": MessageLookupByLibrary.simpleMessage(
-            "Confirmation dialog to clear the current list of users"),
-        "semanticDeleteUserDialog": m2,
-        "semanticName": MessageLookupByLibrary.simpleMessage("Player name"),
-        "semanticRank": MessageLookupByLibrary.simpleMessage("Player rank"),
-        "semanticRankIcon": MessageLookupByLibrary.simpleMessage(
-            "Star icon indicating that the player is in first place"),
-        "semanticResetDialog": MessageLookupByLibrary.simpleMessage(
-            "Confirmation dialog to reset the current users scores"),
-        "semanticScore": MessageLookupByLibrary.simpleMessage("Player score"),
+        "semanticAddPoints":
+            MessageLookupByLibrary.simpleMessage("Add points to player."),
+        "semanticList": MessageLookupByLibrary.simpleMessage("List of players"),
+        "semanticListControls":
+            MessageLookupByLibrary.simpleMessage("Player list controls"),
+        "semanticName": MessageLookupByLibrary.simpleMessage("Name:"),
+        "semanticRank": MessageLookupByLibrary.simpleMessage("Rank:"),
+        "semanticRanked":
+            MessageLookupByLibrary.simpleMessage("Show player ranks"),
+        "semanticRemovePlayer":
+            MessageLookupByLibrary.simpleMessage("Remove player."),
+        "semanticScore": MessageLookupByLibrary.simpleMessage("Score"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit")
       };
 }

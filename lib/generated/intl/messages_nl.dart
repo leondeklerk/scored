@@ -24,9 +24,6 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(userName) => "Verwijder ${userName}";
 
-  static String m2(userName) =>
-      "Popup om het verwijderen van speler ${userName} te bevestigen";
-
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Voeg toe"),
@@ -61,22 +58,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "scoreMissingError":
             MessageLookupByLibrary.simpleMessage("Voer de initiele score in"),
         "semanticAddPoints": MessageLookupByLibrary.simpleMessage(
-            "Popup om punten aan een speler toe te voegen "),
-        "semanticAddUser": MessageLookupByLibrary.simpleMessage(
-            "Popup om een nieuwe speler toe te voegen"),
-        "semanticClearDialog": MessageLookupByLibrary.simpleMessage(
-            "Popup om het verwijderen van alle spelers te bevestigen"),
-        "semanticDeleteUserDialog": m2,
-        "semanticName":
-            MessageLookupByLibrary.simpleMessage("Naam van de speler"),
-        "semanticRank":
-            MessageLookupByLibrary.simpleMessage("Rang van de speler"),
-        "semanticRankIcon": MessageLookupByLibrary.simpleMessage(
-            "Ster om aan te geven dat de speler om de eerste plaats staat"),
-        "semanticResetDialog": MessageLookupByLibrary.simpleMessage(
-            "Popup om het op nul zetten van alle scores te bevestigen"),
-        "semanticScore":
-            MessageLookupByLibrary.simpleMessage("Score van de speler"),
+            "Voeg punten toe aan de speler."),
+        "semanticList": MessageLookupByLibrary.simpleMessage("Spelerslijst"),
+        "semanticListControls":
+            MessageLookupByLibrary.simpleMessage("Spelerslijst knoppen"),
+        "semanticName": MessageLookupByLibrary.simpleMessage("Naam:"),
+        "semanticRank": MessageLookupByLibrary.simpleMessage("Rang:"),
+        "semanticRanked":
+            MessageLookupByLibrary.simpleMessage("Toon speler rangen"),
+        "semanticRemovePlayer":
+            MessageLookupByLibrary.simpleMessage("Verwijder de speler."),
+        "semanticScore": MessageLookupByLibrary.simpleMessage("Score: "),
         "submit": MessageLookupByLibrary.simpleMessage("Oke")
       };
 }

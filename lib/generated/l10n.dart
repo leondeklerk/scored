@@ -290,91 +290,81 @@ class S {
     );
   }
 
-  /// `Confirmation dialog to clear the current list of users`
-  String get semanticClearDialog {
-    return Intl.message(
-      'Confirmation dialog to clear the current list of users',
-      name: 'semanticClearDialog',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Confirmation dialog to reset the current users scores`
-  String get semanticResetDialog {
-    return Intl.message(
-      'Confirmation dialog to reset the current users scores',
-      name: 'semanticResetDialog',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Confirmation dialog to remove player: {userName}`
-  String semanticDeleteUserDialog(String userName) {
-    return Intl.message(
-      'Confirmation dialog to remove player: $userName',
-      name: 'semanticDeleteUserDialog',
-      desc: 'Delete the player',
-      args: [userName],
-    );
-  }
-
-  /// `Player rank`
+  /// `Rank:`
   String get semanticRank {
     return Intl.message(
-      'Player rank',
+      'Rank:',
       name: 'semanticRank',
       desc: '',
       args: [],
     );
   }
 
-  /// `Player name`
+  /// `Name:`
   String get semanticName {
     return Intl.message(
-      'Player name',
+      'Name:',
       name: 'semanticName',
       desc: '',
       args: [],
     );
   }
 
-  /// `Player score`
+  /// `Score`
   String get semanticScore {
     return Intl.message(
-      'Player score',
+      'Score',
       name: 'semanticScore',
       desc: '',
       args: [],
     );
   }
 
-  /// `Star icon indicating that the player is in first place`
-  String get semanticRankIcon {
+  /// `List of players`
+  String get semanticList {
     return Intl.message(
-      'Star icon indicating that the player is in first place',
-      name: 'semanticRankIcon',
+      'List of players',
+      name: 'semanticList',
       desc: '',
       args: [],
     );
   }
 
-  /// `Input dialog to add a new player`
-  String get semanticAddUser {
+  /// `Show player ranks`
+  String get semanticRanked {
     return Intl.message(
-      'Input dialog to add a new player',
-      name: 'semanticAddUser',
+      'Show player ranks',
+      name: 'semanticRanked',
       desc: '',
       args: [],
     );
   }
 
-  /// `Input dialog to add new points to a player`
+  /// `Player list controls`
+  String get semanticListControls {
+    return Intl.message(
+      'Player list controls',
+      name: 'semanticListControls',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add points to player.`
   String get semanticAddPoints {
     return Intl.message(
-      'Input dialog to add new points to a player',
+      'Add points to player.',
       name: 'semanticAddPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove player.`
+  String get semanticRemovePlayer {
+    return Intl.message(
+      'Remove player.',
+      name: 'semanticRemovePlayer',
       desc: '',
       args: [],
     );

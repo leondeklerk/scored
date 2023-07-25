@@ -21,6 +21,8 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
 
   final _controller = TextEditingController(text: "0");
 
+  final _pointsRegex = RegExp(r'^-?[0-9]*');
+
   int? _submit() {
     if (_formKey.currentState!.validate()) {
       return int.parse(_controller.value.text);
@@ -35,20 +37,26 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
     _controller.selection = TextSelection(
         baseOffset: 0, extentOffset: _controller.value.text.length);
     return Form(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
       child: Column(
         children: <Widget>[
           TextFormField(
             controller: _controller,
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'-?[0-9]'))
+              FilteringTextInputFormatter.allow(_pointsRegex)
             ],
             autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(decimal: false),
+            keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return locale.pointsError;
               }
+
+              if (!_pointsRegex.hasMatch(value) || value == "-") {
+                return locale.scoreInvalidError;
+              }
+
               return null;
             },
             decoration: InputDecoration(
