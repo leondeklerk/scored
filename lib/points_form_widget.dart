@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-typedef PointsFormBuilder = void Function(BuildContext context, int? Function() submitFunction);
+typedef PointsFormBuilder = void Function(
+    BuildContext context, int? Function() submitFunction);
 
 class PointsFormWidget extends StatefulWidget {
-  const PointsFormWidget(
-      {super.key,required this.builder});
+  const PointsFormWidget({super.key, required this.builder});
 
   final PointsFormBuilder builder;
 
@@ -19,9 +19,7 @@ class PointsFormWidget extends StatefulWidget {
 class PointsFormWidgetState extends State<PointsFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
-  final _controller = TextEditingController(
-    text: "0"
-  );
+  final _controller = TextEditingController(text: "0");
 
   int? _submit() {
     if (_formKey.currentState!.validate()) {
@@ -34,7 +32,8 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
     widget.builder.call(context, _submit);
-    _controller.selection = TextSelection(baseOffset: 0, extentOffset: _controller.value.text.length);
+    _controller.selection = TextSelection(
+        baseOffset: 0, extentOffset: _controller.value.text.length);
     return Form(
       key: _formKey,
       child: Column(
@@ -56,6 +55,7 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
               filled: false,
               prefixIcon: const Icon(Icons.score),
               border: const OutlineInputBorder(),
+              helperText: "",
               labelText: locale.points,
             ),
           ),

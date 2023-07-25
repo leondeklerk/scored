@@ -279,6 +279,106 @@ class S {
       args: [userName],
     );
   }
+
+  /// `Name`
+  String get name {
+    return Intl.message(
+      'Name',
+      name: 'name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmation dialog to clear the current list of users`
+  String get semanticClearDialog {
+    return Intl.message(
+      'Confirmation dialog to clear the current list of users',
+      name: 'semanticClearDialog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmation dialog to reset the current users scores`
+  String get semanticResetDialog {
+    return Intl.message(
+      'Confirmation dialog to reset the current users scores',
+      name: 'semanticResetDialog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmation dialog to remove player: {userName}`
+  String semanticDeleteUserDialog(String userName) {
+    return Intl.message(
+      'Confirmation dialog to remove player: $userName',
+      name: 'semanticDeleteUserDialog',
+      desc: 'Delete the player',
+      args: [userName],
+    );
+  }
+
+  /// `Player rank`
+  String get semanticRank {
+    return Intl.message(
+      'Player rank',
+      name: 'semanticRank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Player name`
+  String get semanticName {
+    return Intl.message(
+      'Player name',
+      name: 'semanticName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Player score`
+  String get semanticScore {
+    return Intl.message(
+      'Player score',
+      name: 'semanticScore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Star icon indicating that the player is in first place`
+  String get semanticRankIcon {
+    return Intl.message(
+      'Star icon indicating that the player is in first place',
+      name: 'semanticRankIcon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input dialog to add a new player`
+  String get semanticAddUser {
+    return Intl.message(
+      'Input dialog to add a new player',
+      name: 'semanticAddUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input dialog to add new points to a player`
+  String get semanticAddPoints {
+    return Intl.message(
+      'Input dialog to add new points to a player',
+      name: 'semanticAddPoints',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

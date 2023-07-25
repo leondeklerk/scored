@@ -24,6 +24,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(userName) => "Verwijder ${userName}";
 
+  static String m2(userName) =>
+      "Popup om het verwijderen van speler ${userName} te bevestigen";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Voeg toe"),
@@ -40,6 +43,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je deze speler wilt verwijderen?"),
         "deleteUser": m1,
+        "name": MessageLookupByLibrary.simpleMessage("Naam"),
         "nameError": MessageLookupByLibrary.simpleMessage(
             "Vul de naam van de speler in"),
         "player": MessageLookupByLibrary.simpleMessage("Speler"),
@@ -56,6 +60,23 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Voer een geldig nummer in"),
         "scoreMissingError":
             MessageLookupByLibrary.simpleMessage("Voer de initiele score in"),
+        "semanticAddPoints": MessageLookupByLibrary.simpleMessage(
+            "Popup om punten aan een speler toe te voegen "),
+        "semanticAddUser": MessageLookupByLibrary.simpleMessage(
+            "Popup om een nieuwe speler toe te voegen"),
+        "semanticClearDialog": MessageLookupByLibrary.simpleMessage(
+            "Popup om het verwijderen van alle spelers te bevestigen"),
+        "semanticDeleteUserDialog": m2,
+        "semanticName":
+            MessageLookupByLibrary.simpleMessage("Naam van de speler"),
+        "semanticRank":
+            MessageLookupByLibrary.simpleMessage("Rang van de speler"),
+        "semanticRankIcon": MessageLookupByLibrary.simpleMessage(
+            "Ster om aan te geven dat de speler om de eerste plaats staat"),
+        "semanticResetDialog": MessageLookupByLibrary.simpleMessage(
+            "Popup om het op nul zetten van alle scores te bevestigen"),
+        "semanticScore":
+            MessageLookupByLibrary.simpleMessage("Score van de speler"),
         "submit": MessageLookupByLibrary.simpleMessage("Oke")
       };
 }

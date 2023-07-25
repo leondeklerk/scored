@@ -31,10 +31,7 @@ class UserFormWidgetState extends State<UserFormWidget> {
     return null;
   }
 
-  final _scoreController = TextEditingController(
-      text: "0"
-  );
-
+  final _scoreController = TextEditingController(text: "0");
 
   @override
   Widget build(BuildContext context) {
@@ -57,24 +54,23 @@ class UserFormWidgetState extends State<UserFormWidget> {
                 return null;
               },
               decoration: InputDecoration(
-                filled: false,
-                prefixIcon: const Icon(Icons.person),
-                border: const OutlineInputBorder(),
-                labelText: locale.player,
-                helperText: ""
-              ),
+                  filled: false,
+                  prefixIcon: const Icon(Icons.person),
+                  border: const OutlineInputBorder(),
+                  labelText: locale.name,
+                  helperText: ""),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(top: 8),
             child: TextFormField(
               onTap: () {
-                _scoreController.selection = TextSelection(baseOffset: 0, extentOffset: _scoreController.value.text.length);
+                _scoreController.selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: _scoreController.value.text.length);
               },
               controller: _scoreController,
-              onSaved: (String? value) => {
-                  _user.score = int.parse(value!)
-              },
+              onSaved: (String? value) => {_user.score = int.parse(value!)},
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(_scoreRegex)
               ],
@@ -89,11 +85,11 @@ class UserFormWidgetState extends State<UserFormWidget> {
                 return null;
               },
               decoration: InputDecoration(
-                helperText: "",
+                hintText: "",
                 filled: false,
                 prefixIcon: const Icon(Icons.score),
                 border: const OutlineInputBorder(),
-                labelText: locale.score,
+                labelText: locale.points,
               ),
             ),
           ),

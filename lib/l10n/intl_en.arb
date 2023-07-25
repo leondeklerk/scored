@@ -1,4 +1,5 @@
 {
+  "@@locale": "en",
   "add": "Add",
   "submit": "Submit",
   "cancel": "Cancel",
@@ -39,5 +40,25 @@
         "example": "Alice"
       }
     }
-  }
+  },
+  "name": "Name",
+  "semanticClearDialog": "Confirmation dialog to clear the current list of users",
+  "semanticResetDialog": "Confirmation dialog to reset the current users scores",
+  "semanticDeleteUserDialog": "Confirmation dialog to remove player: {userName}",
+  "@semanticDeleteUserDialog": {
+    "description": "Delete the player",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
+  "semanticRank": "Player rank",
+  "semanticName": "Player name",
+  "semanticScore": "Player score",
+  "semanticRankIcon": "Star icon indicating that the player is in first place",
+  "semanticAddUser": "Input dialog to add a new player",
+  "semanticAddPoints": "Input dialog to add new points to a player"
+
 }

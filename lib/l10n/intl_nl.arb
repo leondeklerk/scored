@@ -1,4 +1,5 @@
 {
+  "@@locale": "nl",
   "add": "Voeg toe",
   "submit": "Oke",
   "cancel": "Annuleren",
@@ -39,5 +40,24 @@
         "example": "Alice"
       }
     }
-  }
+  },
+  "name": "Naam",
+  "semanticClearDialog": "Popup om het verwijderen van alle spelers te bevestigen",
+  "semanticResetDialog": "Popup om het op nul zetten van alle scores te bevestigen",
+  "semanticDeleteUserDialog": "Popup om het verwijderen van speler {userName} te bevestigen",
+  "@semanticDeleteUserDialog": {
+    "description": "Verwijder de speler",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
+  "semanticRank": "Rang van de speler",
+  "semanticName": "Naam van de speler",
+  "semanticScore": "Score van de speler",
+  "semanticRankIcon": "Ster om aan te geven dat de speler om de eerste plaats staat",
+  "semanticAddUser": "Popup om een nieuwe speler toe te voegen",
+  "semanticAddPoints": "Popup om punten aan een speler toe te voegen "
 }

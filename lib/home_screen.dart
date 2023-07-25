@@ -19,6 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         user.id = users.length;
         users.add(user);
+        if (_ranked) {
+          _determineRanks();
+        }
       });
       Navigator.pop(context);
     }
@@ -88,11 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          Wrap(
-              alignment: WrapAlignment.spaceEvenly,
-              spacing: 8,
-
-              children: [
+          Wrap(alignment: WrapAlignment.spaceEvenly, spacing: 8, children: [
             InputChip(
                 isEnabled: users.isNotEmpty,
                 label: Text(locale.clear),
@@ -101,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
+                            semanticLabel: locale.semanticClearDialog,
                             title: Text(locale.clearTitle),
                             content: Text(locale.clearPrompt),
                             actions: [
@@ -128,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
+                            semanticLabel: locale.semanticResetDialog,
                             title: Text(locale.resetScores),
                             content: Text(locale.resetScoresPrompt),
                             actions: [
@@ -159,11 +160,13 @@ class _HomeScreenState extends State<HomeScreen> {
           const Divider(),
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.only(bottom: 96),
+                semanticChildCount: users.length,
+                padding: const EdgeInsets.only(bottom: 96),
                 itemCount: users.length,
                 itemBuilder: (BuildContext context, int index) {
                   User activeUser = users[index];
                   return Card(
+                    semanticContainer: true,
                     elevation: 4,
                     child: ListTile(
                         title: Row(
@@ -172,29 +175,32 @@ class _HomeScreenState extends State<HomeScreen> {
                               Wrap(
                                 spacing: 16,
                                 children: [
-                                  if (_ranked) Text("${activeUser.rank}."),
-                                  Text(activeUser.name),
+                                  if (_ranked) Text("${activeUser.rank}.", semanticsLabel: locale.semanticRank),
+                                  Text(activeUser.name, semanticsLabel: locale.semanticName),
                                 ],
                               ),
-                              Text("${activeUser.score}")
+                              Text("${activeUser.score}", semanticsLabel: locale.semanticScore)
                             ]),
                         trailing: _ranked && activeUser.score == _topScore
-                            ? const Icon(Icons.star, color: Colors.amber)
+                            ? Icon(Icons.star, color: Colors.amber, semanticLabel: locale.semanticRankIcon)
                             : null,
                         onLongPress: () {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                    title: Text(locale.deleteUser(activeUser.name)),
-                                    content: Text(                                        locale.deletePrompt),
+                                    semanticLabel:
+                                        locale.semanticDeleteUserDialog(
+                                            activeUser.name),
+                                    title: Text(
+                                        locale.deleteUser(activeUser.name)),
+                                    content: Text(locale.deletePrompt),
                                     actions: [
                                       TextButton(
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: Text(locale.cancel)
-                                      ),
+                                          child: Text(locale.cancel)),
                                       TextButton(
                                           onPressed: () {
                                             setState(() {
@@ -202,8 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             });
                                             Navigator.pop(context);
                                           },
-                                          child: Text(locale.delete)
-                                      )
+                                          child: Text(locale.delete))
                                     ]);
                               });
                         },
@@ -212,9 +217,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
+                                  semanticLabel: locale.semanticAddPoints,
                                   insetPadding: const EdgeInsets.all(16.0),
-                                  title:
-                                      Text(locale.addPointsUser(activeUser.name)),
+                                  title: Text(
+                                      locale.addPointsUser(activeUser.name)),
                                   content: SizedBox(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
@@ -251,12 +257,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-
           onPressed: () {
             showDialog<void>(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
+                  semanticLabel: locale.semanticAddUser,
                   insetPadding: const EdgeInsets.all(16.0),
                   title: Text(locale.addPlayer),
                   content: SizedBox(
