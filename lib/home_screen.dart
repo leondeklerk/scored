@@ -41,7 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _determineRanks() {
-    users.sort((userA, userB) => userB.score.compareTo(userA.score));
+    users.sort((userA, userB) {
+      if (_reversed) {
+        return userA.score.compareTo(userB.score);
+      }
+      return userB.score.compareTo(userA.score);
+    });
     if (users.isEmpty) {
       return;
     }
@@ -50,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
     int lastScore = users[0].score;
     int rank = 1;
     for (var user in users) {
-      if (user.score < lastScore) {
+      // Only increase rank if the new score is different
+      bool cond = _reversed ? user.score > lastScore : user.score < lastScore;
+      if (cond) {
         rank += 1;
         user.rank = rank;
         lastScore = user.score;
@@ -75,11 +82,25 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _reverse() {
+    if (_ranked) {
+      setState(() {
+        _reversed = !_reversed;
+        _determineRanks();
+      });
+    } else {
+      setState(() {
+        _reversed = !_reversed;
+      });
+    }
+  }
+
   late User? Function() userFormSubmit;
   late int? Function() scoreFormSubmit;
   List<User> users = [];
   bool _ranked = false;
   int _topScore = 0;
+  bool _reversed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +189,25 @@ class _HomeScreenState extends State<HomeScreen> {
                             semanticsLabel: locale.semanticRanked),
                         selected: _ranked,
                         onSelected: _setRanked,
-                      )
+                      ),
+                      Semantics(
+                        label: _reversed
+                            ? locale.semanticsReverseDesc
+                            : locale.semanticsReverseAsc,
+                        button: true,
+                        child: ActionChip(
+                            onPressed: _ranked ? _reverse : null,
+                            label: Semantics(
+                                excludeSemantics: true, child: const Text("")),
+                            avatar: (() {
+                              if (_reversed) {
+                                return const Icon(Icons.keyboard_arrow_down);
+                              } else {
+                                return const Icon(Icons.keyboard_arrow_up);
+                              }
+                            })(),
+                            labelPadding: EdgeInsets.zero),
+                      ),
                     ]),
               ],
             ),

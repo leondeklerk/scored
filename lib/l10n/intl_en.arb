@@ -49,5 +49,7 @@
   "semanticRanked": "Show player ranks",
   "semanticListControls": "Player list controls",
   "semanticAddPoints": "Add points to player.",
-  "semanticRemovePlayer": "Remove player."
+  "semanticRemovePlayer": "Remove player.",
+  "semanticsReverseAsc": "Rank order - Highest score first",
+  "semanticsReverseDesc": "Rang order - Lowest score first"
 }

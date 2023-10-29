@@ -369,6 +369,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Rank order - Highest score first`
+  String get semanticsReverseAsc {
+    return Intl.message(
+      'Rank order - Highest score first',
+      name: 'semanticsReverseAsc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rang order - Lowest score first`
+  String get semanticsReverseDesc {
+    return Intl.message(
+      'Rang order - Lowest score first',
+      name: 'semanticsReverseDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

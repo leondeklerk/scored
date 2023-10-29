@@ -49,5 +49,7 @@
   "semanticRanked": "Toon speler rangen",
   "semanticListControls": "Spelerslijst knoppen",
   "semanticAddPoints": "Voeg punten toe aan de speler.",
-  "semanticRemovePlayer": "Verwijder de speler."
+  "semanticRemovePlayer": "Verwijder de speler.",
+  "semanticsReverseAsc": "Rang volgorde - Hoogste score eerst",
+  "semanticsReverseDesc": "Rang volgorde - Laagste score eerst"
 }

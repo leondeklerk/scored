@@ -69,6 +69,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "semanticRemovePlayer":
             MessageLookupByLibrary.simpleMessage("Verwijder de speler."),
         "semanticScore": MessageLookupByLibrary.simpleMessage("Score: "),
+        "semanticsReverseAsc": MessageLookupByLibrary.simpleMessage(
+            "Rang volgorde - Hoogste score eerst"),
+        "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
+            "Rang volgorde - Laagste score eerst"),
         "submit": MessageLookupByLibrary.simpleMessage("Oke")
       };
 }
