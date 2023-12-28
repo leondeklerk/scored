@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:scored/models/config_model.dart';
+import 'package:scored/models/score_model.dart';
+import 'package:scored/models/state.dart';
+import 'package:scored/models/user_model.dart';
 import 'package:scored/points_form_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'user_form_widget.dart';
 import 'models/user.dart';
+import 'package:sqflite/sqflite.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Database db;
+  final PersistedState? state;
+
+  const HomeScreen({super.key, required this.db, required this.state});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (_ranked) {
           _determineRanks();
         }
+        _setUser(user);
       });
       Navigator.pop(context);
     }
@@ -35,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (_ranked) {
           _determineRanks();
         }
+        _setUser(users[activeUserIndex]);
       });
       Navigator.pop(context);
     }
@@ -80,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
         users.sort((userA, userB) => userA.id.compareTo(userB.id));
       });
     }
+    _setConfig();
   }
 
   void _reverse() {
@@ -93,6 +104,73 @@ class _HomeScreenState extends State<HomeScreen> {
         _reversed = !_reversed;
       });
     }
+    _setConfig();
+  }
+
+  void _setConfig() async {
+    int rankedInt = _ranked ? 1 : 0;
+    int reversedInt = _reversed ? 1 : 0;
+    ConfigModel model =
+        ConfigModel(id: 0, ranked: rankedInt, reversed: reversedInt, pages: 0);
+    await widget.db.insert('config', model.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  void _setUser(User user) async {
+    UserModel userModel = UserModel(userId: user.id, name: user.name);
+    ScoreModel scoreModel =
+        ScoreModel(page: 0, userId: user.id, score: user.score);
+    await widget.db.insert('users', userModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    await widget.db.insert('scores', scoreModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  void _deleteUser(int index) {
+    int id = users[index].id;
+
+    _removeUserRows(id);
+
+    setState(() {
+      users.removeAt(index);
+    });
+
+    Navigator.pop(context);
+    _determineRanks();
+  }
+
+  void _removeUserRows(int id) async {
+    await widget.db.delete("users", where: "userId = ?", whereArgs: [id]);
+    await widget.db.delete("scores", where: "userId = ?", whereArgs: [id]);
+  }
+
+  void _clearTables() async {
+    await widget.db.delete("users");
+    await widget.db.delete("scores");
+  }
+
+  void _clearScores() {
+    setState(() {
+      users = [];
+    });
+    _clearTables();
+    Navigator.pop(context);
+  }
+
+  void _resetScores() async {
+    setState(() {
+      for (var user in users) {
+        user.score = 0;
+        user.rank = 1;
+      }
+    });
+    _determineRanks();
+    widget.db.rawUpdate('UPDATE scores SET score = 0');
+    Navigator.pop(context);
+  }
+
+  void _cancel() {
+    Navigator.pop(context);
   }
 
   late User? Function() userFormSubmit;
@@ -101,6 +179,17 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _ranked = false;
   int _topScore = 0;
   bool _reversed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.state != null) {
+      _ranked = widget.state?.config?.ranked == 1 ? true : false;
+      _reversed = widget.state?.config?.reversed == 1 ? true : false;
+      users = widget.state!.users;
+      _determineRanks();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,17 +224,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         content: Text(locale.clearPrompt),
                                         actions: [
                                           TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
+                                              onPressed: _cancel,
                                               child: Text(locale.cancel)),
                                           TextButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  users = [];
-                                                });
-                                                Navigator.pop(context);
-                                              },
+                                              onPressed: _clearScores,
                                               child: Text(locale.clearButton))
                                         ]);
                                   });
@@ -165,20 +247,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         content: Text(locale.resetScoresPrompt),
                                         actions: [
                                           TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
+                                              onPressed: _cancel,
                                               child: Text(locale.cancel)),
                                           TextButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  for (var user in users) {
-                                                    user.score = 0;
-                                                    user.rank = 1;
-                                                  }
-                                                });
-                                                Navigator.pop(context);
-                                              },
+                                              onPressed: _resetScores,
                                               child: Text(locale.reset))
                                         ]);
                                   });
@@ -272,16 +344,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       content: Text(locale.deletePrompt),
                                       actions: [
                                         TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
+                                            onPressed: _cancel,
                                             child: Text(locale.cancel)),
                                         TextButton(
                                             onPressed: () {
-                                              setState(() {
-                                                users.removeAt(index);
-                                              });
-                                              Navigator.pop(context);
+                                              _deleteUser(index);
                                             },
                                             child: Text(locale.delete))
                                       ]);
@@ -312,9 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     actions: [
                                       TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
+                                          onPressed: _cancel,
                                           child: Text(locale.cancel)),
                                       TextButton(
                                           onPressed: () {
@@ -356,11 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(locale.cancel)),
+                    TextButton(onPressed: _cancel, child: Text(locale.cancel)),
                     TextButton(onPressed: _userSubmit, child: Text(locale.add))
                   ],
                 );
