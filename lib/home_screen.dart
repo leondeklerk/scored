@@ -25,11 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
     User? user = userFormSubmit.call();
     if (user != null) {
       setState(() {
-        user.id = users.length;
+        user.id = "$currentPage-${users.length}";
         users.add(user);
-        if (_ranked) {
-          _determineRanks();
-        }
+        _determineOrder();
         _setUser(user);
       });
       Navigator.pop(context);
@@ -41,25 +39,29 @@ class _HomeScreenState extends State<HomeScreen> {
     if (points != null) {
       setState(() {
         users[activeUserIndex].score += points;
-        if (_ranked) {
-          _determineRanks();
-        }
+        _determineOrder();
         _setUser(users[activeUserIndex]);
       });
       Navigator.pop(context);
     }
   }
 
-  void _determineRanks() {
+  void _determineOrder() {
+    if (users.isEmpty) {
+      return;
+    }
+
+    if (!_ranked) {
+      users.sort((userA, userB) => userA.id.compareTo(userB.id));
+      return;
+    }
+
     users.sort((userA, userB) {
       if (_reversed) {
         return userA.score.compareTo(userB.score);
       }
       return userB.score.compareTo(userA.score);
     });
-    if (users.isEmpty) {
-      return;
-    }
 
     _topScore = users[0].score;
     int lastScore = users[0].score;
@@ -82,12 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (ranked) {
       setState(() {
         _ranked = true;
-        _determineRanks();
+        _determineOrder();
       });
     } else {
       setState(() {
         _ranked = false;
-        users.sort((userA, userB) => userA.id.compareTo(userB.id));
+        _determineOrder();
       });
     }
     _setConfig();
@@ -97,11 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_ranked) {
       setState(() {
         _reversed = !_reversed;
-        _determineRanks();
+        _determineOrder();
       });
     } else {
       setState(() {
         _reversed = !_reversed;
+        _determineOrder();
       });
     }
     _setConfig();
@@ -117,9 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _setUser(User user) async {
-    UserModel userModel = UserModel(userId: user.id, name: user.name);
+    UserModel userModel =
+        UserModel(id: user.id, name: user.name, pageId: currentPage);
     ScoreModel scoreModel =
-        ScoreModel(page: 0, userId: user.id, score: user.score);
+        ScoreModel(pageId: currentPage, userId: user.id, score: user.score);
     await widget.db.insert('users', userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     await widget.db.insert('scores', scoreModel.toMap(),
@@ -127,20 +131,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _deleteUser(int index) {
-    int id = users[index].id;
+    String id = users[index].id;
 
     _removeUserRows(id);
 
     setState(() {
       users.removeAt(index);
+      _determineOrder();
     });
 
     Navigator.pop(context);
-    _determineRanks();
   }
 
-  void _removeUserRows(int id) async {
-    await widget.db.delete("users", where: "userId = ?", whereArgs: [id]);
+  void _removeUserRows(String id) async {
+    await widget.db.delete("users", where: "id = ?", whereArgs: [id]);
     await widget.db.delete("scores", where: "userId = ?", whereArgs: [id]);
   }
 
@@ -163,8 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
         user.score = 0;
         user.rank = 1;
       }
+      _determineOrder();
     });
-    _determineRanks();
     widget.db.rawUpdate('UPDATE scores SET score = 0');
     Navigator.pop(context);
   }
@@ -176,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late User? Function() userFormSubmit;
   late int? Function() scoreFormSubmit;
   List<User> users = [];
+  int currentPage = 0;
   bool _ranked = false;
   int _topScore = 0;
   bool _reversed = false;
@@ -186,8 +191,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (widget.state != null) {
       _ranked = widget.state?.config?.ranked == 1 ? true : false;
       _reversed = widget.state?.config?.reversed == 1 ? true : false;
-      users = widget.state!.users;
-      _determineRanks();
+      var userMap = widget.state!.users[0]!;
+      userMap.forEach((key, value) {
+        users.add(value);
+      });
+      _determineOrder();
     }
   }
 
