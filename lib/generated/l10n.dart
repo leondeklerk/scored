@@ -389,6 +389,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Default`
+  String get standardPageName {
+    return Intl.message(
+      'Default',
+      name: 'standardPageName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rename page`
+  String get renamePage {
+    return Intl.message(
+      'Rename page',
+      name: 'renamePage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete {page}`
+  String deletePage(String page) {
+    return Intl.message(
+      'Delete $page',
+      name: 'deletePage',
+      desc: 'Delete with page name template',
+      args: [page],
+    );
+  }
+
+  /// `Are you sure you want to delete this page?`
+  String get pageDeletePrompt {
+    return Intl.message(
+      'Are you sure you want to delete this page?',
+      name: 'pageDeletePrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Page`
+  String get page {
+    return Intl.message(
+      'Page',
+      name: 'page',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add page`
+  String get addPage {
+    return Intl.message(
+      'Add page',
+      name: 'addPage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

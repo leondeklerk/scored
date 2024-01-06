@@ -51,5 +51,21 @@
   "semanticAddPoints": "Add points to player.",
   "semanticRemovePlayer": "Remove player.",
   "semanticsReverseAsc": "Rank order - Highest score first",
-  "semanticsReverseDesc": "Rang order - Lowest score first"
+  "semanticsReverseDesc": "Rang order - Lowest score first",
+  "standardPageName": "Default",
+  "renamePage": "Rename page",
+  "deletePage": "Delete {page}",
+  "@deletePage": {
+    "description": "Delete with page name template",
+    "placeholders": {
+      "page": {
+        "type": "String",
+        "example": "Page 1"
+      }
+    }
+  },
+  "pageDeletePrompt": "Are you sure you want to delete this page?",
+  "page": "Page",
+  "addPage": "Add page"
+
 }

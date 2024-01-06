@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scored/home_screen.dart';
+import 'package:scored/models/config.dart';
 import 'package:scored/models/page_model.dart';
 import 'package:scored/models/score_model.dart';
 import 'package:scored/models/user_model.dart';
@@ -27,23 +28,23 @@ void main() async {
       onCreate: (db, version) async {
     await createDb(db);
   }, onUpgrade: (db, oldVersion, newVersion) async {
-    if (newVersion == 2) {
+    if (newVersion == 2 || newVersion == 3 || newVersion == 4 || newVersion == 5) {
       await db.execute("DROP TABLE IF EXISTS config");
-      await db.execute("DROP TABLE IF EXISTS pages");
       await db.execute("DROP TABLE IF EXISTS users");
       await db.execute("DROP TABLE IF EXISTS scores");
+      await db.execute("DROP TABLE IF EXISTS pages");
       await createDb(db);
     }
-  }, version: 2);
+  }, version: 5);
 
   runApp(ScoredApp(database: database));
 }
 
 Future<void> createDb(Database db) async {
+
+  await db.execute("CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT);");
   await db.execute(
-      'CREATE TABLE IF NOT EXISTS config(id INTEGER PRIMARY KEY, ranked INTEGER, reversed INTEGER, pages INTEGER);');
-  await db.execute("CREATE TABLE IF NOT EXISTS pages(id INTEGER, name TEXT);");
-  await db.execute("INSERT INTO pages VALUES (0, 'default')");
+      'CREATE TABLE IF NOT EXISTS config(ranked INTEGER, reversed INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(pageId));');
   await db.execute(
       'CREATE TABLE IF NOT EXISTS users(id TEXT, name TEXT, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(id, pageId));');
   await db.execute(
@@ -68,10 +69,9 @@ class ScoredApp extends StatelessWidget {
 
     List<ConfigModel> configList = List.generate(configs.length, (i) {
       return ConfigModel(
-        id: configs[i]['id'] as int,
         ranked: configs[i]['ranked'] as int,
         reversed: configs[i]['reversed'] as int,
-        pages: configs[i]['pages'] as int,
+        pageId: configs[i]['pageId'] as int,
       );
     });
 
@@ -98,17 +98,17 @@ class ScoredApp extends StatelessWidget {
       );
     });
 
-    PersistedState state = PersistedState(users: {}, pages: [], config: null);
+    PersistedState state = PersistedState(users: {}, pages: [], configs: {});
 
-    int pagesSize = 1;
 
-    if (configList.isNotEmpty) {
-      state.config = configList[0];
-      pagesSize = configList[0].pages;
+    for (var i = 0; i < configList.length; i++) {
+      ConfigModel config = configList[i];
+      state.configs[config.pageId] = Config(ranked: config.ranked == 1 ? true : false, reversed: config.reversed == 1 ? true : false, pageId: config.pageId);
     }
 
-    for (var i = 0; i < pagesSize; i++) {
-      state.pages.add(pagesList[i].name);
+    state.pages = pagesList;
+
+    for (var i = 0; i < pagesList.length; i++) {
       state.users[i] = {};
     }
 
@@ -129,16 +129,6 @@ class ScoredApp extends StatelessWidget {
           scoreEntry.score;
     }
 
-    // if (scoresList.length == usersList.length) {
-    //   for (var i = 0; i < usersList.length; i++) {
-    //     var scoreEntry = scoresList[i];
-    //     var userEntry = usersList[i];
-    //     var user = User(name: userEntry.name);
-    //     user.score = scoreEntry.score;
-    //     user.id = userEntry.id;
-    //     state.users.add(user);
-    //   }
-    // }
     return state;
   }
 

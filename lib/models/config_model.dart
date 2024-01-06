@@ -1,26 +1,23 @@
 class ConfigModel {
-  final int id;
-  final int ranked;
-  final int reversed;
-  final int pages;
+  int ranked;
+  int reversed;
+  final int pageId;
 
-  const ConfigModel(
-      {required this.id,
-      required this.ranked,
+  ConfigModel(
+      {      required this.ranked,
       required this.reversed,
-      required this.pages});
+      required this.pageId});
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'ranked': ranked,
       'reversed': reversed,
-      'pages': pages,
+      'pageId': pageId,
     };
   }
 
   @override
   String toString() {
-    return 'ConfigModel{id: $id, ranked: $ranked, reversed: $reversed, pages: $pages}';
+    return 'ConfigModel{ranked: $ranked, reversed: $reversed, pageId: $pageId}';
   }
 }

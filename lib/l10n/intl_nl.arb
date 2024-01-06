@@ -51,5 +51,21 @@
   "semanticAddPoints": "Voeg punten toe aan de speler.",
   "semanticRemovePlayer": "Verwijder de speler.",
   "semanticsReverseAsc": "Rang volgorde - Hoogste score eerst",
-  "semanticsReverseDesc": "Rang volgorde - Laagste score eerst"
+  "semanticsReverseDesc": "Rang volgorde - Laagste score eerst",
+  "standardPageName": "Standaard",
+  "renamePage": "Verander pagina titel",
+  "deletePage": "Verwijder {page}",
+  "@deletePage": {
+    "description": "Delete with page name template",
+    "placeholders": {
+      "page": {
+        "type": "String",
+        "example": "Page 1"
+      }
+    }
+  },
+  "pageDeletePrompt": "Weet je zeker dat je deze pagina wilt verwijderen?",
+  "page": "Pagina",
+  "addPage": "Pagina toevoegen"
+
 }

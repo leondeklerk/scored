@@ -1,11 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:scored/models/config_model.dart';
-import 'package:scored/models/score_model.dart';
-import 'package:scored/models/state.dart';
-import 'package:scored/models/user_model.dart';
-import 'package:scored/points_form_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:scored/models/config.dart';
+import 'package:scored/models/config_model.dart';
+import 'package:scored/models/page_model.dart';
+import 'package:scored/models/state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/page_form_widget.dart';
+import 'package:scored/page_rename_form_widget.dart';
+import 'package:scored/score_sheet.dart';
+import 'package:page_view_indicators/page_view_indicators.dart';
+
+import 'models/score_model.dart';
+import 'models/user_model.dart';
 import 'user_form_widget.dart';
 import 'models/user.dart';
 import 'package:sqflite/sqflite.dart';
@@ -23,52 +30,129 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   void _userSubmit() {
     User? user = userFormSubmit.call();
+
     if (user != null) {
-      setState(() {
-        user.id = "$currentPage-${users.length}";
-        users.add(user);
-        _determineOrder();
-        _setUser(user);
-      });
-      Navigator.pop(context);
+      sheetUserSubmitFunctions[controller.page]?.call(user);
     }
   }
 
-  void _pointsSubmit(int activeUserIndex) {
-    int? points = scoreFormSubmit.call();
-    if (points != null) {
-      setState(() {
-        users[activeUserIndex].score += points;
-        _determineOrder();
-        _setUser(users[activeUserIndex]);
-      });
-      Navigator.pop(context);
-    }
+  late User? Function() userFormSubmit;
+  late String? Function() pageFormSubmit;
+  late PageModel? Function() pageRenameFormSubmit;
+  Map<int, void Function(User user)> sheetUserSubmitFunctions = {};
+  Map<int, Config?> configs = {0: null};
+  Map<int, List<User>> userLists = {0: []};
+  List<PageModel> pages = [];
+  PageController controller = PageController(initialPage: 0);
+  Map<int, int> topScores = {};
+  final ValueNotifier<int> _pageNotifier = ValueNotifier<int>(0);
+
+  void _addPage() async {
+    String? name = pageFormSubmit.call();
+    var id = _nextPageId();
+
+    name ??= id.toString();
+
+    var model = PageModel(id: id, name: name);
+    await widget.db.insert('pages', model.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.fail);
+    setState(() {
+      configs[id] = null;
+      userLists[id] = [];
+      topScores[id] = 0;
+      pages.add(model);
+    });
+    controller.animateToPage(pages.length - 1,
+        curve: Curves.easeIn, duration: const Duration(milliseconds: 300));
   }
 
-  void _determineOrder() {
-    if (users.isEmpty) {
+  void _deletePage(int pageId, int index) async {
+    setState(() {
+      configs[pageId] = null;
+      userLists[pageId] = [];
+      topScores[pageId] = 0;
+      pages.removeAt(index);
+    });
+
+    await widget.db.delete("users", where: "pageId = ?", whereArgs: [pageId]);
+    await widget.db.delete("scores", where: "pageId = ?", whereArgs: [pageId]);
+    await widget.db.delete("config", where: "pageId = ?", whereArgs: [pageId]);
+    await widget.db.delete("pages", where: "id = ?", whereArgs: [pageId]);
+  }
+
+  int _nextPageId() {
+    if (pages.isEmpty) {
+      return 0;
+    }
+
+    return pages.map((page) {
+          return page.id;
+        }).reduce(max) +
+        1;
+  }
+
+  void _renamePage(int index) async {
+    PageModel? model = pageRenameFormSubmit.call();
+    if (model == null) {
       return;
     }
 
-    if (!_ranked) {
+    await widget.db.insert('pages', model.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.fail);
+    setState(() {
+      pages[index] = (model);
+    });
+  }
+
+  String capitalizeFirst(String value) {
+    if (value.trim().isEmpty) return "";
+    if (value.length == 1) {
+      return value.toUpperCase();
+    }
+
+    return "${value[0].toUpperCase()}${value.substring(1)}";
+  }
+
+  void _storeConfig(Config config) async {
+    int rankedInt = config.ranked ? 1 : 0;
+    int reversedInt = config.reversed ? 1 : 0;
+    ConfigModel model = ConfigModel(
+        ranked: rankedInt, reversed: reversedInt, pageId: config.pageId);
+    await widget.db.insert('config', model.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  void _determineOrder(int pageId) {
+    var users = userLists[pageId];
+    if (users == null || users.isEmpty) {
+      return;
+    }
+
+    var config = Config(ranked: false, reversed: false, pageId: pageId);
+    if (configs[pageId] != null) {
+      config = configs[pageId]!;
+    }
+
+    if (!config.ranked) {
       users.sort((userA, userB) => userA.id.compareTo(userB.id));
       return;
     }
 
     users.sort((userA, userB) {
-      if (_reversed) {
+      if (config.reversed) {
         return userA.score.compareTo(userB.score);
       }
       return userB.score.compareTo(userA.score);
     });
 
-    _topScore = users[0].score;
+    topScores[pageId] = users[0].score;
+
     int lastScore = users[0].score;
     int rank = 1;
     for (var user in users) {
       // Only increase rank if the new score is different
-      bool cond = _reversed ? user.score > lastScore : user.score < lastScore;
+      bool cond =
+          config.reversed ? user.score > lastScore : user.score < lastScore;
       if (cond) {
         rank += 1;
         user.rank = rank;
@@ -80,122 +164,36 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _setRanked(bool ranked) {
-    if (ranked) {
-      setState(() {
-        _ranked = true;
-        _determineOrder();
-      });
-    } else {
-      setState(() {
-        _ranked = false;
-        _determineOrder();
-      });
-    }
-    _setConfig();
-  }
-
-  void _reverse() {
-    if (_ranked) {
-      setState(() {
-        _reversed = !_reversed;
-        _determineOrder();
-      });
-    } else {
-      setState(() {
-        _reversed = !_reversed;
-        _determineOrder();
-      });
-    }
-    _setConfig();
-  }
-
-  void _setConfig() async {
-    int rankedInt = _ranked ? 1 : 0;
-    int reversedInt = _reversed ? 1 : 0;
-    ConfigModel model =
-        ConfigModel(id: 0, ranked: rankedInt, reversed: reversedInt, pages: 0);
-    await widget.db.insert('config', model.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
-  }
-
-  void _setUser(User user) async {
+  void _storeUser(int pageId, User user) async {
     UserModel userModel =
-        UserModel(id: user.id, name: user.name, pageId: currentPage);
+    UserModel(id: user.id, name: user.name, pageId: pageId);
     ScoreModel scoreModel =
-        ScoreModel(pageId: currentPage, userId: user.id, score: user.score);
+    ScoreModel(pageId: pageId, userId: user.id, score: user.score);
     await widget.db.insert('users', userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     await widget.db.insert('scores', scoreModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  void _deleteUser(int index) {
-    String id = users[index].id;
-
-    _removeUserRows(id);
-
-    setState(() {
-      users.removeAt(index);
-      _determineOrder();
-    });
-
-    Navigator.pop(context);
+  void createInitialPage(String defaultPageName) {
+    pageFormSubmit = () {
+      return defaultPageName;
+    };
+    _addPage();
   }
-
-  void _removeUserRows(String id) async {
-    await widget.db.delete("users", where: "id = ?", whereArgs: [id]);
-    await widget.db.delete("scores", where: "userId = ?", whereArgs: [id]);
-  }
-
-  void _clearTables() async {
-    await widget.db.delete("users");
-    await widget.db.delete("scores");
-  }
-
-  void _clearScores() {
-    setState(() {
-      users = [];
-    });
-    _clearTables();
-    Navigator.pop(context);
-  }
-
-  void _resetScores() async {
-    setState(() {
-      for (var user in users) {
-        user.score = 0;
-        user.rank = 1;
-      }
-      _determineOrder();
-    });
-    widget.db.rawUpdate('UPDATE scores SET score = 0');
-    Navigator.pop(context);
-  }
-
-  void _cancel() {
-    Navigator.pop(context);
-  }
-
-  late User? Function() userFormSubmit;
-  late int? Function() scoreFormSubmit;
-  List<User> users = [];
-  int currentPage = 0;
-  bool _ranked = false;
-  int _topScore = 0;
-  bool _reversed = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.state != null) {
-      _ranked = widget.state?.config?.ranked == 1 ? true : false;
-      _reversed = widget.state?.config?.reversed == 1 ? true : false;
-      var userMap = widget.state!.users[0]!;
-      userMap.forEach((key, value) {
-        users.add(value);
+      configs = widget.state!.configs;
+      widget.state!.users.forEach((key, value) {
+        userLists[key] = value.values.toList();
+        topScores[key] = 0;
+        _determineOrder(key);
       });
-      _determineOrder();
+
+      pages = widget.state!.pages;
     }
   }
 
@@ -203,173 +201,64 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
 
+    if (pages.isEmpty) {
+      createInitialPage(locale.standardPageName);
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scored'),
-      ),
+      appBar: AppBar(title: const Text('Scored')),
       body: Column(
         children: [
-          Semantics(
-            label: locale.semanticListControls,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Wrap(
-                    alignment: WrapAlignment.spaceEvenly,
-                    spacing: 8,
-                    children: [
-                      Semantics(
-                        button: true,
-                        child: InputChip(
-                            isEnabled: users.isNotEmpty,
-                            label: Text(locale.clear),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                        title: Text(locale.clearTitle),
-                                        content: Text(locale.clearPrompt),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: _cancel,
-                                              child: Text(locale.cancel)),
-                                          TextButton(
-                                              onPressed: _clearScores,
-                                              child: Text(locale.clearButton))
-                                        ]);
-                                  });
-                            }),
-                      ),
-                      Semantics(
-                        button: true,
-                        child: InputChip(
-                            isEnabled: users.isNotEmpty,
-                            label: Text(locale.resetScores),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                        title: Text(locale.resetScores),
-                                        content: Text(locale.resetScoresPrompt),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: _cancel,
-                                              child: Text(locale.cancel)),
-                                          TextButton(
-                                              onPressed: _resetScores,
-                                              child: Text(locale.reset))
-                                        ]);
-                                  });
-                            }),
-                      ),
-                      FilterChip(
-                        label: Text(locale.ranked,
-                            semanticsLabel: locale.semanticRanked),
-                        selected: _ranked,
-                        onSelected: _setRanked,
-                      ),
-                      Semantics(
-                        label: _reversed
-                            ? locale.semanticsReverseDesc
-                            : locale.semanticsReverseAsc,
-                        button: true,
-                        child: ActionChip(
-                            onPressed: _ranked ? _reverse : null,
-                            label: Semantics(
-                                excludeSemantics: true, child: const Text("")),
-                            avatar: (() {
-                              if (_reversed) {
-                                return const Icon(Icons.keyboard_arrow_down);
-                              } else {
-                                return const Icon(Icons.keyboard_arrow_up);
-                              }
-                            })(),
-                            labelPadding: EdgeInsets.zero),
-                      ),
-                    ]),
-              ],
-            ),
+          Center(
+              child: Visibility(
+                maintainState: true,
+                maintainSize: true,
+                maintainAnimation: true,
+                visible: pages.length > 1,
+                child: CirclePageIndicator(
+            currentPageNotifier: _pageNotifier,
+            itemCount: pages.length,
           ),
-          const Divider(),
+              )),
           Expanded(
-            child: Semantics(
-              label: "Player list",
-              child: ListView.builder(
-                  semanticChildCount: users.length,
-                  padding: const EdgeInsets.only(bottom: 96),
-                  itemCount: users.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    User activeUser = users[index];
-                    return Semantics(
-                      // onTap: locale.semanticAddPoints,
-                      // onLongPress: locale.semanticRemovePlayer,
-                      child: Card(
-                        elevation: 4,
-                        child: ListTile(
-                          title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Wrap(
-                                  spacing: 16,
-                                  children: [
-                                    if (_ranked)
-                                      Semantics(
-                                          label: locale.semanticRank,
-                                          child: Text("${activeUser.rank}.")),
-                                    Semantics(
-                                      label: locale.semanticName,
-                                      child: Text(activeUser.name),
-                                    ),
-                                  ],
-                                ),
-                                Semantics(
-                                    label: locale.semanticScore,
-                                    child: Text("${activeUser.score}"))
-                              ]),
-                          trailing: (() {
-                            if (_ranked) {
-                              if (activeUser.score == _topScore) {
-                                return Semantics(
-                                    excludeSemantics: true,
-                                    child: const Icon(Icons.star,
-                                        color: Colors.amber));
-                              }
-                              return Semantics(
-                                  excludeSemantics: true,
-                                  child: const Icon(null));
-                            }
-                            return null;
-                          })(),
-                          onLongPress: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                      title: Text(
-                                          locale.deleteUser(activeUser.name)),
-                                      content: Text(locale.deletePrompt),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: _cancel,
-                                            child: Text(locale.cancel)),
-                                        TextButton(
-                                            onPressed: () {
-                                              _deleteUser(index);
-                                            },
-                                            child: Text(locale.delete))
-                                      ]);
-                                });
-                          },
-                          onTap: () {
-                            showDialog(
+            child: PageView(
+              controller: controller,
+              onPageChanged: (index) {
+                setState(() {
+                  _pageNotifier.value = index;
+                });
+              },
+              children: [
+                for (var (index, page) in pages.indexed)
+                  Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: TextButton(
+                            style: TextButton.styleFrom(
+                                padding: const EdgeInsets.only(
+                                    left: 16, bottom: 8, right: 0, top: 8),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                foregroundColor: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color,
+                                textStyle: TextStyle(
+                                    fontWeight: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.fontWeight)),
+                            onPressed: () {
+                              showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     insetPadding: const EdgeInsets.all(16.0),
-                                    title: Text(
-                                        locale.addPointsUser(activeUser.name)),
+                                    title: Text(locale.renamePage),
                                     content: SizedBox(
                                       width: MediaQuery.of(context).size.width,
                                       child: Column(
@@ -377,31 +266,206 @@ class _HomeScreenState extends State<HomeScreen> {
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          PointsFormWidget(
+                                          PageRenameFormWidget(
                                             builder: (context, submitFunction) {
-                                              scoreFormSubmit = submitFunction;
+                                              pageRenameFormSubmit =
+                                                  submitFunction;
                                             },
+                                            baseModel: page,
                                           ),
                                         ],
                                       ),
                                     ),
                                     actions: [
                                       TextButton(
-                                          onPressed: _cancel,
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
                                           child: Text(locale.cancel)),
                                       TextButton(
                                           onPressed: () {
-                                            _pointsSubmit(index);
+                                            _renamePage(index);
+                                            Navigator.pop(context);
                                           },
                                           child: Text(locale.add))
                                     ],
                                   );
-                                });
+                                },
+                              );
+                            },
+                            onLongPress: () {
+                              if (pages.length == 1) {
+                                return;
+                              }
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                        title: Text(locale.deletePage(page.name)),
+                                        content: Text(locale.pageDeletePrompt),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(locale.cancel)),
+                                          TextButton(
+                                              onPressed: () {
+                                                _deletePage(page.id, index);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(locale.delete))
+                                        ]);
+                                  });
+                            },
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: () {
+                                if (page.name == page.id.toString()) {
+                                  return Text("${locale.page} ${(1 + index)}",
+                                      style: const TextStyle(fontSize: 18));
+                                }
+                                return Text(capitalizeFirst(page.name),
+                                    style: const TextStyle(fontSize: 18));
+                              }(),
+                            ),
+                          )),
+                          Visibility(
+                            maintainAnimation: true,
+                            maintainSize: true,
+                            maintainState: true,
+                            visible: index == pages.length - 1,
+                            child: IconButton(
+                                onPressed: () {
+                                  showDialog<void>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        insetPadding:
+                                            const EdgeInsets.all(16.0),
+                                        title: Text(locale.addPage),
+                                        content: SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              PageFormWidget(
+                                                builder:
+                                                    (context, submitFunction) {
+                                                  pageFormSubmit =
+                                                      submitFunction;
+                                                },
+                                                initialName:
+                                                    "${locale.page} ${pages.length + 1}",
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(locale.cancel)),
+                                          TextButton(
+                                              onPressed: () {
+                                                _addPage();
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(locale.add))
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.add)),
+                          )
+                        ],
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: Divider(
+                            height: 1,
+                          )),
+                      Expanded(
+                        child: ScoreSheet(
+                          db: widget.db,
+                          users: userLists[page.id]!,
+                          pageId: page.id,
+                          onSubmitFunction: (pageId, sheetUserSubmitFunction) {
+                            sheetUserSubmitFunctions[pageId] =
+                                sheetUserSubmitFunction;
                           },
+                          setConfig: (configData) {
+                            setState(() {
+                              configs[configData.pageId] = configData;
+                              _determineOrder(configData.pageId);
+                            });
+                            _storeConfig(configData);
+                          },
+                          config: () {
+                            if (configs[page.id] == null) {
+                              return Config(
+                                  ranked: false,
+                                  reversed: false,
+                                  pageId: page.id);
+                            } else {
+                              return configs[page.id]!;
+                            }
+                          }(),
+                          addUser: (pageId, user) {
+                            setState(() {
+                              userLists[pageId]?.add(user);
+                              _storeUser(pageId, user);
+                              _determineOrder(pageId);
+                            });
+                          },
+                          clearState: (pageId) {
+                            setState(() {
+                              userLists[pageId] = [];
+                            });
+                          },
+                          deleteUser: (pageId, userIndex) {
+                            setState(() {
+                              userLists[pageId]?.removeAt(userIndex);
+                              _determineOrder(pageId);
+                            });
+                          },
+                          resetScores: (pageId) {
+                            var list = userLists[pageId];
+                            if (list == null) {
+                              return;
+                            }
+                            setState(() {
+                              for (var user in list) {
+                                user.score = 0;
+                                user.rank = 1;
+                              }
+                              _determineOrder(pageId);
+                            });
+                          },
+                          addScore: (pageId, userIndex, points) {
+                            var list = userLists[pageId];
+                            if (list == null) {
+                              return;
+                            }
+                            setState(() {
+                              list[userIndex].score += points;
+                              _storeUser(pageId, list[userIndex]);
+                              _determineOrder(pageId);
+                            });
+                          },
+                          topScore: topScores[page.id]!,
                         ),
                       ),
-                    );
-                  }),
+                    ],
+                  )
+
+                //
+              ],
             ),
           ),
         ],
@@ -429,7 +493,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   actions: [
-                    TextButton(onPressed: _cancel, child: Text(locale.cancel)),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(locale.cancel)),
                     TextButton(onPressed: _userSubmit, child: Text(locale.add))
                   ],
                 );

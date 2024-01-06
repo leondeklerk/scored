@@ -22,11 +22,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(userName) => "${userName} - Add points";
 
-  static String m1(userName) => "Delete ${userName}";
+  static String m1(page) => "Delete ${page}";
+
+  static String m2(userName) => "Delete ${userName}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "addPage": MessageLookupByLibrary.simpleMessage("Add page"),
         "addPlayer": MessageLookupByLibrary.simpleMessage("Add player"),
         "addPointsUser": m0,
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -36,16 +39,21 @@ class MessageLookup extends MessageLookupByLibrary {
             "Are you sure you want to remove all players?"),
         "clearTitle": MessageLookupByLibrary.simpleMessage("Clear all player"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "deletePage": m1,
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to delete this player?"),
-        "deleteUser": m1,
+        "deleteUser": m2,
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nameError": MessageLookupByLibrary.simpleMessage("Enter a name"),
+        "page": MessageLookupByLibrary.simpleMessage("Page"),
+        "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
+            "Are you sure you want to delete this page?"),
         "player": MessageLookupByLibrary.simpleMessage("Player"),
         "points": MessageLookupByLibrary.simpleMessage("Points"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Enter the number of points"),
         "ranked": MessageLookupByLibrary.simpleMessage("Ranked"),
+        "renamePage": MessageLookupByLibrary.simpleMessage("Rename page"),
         "reset": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Reset scores"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
@@ -71,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rank order - Highest score first"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang order - Lowest score first"),
+        "standardPageName": MessageLookupByLibrary.simpleMessage("Default"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit")
       };
 }

@@ -22,11 +22,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(userName) => "${userName} - Punten toevoegen";
 
-  static String m1(userName) => "Verwijder ${userName}";
+  static String m1(page) => "Verwijder ${page}";
+
+  static String m2(userName) => "Verwijder ${userName}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Voeg toe"),
+        "addPage": MessageLookupByLibrary.simpleMessage("Pagina toevoegen"),
         "addPlayer": MessageLookupByLibrary.simpleMessage("Speler toevoegen"),
         "addPointsUser": m0,
         "cancel": MessageLookupByLibrary.simpleMessage("Annuleren"),
@@ -37,17 +40,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearTitle":
             MessageLookupByLibrary.simpleMessage("Verwijder alle spelers"),
         "delete": MessageLookupByLibrary.simpleMessage("Verwijder"),
+        "deletePage": m1,
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je deze speler wilt verwijderen?"),
-        "deleteUser": m1,
+        "deleteUser": m2,
         "name": MessageLookupByLibrary.simpleMessage("Naam"),
         "nameError": MessageLookupByLibrary.simpleMessage(
             "Vul de naam van de speler in"),
+        "page": MessageLookupByLibrary.simpleMessage("Pagina"),
+        "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
+            "Weet je zeker dat je deze pagina wilt verwijderen?"),
         "player": MessageLookupByLibrary.simpleMessage("Speler"),
         "points": MessageLookupByLibrary.simpleMessage("Punten"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Vul het aantal punten int"),
         "ranked": MessageLookupByLibrary.simpleMessage("Ranglijst"),
+        "renamePage":
+            MessageLookupByLibrary.simpleMessage("Verander pagina titel"),
         "reset": MessageLookupByLibrary.simpleMessage("Herstarten"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
@@ -73,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rang volgorde - Hoogste score eerst"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Laagste score eerst"),
+        "standardPageName": MessageLookupByLibrary.simpleMessage("Standaard"),
         "submit": MessageLookupByLibrary.simpleMessage("Oke")
       };
 }
