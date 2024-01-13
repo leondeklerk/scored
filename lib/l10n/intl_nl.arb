@@ -66,6 +66,7 @@
   },
   "pageDeletePrompt": "Weet je zeker dat je deze pagina wilt verwijderen?",
   "page": "Pagina",
-  "addPage": "Pagina toevoegen"
+  "addPage": "Pagina toevoegen",
+  "rename": "Verander"
 
 }

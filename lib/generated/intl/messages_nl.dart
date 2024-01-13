@@ -55,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Vul het aantal punten int"),
         "ranked": MessageLookupByLibrary.simpleMessage("Ranglijst"),
+        "rename": MessageLookupByLibrary.simpleMessage("Verander"),
         "renamePage":
             MessageLookupByLibrary.simpleMessage("Verander pagina titel"),
         "reset": MessageLookupByLibrary.simpleMessage("Herstarten"),

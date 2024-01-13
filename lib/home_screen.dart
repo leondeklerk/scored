@@ -98,9 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     await widget.db.insert('pages', model.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.fail);
+        conflictAlgorithm: ConflictAlgorithm.replace);
     setState(() {
-      pages[index] = (model);
+      pages[index] = model;
     });
   }
 
@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             _renamePage(index);
                                             Navigator.pop(context);
                                           },
-                                          child: Text(locale.add))
+                                          child: Text(locale.rename))
                                     ],
                                   );
                                 },

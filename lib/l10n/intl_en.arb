@@ -66,6 +66,7 @@
   },
   "pageDeletePrompt": "Are you sure you want to delete this page?",
   "page": "Page",
-  "addPage": "Add page"
+  "addPage": "Add page",
+  "rename": "Rename"
 
 }
