@@ -13,7 +13,6 @@ import 'package:page_view_indicators/page_view_indicators.dart';
 
 import 'models/score_model.dart';
 import 'models/user_model.dart';
-import 'user_form_widget.dart';
 import 'models/user.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -28,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _userSubmit() {
+  void _userSubmit(User? Function() userFormSubmit) {
     User? user = userFormSubmit.call();
 
     if (user != null) {
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  late User? Function() userFormSubmit;
+  // late User? Function() userFormSubmit;
   late String? Function() pageFormSubmit;
   late PageModel? Function() pageRenameFormSubmit;
   Map<int, void Function(User user)> sheetUserSubmitFunctions = {};
@@ -166,9 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _storeUser(int pageId, User user) async {
     UserModel userModel =
-    UserModel(id: user.id, name: user.name, pageId: pageId);
+        UserModel(id: user.id, name: user.name, pageId: pageId);
     ScoreModel scoreModel =
-    ScoreModel(pageId: pageId, userId: user.id, score: user.score);
+        ScoreModel(pageId: pageId, userId: user.id, score: user.score);
     await widget.db.insert('users', userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     await widget.db.insert('scores', scoreModel.toMap(),
@@ -211,15 +210,15 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Center(
               child: Visibility(
-                maintainState: true,
-                maintainSize: true,
-                maintainAnimation: true,
-                visible: pages.length > 1,
-                child: CirclePageIndicator(
-            currentPageNotifier: _pageNotifier,
-            itemCount: pages.length,
-          ),
-              )),
+            maintainState: true,
+            maintainSize: true,
+            maintainAnimation: true,
+            visible: pages.length > 1,
+            child: CirclePageIndicator(
+              currentPageNotifier: _pageNotifier,
+              itemCount: pages.length,
+            ),
+          )),
           Expanded(
             child: PageView(
               controller: controller,
@@ -301,7 +300,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                        title: Text(locale.deletePage(page.name)),
+                                        title:
+                                            Text(locale.deletePage(page.name)),
                                         content: Text(locale.pageDeletePrompt),
                                         actions: [
                                           TextButton(
@@ -330,59 +330,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               }(),
                             ),
                           )),
-                          Visibility(
-                            maintainAnimation: true,
-                            maintainSize: true,
-                            maintainState: true,
-                            visible: index == pages.length - 1,
-                            child: IconButton(
-                                onPressed: () {
-                                  showDialog<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        insetPadding:
-                                            const EdgeInsets.all(16.0),
-                                        title: Text(locale.addPage),
-                                        content: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              PageFormWidget(
-                                                builder:
-                                                    (context, submitFunction) {
-                                                  pageFormSubmit =
-                                                      submitFunction;
-                                                },
-                                                initialName:
-                                                    "${locale.page} ${pages.length + 1}",
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.cancel)),
-                                          TextButton(
-                                              onPressed: () {
-                                                _addPage();
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.add))
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: const Icon(Icons.add)),
-                          )
                         ],
                       ),
                       const Padding(
@@ -399,6 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             sheetUserSubmitFunctions[pageId] =
                                 sheetUserSubmitFunction;
                           },
+                          submitNewUser: _userSubmit,
                           setConfig: (configData) {
                             setState(() {
                               configs[configData.pageId] = configData;
@@ -477,17 +425,18 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   insetPadding: const EdgeInsets.all(16.0),
-                  title: Text(locale.addPlayer),
+                  title: Text(locale.addPage),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        UserFormWidget(
+                        PageFormWidget(
                           builder: (context, submitFunction) {
-                            userFormSubmit = submitFunction;
+                            pageFormSubmit = submitFunction;
                           },
+                          initialName: "${locale.page} ${pages.length + 1}",
                         ),
                       ],
                     ),
@@ -498,13 +447,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.pop(context);
                         },
                         child: Text(locale.cancel)),
-                    TextButton(onPressed: _userSubmit, child: Text(locale.add))
+                    TextButton(
+                        onPressed: () {
+                          _addPage();
+                          Navigator.pop(context);
+                        },
+                        child: Text(locale.add))
                   ],
                 );
               },
             );
           },
-          label: Text(locale.addPlayer),
+          label: Text(locale.addPage.toUpperCase(),
+              style: const TextStyle(fontFamily: "OpenSans")),
           icon: const Icon(Icons.add)),
     );
   }
