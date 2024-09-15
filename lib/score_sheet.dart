@@ -21,7 +21,7 @@ class ScoreSheet extends StatefulWidget {
   final void Function(int pageId) clearState;
   final void Function(int pageId, int userIndex, int score) addScore;
   final int topScore;
-  final void Function(User? Function() addUserSubmit) submitNewUser;
+  final void Function(int pageId, User? Function() addUserSubmit) submitNewUser;
 
   const ScoreSheet(
       {super.key,
@@ -53,7 +53,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
   }
 
   void _submitNewUser() {
-    widget.submitNewUser.call(addUserSubmit);
+    widget.submitNewUser.call(pageId, addUserSubmit);
   }
 
   void _pointsSubmit(int activeUserIndex) {

@@ -27,11 +27,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _userSubmit(User? Function() userFormSubmit) {
+  void _userSubmit(int pageId, User? Function() userFormSubmit) {
     User? user = userFormSubmit.call();
 
     if (user != null) {
-      sheetUserSubmitFunctions[controller.page]?.call(user);
+      sheetUserSubmitFunctions[pageId]?.call(user);
     }
   }
 
