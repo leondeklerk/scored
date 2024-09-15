@@ -13,7 +13,6 @@ import 'package:page_view_indicators/page_view_indicators.dart';
 
 import 'models/score_model.dart';
 import 'models/user_model.dart';
-import 'user_form_widget.dart';
 import 'models/user.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -28,15 +27,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _userSubmit() {
+  void _userSubmit(int pageId, User? Function() userFormSubmit) {
     User? user = userFormSubmit.call();
 
     if (user != null) {
-      sheetUserSubmitFunctions[controller.page]?.call(user);
+      sheetUserSubmitFunctions[pageId]?.call(user);
     }
   }
 
-  late User? Function() userFormSubmit;
+  // late User? Function() userFormSubmit;
   late String? Function() pageFormSubmit;
   late PageModel? Function() pageRenameFormSubmit;
   Map<int, void Function(User user)> sheetUserSubmitFunctions = {};
@@ -53,16 +52,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
     name ??= id.toString();
 
-    var model = PageModel(id: id, name: name);
+    var order = _nextOrder();
+
+    var index = 0;
+    if (pages.isNotEmpty) {
+      index = _pageNotifier.value + 1;
+    }
+
+    var model = PageModel(id: id, name: name, order: order);
     await widget.db.insert('pages', model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail);
     setState(() {
       configs[id] = null;
       userLists[id] = [];
       topScores[id] = 0;
-      pages.add(model);
+      pages.insert(index, model);
     });
-    controller.animateToPage(pages.length - 1,
+    controller.animateToPage(_pageNotifier.value + 1,
         curve: Curves.easeIn, duration: const Duration(milliseconds: 300));
   }
 
@@ -89,6 +95,23 @@ class _HomeScreenState extends State<HomeScreen> {
           return page.id;
         }).reduce(max) +
         1;
+  }
+
+  double _nextOrder() {
+    if (pages.isEmpty) {
+      return 0;
+    }
+
+    if (pages.length == 1) {
+      return 1;
+    }
+
+    int newIndex = _pageNotifier.value + 1;
+    if (newIndex == pages.length) {
+      return pages.last.order + 1;
+    }
+
+    return (pages[newIndex - 1].order + pages[newIndex].order) / 2;
   }
 
   void _renamePage(int index) async {
@@ -166,9 +189,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _storeUser(int pageId, User user) async {
     UserModel userModel =
-    UserModel(id: user.id, name: user.name, pageId: pageId);
+        UserModel(id: user.id, name: user.name, pageId: pageId);
     ScoreModel scoreModel =
-    ScoreModel(pageId: pageId, userId: user.id, score: user.score);
+        ScoreModel(pageId: pageId, userId: user.id, score: user.score);
     await widget.db.insert('users', userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     await widget.db.insert('scores', scoreModel.toMap(),
@@ -193,6 +216,12 @@ class _HomeScreenState extends State<HomeScreen> {
         _determineOrder(key);
       });
 
+      if (widget.state!.users.isEmpty) {
+        for (var page in widget.state!.pages) {
+          userLists[page.id] = [];
+        }
+      }
+
       pages = widget.state!.pages;
     }
   }
@@ -211,15 +240,15 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Center(
               child: Visibility(
-                maintainState: true,
-                maintainSize: true,
-                maintainAnimation: true,
-                visible: pages.length > 1,
-                child: CirclePageIndicator(
-            currentPageNotifier: _pageNotifier,
-            itemCount: pages.length,
-          ),
-              )),
+            maintainState: true,
+            maintainSize: true,
+            maintainAnimation: true,
+            visible: pages.length > 1,
+            child: CirclePageIndicator(
+              currentPageNotifier: _pageNotifier,
+              itemCount: pages.length,
+            ),
+          )),
           Expanded(
             child: PageView(
               controller: controller,
@@ -293,31 +322,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               );
                             },
-                            onLongPress: () {
-                              if (pages.length == 1) {
-                                return;
-                              }
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                        title: Text(locale.deletePage(page.name)),
-                                        content: Text(locale.pageDeletePrompt),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.cancel)),
-                                          TextButton(
-                                              onPressed: () {
-                                                _deletePage(page.id, index);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.delete))
-                                        ]);
-                                  });
-                            },
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: () {
@@ -331,58 +335,40 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )),
                           Visibility(
-                            maintainAnimation: true,
-                            maintainSize: true,
+                            visible: pages.length > 1,
                             maintainState: true,
-                            visible: index == pages.length - 1,
+                            maintainAnimation: true,
+                            maintainInteractivity: false,
+                            maintainSize: true,
                             child: IconButton(
                                 onPressed: () {
-                                  showDialog<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        insetPadding:
-                                            const EdgeInsets.all(16.0),
-                                        title: Text(locale.addPage),
-                                        content: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              PageFormWidget(
-                                                builder:
-                                                    (context, submitFunction) {
-                                                  pageFormSubmit =
-                                                      submitFunction;
-                                                },
-                                                initialName:
-                                                    "${locale.page} ${pages.length + 1}",
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.cancel)),
-                                          TextButton(
-                                              onPressed: () {
-                                                _addPage();
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.add))
-                                        ],
-                                      );
-                                    },
-                                  );
+                                  if (pages.length == 1) {
+                                    return;
+                                  }
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                            title:
+                                            Text(locale.deletePage(page.name)),
+                                            content: Text(locale.pageDeletePrompt),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(locale.cancel)),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    _deletePage(page.id, index);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(locale.delete))
+                                            ]);
+                                      });
                                 },
-                                icon: const Icon(Icons.add)),
-                          )
+                                icon: const Icon(Icons.close)),
+                          ),
                         ],
                       ),
                       const Padding(
@@ -399,6 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             sheetUserSubmitFunctions[pageId] =
                                 sheetUserSubmitFunction;
                           },
+                          submitNewUser: _userSubmit,
                           setConfig: (configData) {
                             setState(() {
                               configs[configData.pageId] = configData;
@@ -477,17 +464,18 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   insetPadding: const EdgeInsets.all(16.0),
-                  title: Text(locale.addPlayer),
+                  title: Text(locale.addPage),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        UserFormWidget(
+                        PageFormWidget(
                           builder: (context, submitFunction) {
-                            userFormSubmit = submitFunction;
+                            pageFormSubmit = submitFunction;
                           },
+                          initialName: "${locale.page} ${pages.length + 1}",
                         ),
                       ],
                     ),
@@ -498,13 +486,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.pop(context);
                         },
                         child: Text(locale.cancel)),
-                    TextButton(onPressed: _userSubmit, child: Text(locale.add))
+                    TextButton(
+                        onPressed: () {
+                          _addPage();
+                          Navigator.pop(context);
+                        },
+                        child: Text(locale.add))
                   ],
                 );
               },
             );
           },
-          label: Text(locale.addPlayer),
+          label: Text(locale.addPage.toUpperCase(),
+              style: const TextStyle(fontFamily: "OpenSans")),
           icon: const Icon(Icons.add)),
     );
   }

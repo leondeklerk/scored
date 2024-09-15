@@ -22,9 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(userName) => "${userName} - Add points";
 
-  static String m1(page) => "Delete ${page}";
+  static String m1(page) => "Remove ${page}";
 
-  static String m2(userName) => "Delete ${userName}";
+  static String m2(userName) => "Remove ${userName}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -38,16 +38,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearPrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to remove all players?"),
         "clearTitle": MessageLookupByLibrary.simpleMessage("Clear all player"),
-        "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "delete": MessageLookupByLibrary.simpleMessage("Remove"),
         "deletePage": m1,
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
-            "Are you sure you want to delete this player?"),
+            "Are you sure you want to remove this player?"),
         "deleteUser": m2,
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nameError": MessageLookupByLibrary.simpleMessage("Enter a name"),
         "page": MessageLookupByLibrary.simpleMessage("Page"),
         "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
-            "Are you sure you want to delete this page?"),
+            "Are you sure you want to remove this page?"),
         "player": MessageLookupByLibrary.simpleMessage("Player"),
         "points": MessageLookupByLibrary.simpleMessage("Points"),
         "pointsError":

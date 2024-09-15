@@ -4,7 +4,7 @@ import 'package:scored/models/config.dart';
 import 'package:scored/models/page_model.dart';
 import 'package:scored/models/score_model.dart';
 import 'package:scored/models/user_model.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:async';
@@ -18,7 +18,7 @@ import 'models/user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Wakelock.enable();
+  WakelockPlus.enable();
 
   final database = await openDatabase(
       // Set the path to the database. Note: Using the `join` function from the
@@ -35,14 +35,19 @@ void main() async {
       await db.execute("DROP TABLE IF EXISTS pages");
       await createDb(db);
     }
-  }, version: 5);
+
+    if (newVersion == 6) {
+      await db.execute("ALTER TABLE pages ADD COLUMN `order` REAL;");
+      await db.execute("UPDATE pages SET `order` = id;");
+    }
+  }, version: 6);
 
   runApp(ScoredApp(database: database));
 }
 
 Future<void> createDb(Database db) async {
 
-  await db.execute("CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT);");
+  await db.execute("CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT, `order` REAL);");
   await db.execute(
       'CREATE TABLE IF NOT EXISTS config(ranked INTEGER, reversed INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(pageId));');
   await db.execute(
@@ -65,7 +70,7 @@ class ScoredApp extends StatelessWidget {
         await database.query('users', orderBy: "name ASC");
     final List<Map<String, dynamic>> scores = await database.query('scores');
     final List<Map<String, dynamic>> pages =
-        await database.query('pages', orderBy: "id ASC");
+        await database.query('pages', orderBy: "`order` ASC");
 
     List<ConfigModel> configList = List.generate(configs.length, (i) {
       return ConfigModel(
@@ -95,6 +100,7 @@ class ScoredApp extends StatelessWidget {
       return PageModel(
         id: pages[i]['id'] as int,
         name: pages[i]['name'] as String,
+        order: pages[i]['order'] as double,
       );
     });
 
@@ -109,7 +115,7 @@ class ScoredApp extends StatelessWidget {
     state.pages = pagesList;
 
     for (var i = 0; i < pagesList.length; i++) {
-      state.users[i] = {};
+      state.users[pagesList[i].id] = {};
     }
 
     for (var i = 0; i < usersList.length; i++) {

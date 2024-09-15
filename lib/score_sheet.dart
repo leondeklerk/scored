@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/points_form_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/user_form_widget.dart';
 import 'models/user.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,22 +21,23 @@ class ScoreSheet extends StatefulWidget {
   final void Function(int pageId) clearState;
   final void Function(int pageId, int userIndex, int score) addScore;
   final int topScore;
+  final void Function(int pageId, User? Function() addUserSubmit) submitNewUser;
 
-  const ScoreSheet({
-    super.key,
-    required this.db,
-    required this.pageId,
-    required this.onSubmitFunction,
-    required this.setConfig,
-    required this.config,
-    required this.users,
-    required this.addUser,
-    required this.resetScores,
-    required this.deleteUser,
-    required this.clearState,
-    required this.addScore,
-    required this.topScore,
-  });
+  const ScoreSheet(
+      {super.key,
+      required this.db,
+      required this.pageId,
+      required this.onSubmitFunction,
+      required this.setConfig,
+      required this.config,
+      required this.users,
+      required this.addUser,
+      required this.resetScores,
+      required this.deleteUser,
+      required this.clearState,
+      required this.addScore,
+      required this.topScore,
+      required this.submitNewUser});
 
   final ScoreSheetSubmit onSubmitFunction;
 
@@ -48,6 +50,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
     user.id = "$pageId-${widget.users.length}";
     widget.addUser(pageId, user);
     Navigator.pop(context);
+  }
+
+  void _submitNewUser() {
+    widget.submitNewUser.call(pageId, addUserSubmit);
   }
 
   void _pointsSubmit(int activeUserIndex) {
@@ -109,6 +115,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
     Navigator.pop(context);
   }
 
+  late User? Function() addUserSubmit;
   late User? Function() userFormSubmit;
   late int? Function() scoreFormSubmit;
   int pageId = 0;
@@ -136,7 +143,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   button: true,
                   child: InputChip(
                       isEnabled: widget.users.isNotEmpty,
-                      label: Text(locale.clear),
+                      label: Text(locale.clear.toUpperCase(), style: const TextStyle(fontFamily: "OpenSans"),),
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -159,7 +166,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   button: true,
                   child: InputChip(
                       isEnabled: widget.users.isNotEmpty,
-                      label: Text(locale.resetScores),
+                      label: Text(locale.resetScores.toUpperCase(), style: const TextStyle(fontFamily: "OpenSans"),),
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -179,8 +186,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       }),
                 ),
                 FilterChip(
-                  label: Text(locale.ranked,
-                      semanticsLabel: locale.semanticRanked),
+                  label: Text(locale.ranked.toUpperCase(),
+                      semanticsLabel: locale.semanticRanked, style: const TextStyle(fontFamily: "OpenSans"),),
                   selected: widget.config.ranked,
                   onSelected: _setRanked,
                 ),
@@ -211,77 +218,42 @@ class _ScoreSheetState extends State<ScoreSheet> {
           child: Semantics(
             label: "Player list",
             child: ListView.builder(
-                semanticChildCount: widget.users.length,
+                semanticChildCount: widget.users.length + 1,
                 padding: const EdgeInsets.only(bottom: 96),
-                itemCount: widget.users.length,
+                itemCount: widget.users.length + 1,
                 itemBuilder: (BuildContext context, int index) {
-                  User activeUser = widget.users[index];
-                  return Semantics(
-                    child: Card(
-                      elevation: 4,
-                      child: ListTile(
-                        title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  if (index == widget.users.length) {
+                    // Add a button that looks like a list item but uses a secondary color and is a button to add a new player
+                    return Semantics(
+                      label: locale.addPlayer,
+                      child: Card(
+                        color: Theme.of(context).colorScheme.surface,
+                        // color: Theme.of(context).colorScheme.secondaryContainer,
+                        child: ListTile(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Theme.of(context).colorScheme.outline),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Wrap(
-                                spacing: 16,
-                                children: [
-                                  if (widget.config.ranked)
-                                    Semantics(
-                                        label: locale.semanticRank,
-                                        child: Text("${activeUser.rank}.")),
-                                  Semantics(
-                                    label: locale.semanticName,
-                                    child: Text(activeUser.name),
-                                  ),
-                                ],
+                              const Icon(Icons.add),
+                              const SizedBox(width: 8),
+                              Text(
+                                style: const TextStyle(fontFamily: "OpenSans"),
+                                locale.addPlayer.toUpperCase(),
                               ),
-                              Semantics(
-                                  label: locale.semanticScore,
-                                  child: Text("${activeUser.score}"))
-                            ]),
-                        trailing: (() {
-                          if (widget.config.ranked) {
-                            if (activeUser.score == widget.topScore) {
-                              return Semantics(
-                                  excludeSemantics: true,
-                                  child: const Icon(Icons.star,
-                                      color: Colors.amber));
-                            }
-                            return Semantics(
-                                excludeSemantics: true,
-                                child: const Icon(null));
-                          }
-                          return null;
-                        })(),
-                        onLongPress: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                    title: Text(
-                                        locale.deleteUser(activeUser.name)),
-                                    content: Text(locale.deletePrompt),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: _cancel,
-                                          child: Text(locale.cancel)),
-                                      TextButton(
-                                          onPressed: () {
-                                            _deleteUser(index);
-                                          },
-                                          child: Text(locale.delete))
-                                    ]);
-                              });
-                        },
-                        onTap: () {
-                          showDialog(
+                              // Add spacing between the text and the icon:
+                            ],
+                          ),
+                          onTap: () {
+                            showDialog<void>(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   insetPadding: const EdgeInsets.all(16.0),
-                                  title: Text(
-                                      locale.addPointsUser(activeUser.name)),
+                                  title: Text(locale.addPlayer),
                                   content: SizedBox(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
@@ -289,9 +261,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                           CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
-                                        PointsFormWidget(
+                                        UserFormWidget(
                                           builder: (context, submitFunction) {
-                                            scoreFormSubmit = submitFunction;
+                                            addUserSubmit = submitFunction;
                                           },
                                         ),
                                       ],
@@ -299,20 +271,128 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   ),
                                   actions: [
                                     TextButton(
-                                        onPressed: _cancel,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
                                         child: Text(locale.cancel)),
                                     TextButton(
-                                        onPressed: () {
-                                          _pointsSubmit(index);
-                                        },
+                                        onPressed: _submitNewUser,
                                         child: Text(locale.add))
                                   ],
                                 );
-                              });
-                        },
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    User activeUser = widget.users[index];
+
+                    String capitalizeFirstLetter(String text) {
+                      if (text.isEmpty) return text;
+                      return text[0].toUpperCase() + text.substring(1);
+                    }
+
+                    return Semantics(
+                      child: Card(
+                        elevation: 4,
+                        child: ListTile(
+                          title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Wrap(
+                                  spacing: 16,
+                                  children: [
+                                    if (widget.config.ranked)
+                                      Semantics(
+                                          label: locale.semanticRank,
+                                          child: Text("${activeUser.rank}.")),
+                                    Semantics(
+                                      label: locale.semanticName,
+                                      child: Text(capitalizeFirstLetter(
+                                          activeUser.name)),
+                                    ),
+                                  ],
+                                ),
+                                Semantics(
+                                    label: locale.semanticScore,
+                                    child: Text("${activeUser.score}"))
+                              ]),
+                          trailing: (() {
+                            if (widget.config.ranked) {
+                              if (activeUser.score == widget.topScore) {
+                                return Semantics(
+                                    excludeSemantics: true,
+                                    child: const Icon(Icons.star,
+                                        color: Colors.amber));
+                              }
+                              return Semantics(
+                                  excludeSemantics: true,
+                                  child: const Icon(null));
+                            }
+                            return null;
+                          })(),
+                          onLongPress: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(
+                                          locale.deleteUser(activeUser.name)),
+                                      content: Text(locale.deletePrompt),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: _cancel,
+                                            child: Text(locale.cancel)),
+                                        TextButton(
+                                            onPressed: () {
+                                              _deleteUser(index);
+                                            },
+                                            child: Text(locale.delete))
+                                      ]);
+                                });
+                          },
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    insetPadding: const EdgeInsets.all(16.0),
+                                    title: Text(
+                                        locale.addPointsUser(activeUser.name)),
+                                    content: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          PointsFormWidget(
+                                            builder: (context, submitFunction) {
+                                              scoreFormSubmit = submitFunction;
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: _cancel,
+                                          child: Text(locale.cancel)),
+                                      TextButton(
+                                          onPressed: () {
+                                            _pointsSubmit(index);
+                                          },
+                                          child: Text(locale.add))
+                                    ],
+                                  );
+                                });
+                          },
+                        ),
+                      ),
+                    );
+                  }
                 }),
           ),
         ),
