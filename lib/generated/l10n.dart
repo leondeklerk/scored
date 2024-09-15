@@ -160,20 +160,20 @@ class S {
     );
   }
 
-  /// `Are you sure you want to delete this player?`
+  /// `Are you sure you want to remove this player?`
   String get deletePrompt {
     return Intl.message(
-      'Are you sure you want to delete this player?',
+      'Are you sure you want to remove this player?',
       name: 'deletePrompt',
       desc: '',
       args: [],
     );
   }
 
-  /// `Delete`
+  /// `Remove`
   String get delete {
     return Intl.message(
-      'Delete',
+      'Remove',
       name: 'delete',
       desc: '',
       args: [],
@@ -260,12 +260,12 @@ class S {
     );
   }
 
-  /// `Delete {userName}`
+  /// `Remove {userName}`
   String deleteUser(String userName) {
     return Intl.message(
-      'Delete $userName',
+      'Remove $userName',
       name: 'deleteUser',
-      desc: 'Delete with username template',
+      desc: 'Remove with username template',
       args: [userName],
     );
   }
@@ -410,20 +410,20 @@ class S {
     );
   }
 
-  /// `Delete {page}`
+  /// `Remove {page}`
   String deletePage(String page) {
     return Intl.message(
-      'Delete $page',
+      'Remove $page',
       name: 'deletePage',
-      desc: 'Delete with page name template',
+      desc: 'Remove with page name template',
       args: [page],
     );
   }
 
-  /// `Are you sure you want to delete this page?`
+  /// `Are you sure you want to remove this page?`
   String get pageDeletePrompt {
     return Intl.message(
-      'Are you sure you want to delete this page?',
+      'Are you sure you want to remove this page?',
       name: 'pageDeletePrompt',
       desc: '',
       args: [],

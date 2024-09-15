@@ -11,8 +11,8 @@
   "resetScoresPrompt": "Are you sure you want to reset all scores?",
   "reset": "Reset",
   "ranked": "Ranked",
-  "deletePrompt": "Are you sure you want to delete this player?",
-  "delete": "Delete",
+  "deletePrompt": "Are you sure you want to remove this player?",
+  "delete": "Remove",
   "addPlayer": "Add player",
   "points": "Points",
   "pointsError": "Enter the number of points",
@@ -21,9 +21,9 @@
   "scoreMissingError": "Enter the initial score",
   "scoreInvalidError": "Enter a valid number",
   "score": "Score",
-  "deleteUser": "Delete {userName}",
+  "deleteUser": "Remove {userName}",
   "@deleteUser": {
-    "description": "Delete with username template",
+    "description": "Remove with username template",
     "placeholders": {
       "userName": {
         "type": "String",
@@ -54,9 +54,9 @@
   "semanticsReverseDesc": "Rang order - Lowest score first",
   "standardPageName": "Default",
   "renamePage": "Rename page",
-  "deletePage": "Delete {page}",
+  "deletePage": "Remove {page}",
   "@deletePage": {
-    "description": "Delete with page name template",
+    "description": "Remove with page name template",
     "placeholders": {
       "page": {
         "type": "String",
@@ -64,7 +64,7 @@
       }
     }
   },
-  "pageDeletePrompt": "Are you sure you want to delete this page?",
+  "pageDeletePrompt": "Are you sure you want to remove this page?",
   "page": "Page",
   "addPage": "Add page",
   "rename": "Rename"

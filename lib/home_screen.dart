@@ -52,16 +52,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
     name ??= id.toString();
 
-    var model = PageModel(id: id, name: name);
+    var order = _nextOrder();
+
+    var index = 0;
+    if (pages.isNotEmpty) {
+      index = _pageNotifier.value + 1;
+    }
+
+    var model = PageModel(id: id, name: name, order: order);
     await widget.db.insert('pages', model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail);
     setState(() {
       configs[id] = null;
       userLists[id] = [];
       topScores[id] = 0;
-      pages.add(model);
+      pages.insert(index, model);
     });
-    controller.animateToPage(pages.length - 1,
+    controller.animateToPage(_pageNotifier.value + 1,
         curve: Curves.easeIn, duration: const Duration(milliseconds: 300));
   }
 
@@ -88,6 +95,23 @@ class _HomeScreenState extends State<HomeScreen> {
           return page.id;
         }).reduce(max) +
         1;
+  }
+
+  double _nextOrder() {
+    if (pages.isEmpty) {
+      return 0;
+    }
+
+    if (pages.length == 1) {
+      return 1;
+    }
+
+    int newIndex = _pageNotifier.value + 1;
+    if (newIndex == pages.length) {
+      return pages.last.order + 1;
+    }
+
+    return (pages[newIndex - 1].order + pages[newIndex].order) / 2;
   }
 
   void _renamePage(int index) async {
@@ -192,6 +216,12 @@ class _HomeScreenState extends State<HomeScreen> {
         _determineOrder(key);
       });
 
+      if (widget.state!.users.isEmpty) {
+        for (var page in widget.state!.pages) {
+          userLists[page.id] = [];
+        }
+      }
+
       pages = widget.state!.pages;
     }
   }
@@ -292,32 +322,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               );
                             },
-                            onLongPress: () {
-                              if (pages.length == 1) {
-                                return;
-                              }
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                        title:
-                                            Text(locale.deletePage(page.name)),
-                                        content: Text(locale.pageDeletePrompt),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.cancel)),
-                                          TextButton(
-                                              onPressed: () {
-                                                _deletePage(page.id, index);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(locale.delete))
-                                        ]);
-                                  });
-                            },
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: () {
@@ -330,6 +334,41 @@ class _HomeScreenState extends State<HomeScreen> {
                               }(),
                             ),
                           )),
+                          Visibility(
+                            visible: pages.length > 1,
+                            maintainState: true,
+                            maintainAnimation: true,
+                            maintainInteractivity: false,
+                            maintainSize: true,
+                            child: IconButton(
+                                onPressed: () {
+                                  if (pages.length == 1) {
+                                    return;
+                                  }
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                            title:
+                                            Text(locale.deletePage(page.name)),
+                                            content: Text(locale.pageDeletePrompt),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(locale.cancel)),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    _deletePage(page.id, index);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(locale.delete))
+                                            ]);
+                                      });
+                                },
+                                icon: const Icon(Icons.close)),
+                          ),
                         ],
                       ),
                       const Padding(

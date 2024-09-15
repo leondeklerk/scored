@@ -24,7 +24,7 @@ class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
   PageModel? _submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      return PageModel(id: widget.baseModel.id, name: name);
+      return PageModel(id: widget.baseModel.id, name: name, order: widget.baseModel.order);
     }
     return null;
   }
