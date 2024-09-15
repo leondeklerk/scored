@@ -2,17 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-typedef PointsFormBuilder = void Function(
-    BuildContext context, int? Function() submitFunction);
 
 class PointsFormWidget extends StatefulWidget {
-  const PointsFormWidget({super.key, required this.builder});
-
-  final PointsFormBuilder builder;
+  const PointsFormWidget({super.key});
 
   @override
   PointsFormWidgetState createState() {
     return PointsFormWidgetState();
+  }
+
+  static void showPointsDialog(BuildContext context, AppLocalizations locale,
+      String name, Function(int score) onSubmitted) {
+    final GlobalKey<PointsFormWidgetState> pointsFormKey =
+    GlobalKey<PointsFormWidgetState>();
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            insetPadding: const EdgeInsets.all(16.0),
+            title: Text(
+                locale.addPointsUser(name)),
+            content: SizedBox(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              child: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  PointsFormWidget(
+                    key: pointsFormKey,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(locale.cancel)),
+              TextButton(
+                  onPressed: () {
+                    if (pointsFormKey.currentState!.validateAndSave()) {
+                      Navigator.pop(context);
+                      onSubmitted(pointsFormKey.currentState!.score);
+                    }
+                  },
+                  child: Text(locale.add))
+            ],
+          );
+        });
   }
 }
 
@@ -23,17 +66,20 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
 
   final _pointsRegex = RegExp(r'^-?[0-9]*');
 
-  int? _submit() {
+  int score = 0;
+
+  bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
-      return int.parse(_controller.value.text);
+      _formKey.currentState!.save();
+      score = int.parse(_controller.value.text);
+      return true;
     }
-    return null;
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
-    widget.builder.call(context, _submit);
     _controller.selection = TextSelection(
         baseOffset: 0, extentOffset: _controller.value.text.length);
     return Form(
@@ -47,7 +93,8 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
               FilteringTextInputFormatter.allow(_pointsRegex)
             ],
             autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
+            keyboardType: const TextInputType.numberWithOptions(
+                decimal: false, signed: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return locale.pointsError;

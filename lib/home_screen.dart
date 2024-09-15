@@ -27,18 +27,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _userSubmit(int pageId, User? Function() userFormSubmit) {
-    User? user = userFormSubmit.call();
-
-    if (user != null) {
-      sheetUserSubmitFunctions[pageId]?.call(user);
-    }
-  }
-
-  // late User? Function() userFormSubmit;
-  late String? Function() pageFormSubmit;
-  late PageModel? Function() pageRenameFormSubmit;
-  Map<int, void Function(User user)> sheetUserSubmitFunctions = {};
   Map<int, Config?> configs = {0: null};
   Map<int, List<User>> userLists = {0: []};
   List<PageModel> pages = [];
@@ -46,8 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<int, int> topScores = {};
   final ValueNotifier<int> _pageNotifier = ValueNotifier<int>(0);
 
-  void _addPage() async {
-    String? name = pageFormSubmit.call();
+  void _addPage(String? name) async {
     var id = _nextPageId();
 
     name ??= id.toString();
@@ -114,12 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return (pages[newIndex - 1].order + pages[newIndex].order) / 2;
   }
 
-  void _renamePage(int index) async {
-    PageModel? model = pageRenameFormSubmit.call();
-    if (model == null) {
-      return;
-    }
-
+  void _renamePage(int index, PageModel model) async {
     await widget.db.insert('pages', model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     setState(() {
@@ -199,10 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void createInitialPage(String defaultPageName) {
-    pageFormSubmit = () {
-      return defaultPageName;
-    };
-    _addPage();
+    _addPage(defaultPageName);
   }
 
   @override
@@ -282,45 +261,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .bodyMedium
                                         ?.fontWeight)),
                             onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    insetPadding: const EdgeInsets.all(16.0),
-                                    title: Text(locale.renamePage),
-                                    content: SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          PageRenameFormWidget(
-                                            builder: (context, submitFunction) {
-                                              pageRenameFormSubmit =
-                                                  submitFunction;
-                                            },
-                                            baseModel: page,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(locale.cancel)),
-                                      TextButton(
-                                          onPressed: () {
-                                            _renamePage(index);
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(locale.rename))
-                                    ],
-                                  );
-                                },
-                              );
+                              PageRenameFormWidget.showPageRenameDialog(
+                                  context, locale, page, (PageModel model) {
+                                _renamePage(index, model);
+                              });
                             },
                             child: Align(
                               alignment: Alignment.centerLeft,
@@ -349,9 +293,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                            title:
-                                            Text(locale.deletePage(page.name)),
-                                            content: Text(locale.pageDeletePrompt),
+                                            title: Text(
+                                                locale.deletePage(page.name)),
+                                            content:
+                                                Text(locale.pageDeletePrompt),
                                             actions: [
                                               TextButton(
                                                   onPressed: () {
@@ -381,11 +326,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           db: widget.db,
                           users: userLists[page.id]!,
                           pageId: page.id,
-                          onSubmitFunction: (pageId, sheetUserSubmitFunction) {
-                            sheetUserSubmitFunctions[pageId] =
-                                sheetUserSubmitFunction;
-                          },
-                          submitNewUser: _userSubmit,
                           setConfig: (configData) {
                             setState(() {
                               configs[configData.pageId] = configData;
@@ -459,43 +399,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  insetPadding: const EdgeInsets.all(16.0),
-                  title: Text(locale.addPage),
-                  content: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        PageFormWidget(
-                          builder: (context, submitFunction) {
-                            pageFormSubmit = submitFunction;
-                          },
-                          initialName: "${locale.page} ${pages.length + 1}",
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(locale.cancel)),
-                    TextButton(
-                        onPressed: () {
-                          _addPage();
-                          Navigator.pop(context);
-                        },
-                        child: Text(locale.add))
-                  ],
-                );
-              },
-            );
+            PageFormWidget.showAddPageDialog(
+                context, locale, "${locale.page} ${pages.length + 1}",
+                (String name) {
+              _addPage(name);
+            });
           },
           label: Text(locale.addPage.toUpperCase(),
               style: const TextStyle(fontFamily: "OpenSans")),

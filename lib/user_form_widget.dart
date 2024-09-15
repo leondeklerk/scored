@@ -4,31 +4,74 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models/user.dart';
 
-typedef UserFormBuilder = void Function(
-    BuildContext context, User? Function() submitFunction);
-
 class UserFormWidget extends StatefulWidget {
-  const UserFormWidget({super.key, required this.builder});
+  const UserFormWidget({super.key, required this.user});
 
-  final UserFormBuilder builder;
+  final User user;
 
   @override
   UserFormWidgetState createState() {
     return UserFormWidgetState();
   }
+
+  static void showUserFormDialog(BuildContext context, AppLocalizations locale,
+      User model, Function() onSubmitted) {
+    final GlobalKey<UserFormWidgetState> userFormKey =
+        GlobalKey<UserFormWidgetState>();
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: const EdgeInsets.all(16.0),
+          title: Text(locale.addPlayer),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                UserFormWidget(
+                  key: userFormKey,
+                  user: model,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(locale.cancel)),
+            TextButton(
+                onPressed: () {
+                  if (userFormKey.currentState!.validateAndSave()) {
+                    Navigator.pop(context);
+                    onSubmitted();
+                  }
+                },
+                child: Text(locale.add))
+          ],
+        );
+      },
+    );
+    ;
+  }
 }
 
 class UserFormWidgetState extends State<UserFormWidget> {
   final _formKey = GlobalKey<FormState>();
-  final User _user = User(name: "");
+
+  // final User _user = User(name: "");
   final _scoreRegex = RegExp(r'^-?[0-9]*');
 
-  User? _submit() {
+  bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      return _user;
+      return true;
     }
-    return null;
+    return false;
   }
 
   final _scoreController = TextEditingController(text: "0");
@@ -36,7 +79,6 @@ class UserFormWidgetState extends State<UserFormWidget> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
-    widget.builder.call(context, _submit);
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
@@ -46,7 +88,7 @@ class UserFormWidgetState extends State<UserFormWidget> {
             margin: const EdgeInsets.only(bottom: 8),
             child: TextFormField(
               autofocus: true,
-              onSaved: (String? value) => {_user.name = value!},
+              onSaved: (String? value) => {widget.user.name = value!},
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale.nameError;
@@ -70,11 +112,13 @@ class UserFormWidgetState extends State<UserFormWidget> {
                     extentOffset: _scoreController.value.text.length);
               },
               controller: _scoreController,
-              onSaved: (String? value) => {_user.score = int.parse(value!)},
+              onSaved: (String? value) =>
+                  {widget.user.score = int.parse(value!)},
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(_scoreRegex)
               ],
-              keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                  decimal: false, signed: true),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale.scoreMissingError;

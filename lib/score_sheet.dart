@@ -21,13 +21,11 @@ class ScoreSheet extends StatefulWidget {
   final void Function(int pageId) clearState;
   final void Function(int pageId, int userIndex, int score) addScore;
   final int topScore;
-  final void Function(int pageId, User? Function() addUserSubmit) submitNewUser;
 
   const ScoreSheet(
       {super.key,
       required this.db,
       required this.pageId,
-      required this.onSubmitFunction,
       required this.setConfig,
       required this.config,
       required this.users,
@@ -36,34 +34,14 @@ class ScoreSheet extends StatefulWidget {
       required this.deleteUser,
       required this.clearState,
       required this.addScore,
-      required this.topScore,
-      required this.submitNewUser});
+      required this.topScore});
 
-  final ScoreSheetSubmit onSubmitFunction;
 
   @override
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
 class _ScoreSheetState extends State<ScoreSheet> {
-  void _userSubmit(User user) {
-    user.id = "$pageId-${widget.users.length}";
-    widget.addUser(pageId, user);
-    Navigator.pop(context);
-  }
-
-  void _submitNewUser() {
-    widget.submitNewUser.call(pageId, addUserSubmit);
-  }
-
-  void _pointsSubmit(int activeUserIndex) {
-    int? points = scoreFormSubmit.call();
-    if (points != null) {
-      widget.addScore(pageId, activeUserIndex, points);
-      Navigator.pop(context);
-    }
-  }
-
   void _setRanked(bool ranked) {
     widget.setConfig(Config(
         ranked: ranked, reversed: widget.config.reversed, pageId: pageId));
@@ -115,9 +93,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
     Navigator.pop(context);
   }
 
-  late User? Function() addUserSubmit;
-  late User? Function() userFormSubmit;
-  late int? Function() scoreFormSubmit;
   int pageId = 0;
 
   @override
@@ -129,7 +104,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
-    widget.onSubmitFunction.call(pageId, _userSubmit);
 
     return Column(
       children: [
@@ -143,7 +117,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   button: true,
                   child: InputChip(
                       isEnabled: widget.users.isNotEmpty,
-                      label: Text(locale.clear.toUpperCase(), style: const TextStyle(fontFamily: "OpenSans"),),
+                      label: Text(
+                        locale.clear.toUpperCase(),
+                        style: const TextStyle(fontFamily: "OpenSans"),
+                      ),
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -166,7 +143,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   button: true,
                   child: InputChip(
                       isEnabled: widget.users.isNotEmpty,
-                      label: Text(locale.resetScores.toUpperCase(), style: const TextStyle(fontFamily: "OpenSans"),),
+                      label: Text(
+                        locale.resetScores.toUpperCase(),
+                        style: const TextStyle(fontFamily: "OpenSans"),
+                      ),
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -186,8 +166,11 @@ class _ScoreSheetState extends State<ScoreSheet> {
                       }),
                 ),
                 FilterChip(
-                  label: Text(locale.ranked.toUpperCase(),
-                      semanticsLabel: locale.semanticRanked, style: const TextStyle(fontFamily: "OpenSans"),),
+                  label: Text(
+                    locale.ranked.toUpperCase(),
+                    semanticsLabel: locale.semanticRanked,
+                    style: const TextStyle(fontFamily: "OpenSans"),
+                  ),
                   selected: widget.config.ranked,
                   onSelected: _setRanked,
                 ),
@@ -248,40 +231,12 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             ],
                           ),
                           onTap: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  insetPadding: const EdgeInsets.all(16.0),
-                                  title: Text(locale.addPlayer),
-                                  content: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        UserFormWidget(
-                                          builder: (context, submitFunction) {
-                                            addUserSubmit = submitFunction;
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(locale.cancel)),
-                                    TextButton(
-                                        onPressed: _submitNewUser,
-                                        child: Text(locale.add))
-                                  ],
-                                );
-                              },
-                            );
+                            User model = User(
+                                name: "", id: "$pageId-${widget.users.length}");
+                            UserFormWidget.showUserFormDialog(
+                                context, locale, model, () {
+                              widget.addUser(pageId, model);
+                            });
                           },
                         ),
                       ),
@@ -354,40 +309,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 });
                           },
                           onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    insetPadding: const EdgeInsets.all(16.0),
-                                    title: Text(
-                                        locale.addPointsUser(activeUser.name)),
-                                    content: SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          PointsFormWidget(
-                                            builder: (context, submitFunction) {
-                                              scoreFormSubmit = submitFunction;
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: _cancel,
-                                          child: Text(locale.cancel)),
-                                      TextButton(
-                                          onPressed: () {
-                                            _pointsSubmit(index);
-                                          },
-                                          child: Text(locale.add))
-                                    ],
-                                  );
-                                });
+                            PointsFormWidget.showPointsDialog(context, locale, activeUser.name, (int points) {
+                              widget.addScore(pageId, index, points);
+                            });
                           },
                         ),
                       ),

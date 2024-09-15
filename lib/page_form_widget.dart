@@ -1,18 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-typedef PageFormBuilder = void Function(
-    BuildContext context, String? Function() submitFunction);
-
 class PageFormWidget extends StatefulWidget {
-  const PageFormWidget({super.key, required this.builder, required this.initialName});
+  const PageFormWidget({super.key, required this.initialName});
 
-  final PageFormBuilder builder;
   final String initialName;
 
   @override
   PageFormWidgetState createState() {
     return PageFormWidgetState();
+  }
+
+  static void showAddPageDialog(BuildContext context, AppLocalizations locale,
+      String initialName, Function(String) onSubmitted) {
+    final GlobalKey<PageFormWidgetState> pageFormKey =
+        GlobalKey<PageFormWidgetState>();
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: const EdgeInsets.all(16.0),
+          title: Text(locale.addPage),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                PageFormWidget(
+                  key: pageFormKey,
+                  initialName: initialName,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(locale.cancel)),
+            TextButton(
+                onPressed: () {
+                  if (pageFormKey.currentState!.validateAndSave()) {
+                    Navigator.pop(context);
+                    onSubmitted(pageFormKey.currentState!.name);
+                  }
+                },
+                child: Text(locale.add))
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -20,19 +59,18 @@ class PageFormWidgetState extends State<PageFormWidget> {
   final _formKey = GlobalKey<FormState>();
   String name = "";
 
-  String? _submit() {
+  bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      return name;
+      return true;
     }
-    return null;
+    return false;
   }
-
 
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
-    widget.builder.call(context, _submit);
+    // widget.builder.call(context, _submit);
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
