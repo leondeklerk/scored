@@ -2,18 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'models/page_model.dart';
 
-typedef PageRenameFormBuilder = void Function(
-    BuildContext context, PageModel? Function() submitFunction,);
-
 class PageRenameFormWidget extends StatefulWidget {
-  const PageRenameFormWidget({super.key, required this.builder, required this.baseModel});
+  const PageRenameFormWidget({super.key, required this.baseModel});
 
-  final PageRenameFormBuilder builder;
   final PageModel baseModel;
 
   @override
   PageRenameFormWidgetState createState() {
     return PageRenameFormWidgetState();
+  }
+
+  static void showPageRenameDialog(
+      BuildContext context,
+      AppLocalizations locale,
+      PageModel startModel,
+      Function(PageModel) onSubmitted) {
+    final GlobalKey<PageRenameFormWidgetState> pageKey =
+        GlobalKey<PageRenameFormWidgetState>();
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: const EdgeInsets.all(16.0),
+          title: Text(locale.renamePage),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                PageRenameFormWidget(
+                  key: pageKey,
+                  baseModel: startModel,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(locale.cancel)),
+            TextButton(
+                onPressed: () {
+                  if (pageKey.currentState!.validateAndSave()) {
+                    Navigator.pop(context);
+                    onSubmitted(pageKey.currentState!.getResult());
+                  }
+                },
+                child: Text(locale.rename))
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -21,19 +64,22 @@ class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
   final _formKey = GlobalKey<FormState>();
   String name = "";
 
-  PageModel? _submit() {
+  bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      return PageModel(id: widget.baseModel.id, name: name, order: widget.baseModel.order);
+      return true;
     }
-    return null;
+    return false;
   }
 
+  PageModel getResult() {
+    return PageModel(
+        id: widget.baseModel.id, name: name, order: widget.baseModel.order);
+  }
 
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
-    widget.builder.call(context, _submit);
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
