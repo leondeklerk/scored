@@ -7,6 +7,7 @@
   "clearButton": "Verwijderen",
   "clearTitle": "Verwijder alle spelers",
   "clearPrompt": "Weet je zeker dat je alle spelers wilt verwijderen?",
+  "confirm": "Oke",
   "resetScores": "Herstart",
   "resetScoresPrompt": "Weet je zeker dat je alle scores op nul wilt zetten?",
   "reset": "Herstarten",
@@ -52,21 +53,21 @@
   "semanticRemovePlayer": "Verwijder de speler.",
   "semanticsReverseAsc": "Rang volgorde - Hoogste score eerst",
   "semanticsReverseDesc": "Rang volgorde - Laagste score eerst",
-  "standardPageName": "Standaard",
-  "renamePage": "Verander pagina titel",
+  "standardPageName": "Scoreblad",
+  "renamePage": "Hernoem scoreblad",
   "deletePage": "Verwijder {page}",
   "@deletePage": {
     "description": "Delete with page name template",
     "placeholders": {
       "page": {
         "type": "String",
-        "example": "Page 1"
+        "example": "Sheet 1"
       }
     }
   },
-  "pageDeletePrompt": "Weet je zeker dat je deze pagina wilt verwijderen?",
-  "page": "Pagina",
-  "addPage": "Pagina toevoegen",
-  "rename": "Verander"
+  "pageDeletePrompt": "Weet je zeker dat je dit scoreblad wilt verwijderen?",
+  "page": "Scoreblad",
+  "addPage": "Scoreblad toevoegen",
+  "rename": "Hernoem"
 
 }

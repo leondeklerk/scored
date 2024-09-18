@@ -100,10 +100,10 @@ class S {
     );
   }
 
-  /// `Clear all player`
+  /// `Clear all players`
   String get clearTitle {
     return Intl.message(
-      'Clear all player',
+      'Clear all players',
       name: 'clearTitle',
       desc: '',
       args: [],
@@ -115,6 +115,16 @@ class S {
     return Intl.message(
       'Are you sure you want to remove all players?',
       name: 'clearPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ok`
+  String get confirm {
+    return Intl.message(
+      'Ok',
+      name: 'confirm',
       desc: '',
       args: [],
     );
@@ -390,20 +400,20 @@ class S {
     );
   }
 
-  /// `Default`
+  /// `Score sheet`
   String get standardPageName {
     return Intl.message(
-      'Default',
+      'Score sheet',
       name: 'standardPageName',
       desc: '',
       args: [],
     );
   }
 
-  /// `Rename page`
+  /// `Rename sheet`
   String get renamePage {
     return Intl.message(
-      'Rename page',
+      'Rename sheet',
       name: 'renamePage',
       desc: '',
       args: [],
@@ -420,30 +430,30 @@ class S {
     );
   }
 
-  /// `Are you sure you want to remove this page?`
+  /// `Are you sure you want to remove this score sheet?`
   String get pageDeletePrompt {
     return Intl.message(
-      'Are you sure you want to remove this page?',
+      'Are you sure you want to remove this score sheet?',
       name: 'pageDeletePrompt',
       desc: '',
       args: [],
     );
   }
 
-  /// `Page`
+  /// `Score sheet`
   String get page {
     return Intl.message(
-      'Page',
+      'Score sheet',
       name: 'page',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add page`
+  /// `Add sheet`
   String get addPage {
     return Intl.message(
-      'Add page',
+      'Add sheet',
       name: 'addPage',
       desc: '',
       args: [],

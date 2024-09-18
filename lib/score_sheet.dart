@@ -3,6 +3,8 @@ import 'package:scored/models/config.dart';
 import 'package:scored/points_form_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/user_form_widget.dart';
+import 'action_button_text.dart';
+import 'confirm_dialog.dart';
 import 'models/user.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -36,7 +38,6 @@ class ScoreSheet extends StatefulWidget {
       required this.addScore,
       required this.topScore});
 
-
   @override
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
@@ -61,7 +62,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
 
     _removeUserRows(id);
     widget.deleteUser(pageId, index);
-    Navigator.pop(context);
   }
 
   void _removeUserRows(String id) async {
@@ -79,18 +79,12 @@ class _ScoreSheetState extends State<ScoreSheet> {
   void _clearScores() {
     widget.clearState(pageId);
     _clearTables();
-    Navigator.pop(context);
   }
 
   void _resetScores() async {
     widget.resetScores(pageId);
     widget.db
         .rawUpdate('UPDATE scores SET score = 0 WHERE pageId = ?', [pageId]);
-    Navigator.pop(context);
-  }
-
-  void _cancel() {
-    Navigator.pop(context);
   }
 
   int pageId = 0;
@@ -117,60 +111,37 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   button: true,
                   child: InputChip(
                       isEnabled: widget.users.isNotEmpty,
-                      label: Text(
-                        locale.clear.toUpperCase(),
-                        style: const TextStyle(fontFamily: "OpenSans"),
-                      ),
+                      label: ActionButtonText(text: locale.clear),
                       onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                  title: Text(locale.clearTitle),
-                                  content: Text(locale.clearPrompt),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: _cancel,
-                                        child: Text(locale.cancel)),
-                                    TextButton(
-                                        onPressed: _clearScores,
-                                        child: Text(locale.clearButton))
-                                  ]);
-                            });
+                        ConfirmDialog.show(
+                          context: context,
+                          locale: locale,
+                          title: locale.clearTitle,
+                          content: locale.clearPrompt,
+                          confirmText: locale.clearButton,
+                          onConfirm: _clearScores,
+                        );
                       }),
                 ),
                 Semantics(
                   button: true,
                   child: InputChip(
                       isEnabled: widget.users.isNotEmpty,
-                      label: Text(
-                        locale.resetScores.toUpperCase(),
-                        style: const TextStyle(fontFamily: "OpenSans"),
-                      ),
+                      label: ActionButtonText(text: locale.resetScores),
                       onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                  title: Text(locale.resetScores),
-                                  content: Text(locale.resetScoresPrompt),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: _cancel,
-                                        child: Text(locale.cancel)),
-                                    TextButton(
-                                        onPressed: _resetScores,
-                                        child: Text(locale.reset))
-                                  ]);
-                            });
+                        ConfirmDialog.show(
+                          context: context,
+                          locale: locale,
+                          title: locale.resetScores,
+                          content: locale.resetScoresPrompt,
+                          confirmText: locale.reset,
+                          onConfirm: _resetScores,
+                        );
                       }),
                 ),
                 FilterChip(
-                  label: Text(
-                    locale.ranked.toUpperCase(),
-                    semanticsLabel: locale.semanticRanked,
-                    style: const TextStyle(fontFamily: "OpenSans"),
-                  ),
+                  label: ActionButtonText(
+                      text: locale.ranked, semantics: locale.semanticRanked),
                   selected: widget.config.ranked,
                   onSelected: _setRanked,
                 ),
@@ -223,10 +194,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             children: [
                               const Icon(Icons.add),
                               const SizedBox(width: 8),
-                              Text(
-                                style: const TextStyle(fontFamily: "OpenSans"),
-                                locale.addPlayer.toUpperCase(),
-                              ),
+                              ActionButtonText(text: locale.addPlayer),
                               // Add spacing between the text and the icon:
                             ],
                           ),
@@ -289,27 +257,20 @@ class _ScoreSheetState extends State<ScoreSheet> {
                             return null;
                           })(),
                           onLongPress: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                      title: Text(
-                                          locale.deleteUser(activeUser.name)),
-                                      content: Text(locale.deletePrompt),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: _cancel,
-                                            child: Text(locale.cancel)),
-                                        TextButton(
-                                            onPressed: () {
-                                              _deleteUser(index);
-                                            },
-                                            child: Text(locale.delete))
-                                      ]);
-                                });
+                            ConfirmDialog.show(
+                              context: context,
+                              locale: locale,
+                              title: locale.deleteUser(activeUser.name),
+                              content: locale.deletePrompt,
+                              confirmText: locale.delete,
+                              onConfirm: () {
+                                _deleteUser(index);
+                              },
+                            );
                           },
                           onTap: () {
-                            PointsFormWidget.showPointsDialog(context, locale, activeUser.name, (int points) {
+                            PointsFormWidget.showPointsDialog(
+                                context, locale, activeUser.name, (int points) {
                               widget.addScore(pageId, index, points);
                             });
                           },

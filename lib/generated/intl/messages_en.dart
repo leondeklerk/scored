@@ -29,7 +29,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Add"),
-        "addPage": MessageLookupByLibrary.simpleMessage("Add page"),
+        "addPage": MessageLookupByLibrary.simpleMessage("Add sheet"),
         "addPlayer": MessageLookupByLibrary.simpleMessage("Add player"),
         "addPointsUser": m0,
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -37,7 +37,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearButton": MessageLookupByLibrary.simpleMessage("Clear"),
         "clearPrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to remove all players?"),
-        "clearTitle": MessageLookupByLibrary.simpleMessage("Clear all player"),
+        "clearTitle": MessageLookupByLibrary.simpleMessage("Clear all players"),
+        "confirm": MessageLookupByLibrary.simpleMessage("Ok"),
         "delete": MessageLookupByLibrary.simpleMessage("Remove"),
         "deletePage": m1,
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
@@ -45,16 +46,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "deleteUser": m2,
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nameError": MessageLookupByLibrary.simpleMessage("Enter a name"),
-        "page": MessageLookupByLibrary.simpleMessage("Page"),
+        "page": MessageLookupByLibrary.simpleMessage("Score sheet"),
         "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
-            "Are you sure you want to remove this page?"),
+            "Are you sure you want to remove this score sheet?"),
         "player": MessageLookupByLibrary.simpleMessage("Player"),
         "points": MessageLookupByLibrary.simpleMessage("Points"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Enter the number of points"),
         "ranked": MessageLookupByLibrary.simpleMessage("Ranked"),
         "rename": MessageLookupByLibrary.simpleMessage("Rename"),
-        "renamePage": MessageLookupByLibrary.simpleMessage("Rename page"),
+        "renamePage": MessageLookupByLibrary.simpleMessage("Rename sheet"),
         "reset": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Reset scores"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
@@ -80,7 +81,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rank order - Highest score first"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang order - Lowest score first"),
-        "standardPageName": MessageLookupByLibrary.simpleMessage("Default"),
+        "standardPageName": MessageLookupByLibrary.simpleMessage("Score sheet"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit")
       };
 }

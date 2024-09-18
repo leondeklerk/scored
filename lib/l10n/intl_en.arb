@@ -5,8 +5,9 @@
   "cancel": "Cancel",
   "clear": "Clear",
   "clearButton": "Clear",
-  "clearTitle": "Clear all player",
+  "clearTitle": "Clear all players",
   "clearPrompt": "Are you sure you want to remove all players?",
+  "confirm": "Ok",
   "resetScores": "Reset scores",
   "resetScoresPrompt": "Are you sure you want to reset all scores?",
   "reset": "Reset",
@@ -52,21 +53,21 @@
   "semanticRemovePlayer": "Remove player.",
   "semanticsReverseAsc": "Rank order - Highest score first",
   "semanticsReverseDesc": "Rang order - Lowest score first",
-  "standardPageName": "Default",
-  "renamePage": "Rename page",
+  "standardPageName": "Score sheet",
+  "renamePage": "Rename sheet",
   "deletePage": "Remove {page}",
   "@deletePage": {
     "description": "Remove with page name template",
     "placeholders": {
       "page": {
         "type": "String",
-        "example": "Page 1"
+        "example": "Sheet 1"
       }
     }
   },
-  "pageDeletePrompt": "Are you sure you want to remove this page?",
-  "page": "Page",
-  "addPage": "Add page",
+  "pageDeletePrompt": "Are you sure you want to remove this score sheet?",
+  "page": "Score sheet",
+  "addPage": "Add sheet",
   "rename": "Rename"
 
 }

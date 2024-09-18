@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:scored/confirm_dialog.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/models/config_model.dart';
 import 'package:scored/models/page_model.dart';
@@ -66,6 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
       topScores[pageId] = 0;
       pages.removeAt(index);
     });
+
+    _pageNotifier.value = min(index, pages.length - 1);
 
     await widget.db.delete("users", where: "pageId = ?", whereArgs: [pageId]);
     await widget.db.delete("scores", where: "pageId = ?", whereArgs: [pageId]);
@@ -289,28 +293,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   if (pages.length == 1) {
                                     return;
                                   }
-                                  showDialog(
+                                  ConfirmDialog.show(
                                       context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                            title: Text(
-                                                locale.deletePage(page.name)),
-                                            content:
-                                                Text(locale.pageDeletePrompt),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text(locale.cancel)),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    _deletePage(page.id, index);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text(locale.delete))
-                                            ]);
-                                      });
+                                      locale: locale,
+                                      title: locale.deletePage(page.name),
+                                      content: locale.pageDeletePrompt,
+                                      onConfirm: () {
+                                        _deletePage(page.id, index);
+                                      },
+                                      confirmText: locale.delete);;
                                 },
                                 icon: const Icon(Icons.close)),
                           ),
@@ -399,8 +390,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            PageFormWidget.showAddPageDialog(
-                context, locale, "${locale.page} ${pages.length + 1}",
+            PageFormWidget.showAddPageDialog(context, locale,
+                "${locale.page} - ${DateFormat('HH:mm dd/MM/yy', locale.localeName).format(DateTime.now())}",
                 (String name) {
               _addPage(name);
             });

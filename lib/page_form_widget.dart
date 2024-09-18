@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'action_button_text.dart';
+
 class PageFormWidget extends StatefulWidget {
   const PageFormWidget({super.key, required this.initialName});
 
@@ -39,7 +41,7 @@ class PageFormWidget extends StatefulWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text(locale.cancel)),
+                child: ActionButtonText(text: locale.cancel)),
             TextButton(
                 onPressed: () {
                   if (pageFormKey.currentState!.validateAndSave()) {
@@ -47,7 +49,7 @@ class PageFormWidget extends StatefulWidget {
                     onSubmitted(pageFormKey.currentState!.name);
                   }
                 },
-                child: Text(locale.add))
+                child: ActionButtonText(text: locale.add))
           ],
         );
       },
@@ -58,6 +60,7 @@ class PageFormWidget extends StatefulWidget {
 class PageFormWidgetState extends State<PageFormWidget> {
   final _formKey = GlobalKey<FormState>();
   String name = "";
+  late TextEditingController _controller;
 
   bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
@@ -65,6 +68,16 @@ class PageFormWidgetState extends State<PageFormWidget> {
       return true;
     }
     return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialName)
+      ..selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: widget.initialName.length,
+      );
   }
 
   @override
@@ -79,7 +92,8 @@ class PageFormWidgetState extends State<PageFormWidget> {
           Container(
             margin: const EdgeInsets.only(bottom: 8),
             child: TextFormField(
-              initialValue: widget.initialName,
+              controller: _controller,
+              // initialValue: widget.initialName,
               autofocus: true,
               onSaved: (String? value) => {name = value!},
               validator: (value) {

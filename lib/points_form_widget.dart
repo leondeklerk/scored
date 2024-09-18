@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'action_button_text.dart';
+
 
 class PointsFormWidget extends StatefulWidget {
   const PointsFormWidget({super.key});
@@ -44,7 +46,8 @@ class PointsFormWidget extends StatefulWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(locale.cancel)),
+                  child: ActionButtonText(
+                      text: locale.cancel)),
               TextButton(
                   onPressed: () {
                     if (pointsFormKey.currentState!.validateAndSave()) {
@@ -52,7 +55,8 @@ class PointsFormWidget extends StatefulWidget {
                       onSubmitted(pointsFormKey.currentState!.score);
                     }
                   },
-                  child: Text(locale.add))
+                  child: ActionButtonText(
+                      text: locale.add))
             ],
           );
         });

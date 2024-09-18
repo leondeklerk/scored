@@ -29,7 +29,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Voeg toe"),
-        "addPage": MessageLookupByLibrary.simpleMessage("Pagina toevoegen"),
+        "addPage": MessageLookupByLibrary.simpleMessage("Scoreblad toevoegen"),
         "addPlayer": MessageLookupByLibrary.simpleMessage("Speler toevoegen"),
         "addPointsUser": m0,
         "cancel": MessageLookupByLibrary.simpleMessage("Annuleren"),
@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Weet je zeker dat je alle spelers wilt verwijderen?"),
         "clearTitle":
             MessageLookupByLibrary.simpleMessage("Verwijder alle spelers"),
+        "confirm": MessageLookupByLibrary.simpleMessage("Oke"),
         "delete": MessageLookupByLibrary.simpleMessage("Verwijder"),
         "deletePage": m1,
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
@@ -47,17 +48,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "name": MessageLookupByLibrary.simpleMessage("Naam"),
         "nameError": MessageLookupByLibrary.simpleMessage(
             "Vul de naam van de speler in"),
-        "page": MessageLookupByLibrary.simpleMessage("Pagina"),
+        "page": MessageLookupByLibrary.simpleMessage("Scoreblad"),
         "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
-            "Weet je zeker dat je deze pagina wilt verwijderen?"),
+            "Weet je zeker dat je dit scoreblad wilt verwijderen?"),
         "player": MessageLookupByLibrary.simpleMessage("Speler"),
         "points": MessageLookupByLibrary.simpleMessage("Punten"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Vul het aantal punten int"),
         "ranked": MessageLookupByLibrary.simpleMessage("Ranglijst"),
-        "rename": MessageLookupByLibrary.simpleMessage("Verander"),
-        "renamePage":
-            MessageLookupByLibrary.simpleMessage("Verander pagina titel"),
+        "rename": MessageLookupByLibrary.simpleMessage("Hernoem"),
+        "renamePage": MessageLookupByLibrary.simpleMessage("Hernoem scoreblad"),
         "reset": MessageLookupByLibrary.simpleMessage("Herstarten"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
@@ -83,7 +83,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rang volgorde - Hoogste score eerst"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Laagste score eerst"),
-        "standardPageName": MessageLookupByLibrary.simpleMessage("Standaard"),
+        "standardPageName": MessageLookupByLibrary.simpleMessage("Scoreblad"),
         "submit": MessageLookupByLibrary.simpleMessage("Oke")
       };
 }

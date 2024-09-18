@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'action_button_text.dart';
 import 'models/page_model.dart';
 
 class PageRenameFormWidget extends StatefulWidget {
@@ -44,7 +45,8 @@ class PageRenameFormWidget extends StatefulWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text(locale.cancel)),
+                child: ActionButtonText(
+                    text: locale.cancel)),
             TextButton(
                 onPressed: () {
                   if (pageKey.currentState!.validateAndSave()) {
@@ -52,7 +54,8 @@ class PageRenameFormWidget extends StatefulWidget {
                     onSubmitted(pageKey.currentState!.getResult());
                   }
                 },
-                child: Text(locale.rename))
+                child: ActionButtonText(
+                    text: locale.rename))
           ],
         );
       },
