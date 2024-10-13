@@ -69,6 +69,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _deletePage(int pageId, int index) async {
+    if (index != 0) {
+      await controller.animateToPage(index - 1,
+          curve: Curves.easeIn, duration: const Duration(milliseconds: 200));
+    }
+
     setState(() {
       configs[pageId] = null;
       userLists[pageId] = [];
