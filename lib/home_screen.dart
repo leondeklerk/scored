@@ -11,8 +11,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/page_form_widget.dart';
 import 'package:scored/page_rename_form_widget.dart';
 import 'package:scored/score_sheet.dart';
-import 'package:page_view_indicators/page_view_indicators.dart';
+import 'package:scored/theme_notifier.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import 'setting_screen.dart';
 import 'models/score_model.dart';
 import 'models/user_model.dart';
 import 'models/user.dart';
@@ -21,8 +23,13 @@ import 'package:sqflite/sqflite.dart';
 class HomeScreen extends StatefulWidget {
   final Database db;
   final PersistedState? state;
+  final SettingsNotifier notifier;
 
-  const HomeScreen({super.key, required this.db, required this.state});
+  const HomeScreen(
+      {super.key,
+      required this.db,
+      required this.state,
+      required this.notifier});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -218,7 +225,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Scored')),
+      appBar: AppBar(
+        title: const Text('Scored'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                SettingScreen.showSettings(context, locale, widget.notifier);
+              },
+              icon: const Icon(Icons.tune))
+        ],
+      ),
       body: Column(
         children: [
           Center(
@@ -227,9 +243,19 @@ class _HomeScreenState extends State<HomeScreen> {
             maintainSize: true,
             maintainAnimation: true,
             visible: pages.length > 1,
-            child: CirclePageIndicator(
-              currentPageNotifier: _pageNotifier,
-              itemCount: pages.length,
+            child: SmoothPageIndicator(
+              controller: controller, // PageController
+              count: pages.length,
+              effect: ScrollingDotsEffect(
+                maxVisibleDots: 13,
+                activeDotColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                // Use primary color for active dot
+                dotColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                dotWidth: 8,
+                dotHeight: 8,
+                activeDotScale: 1,
+                // Color(0x509E9E9E)
+              ), // Customize the effect as needed
             ),
           )),
           Expanded(
@@ -301,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onConfirm: () {
                                         _deletePage(page.id, index);
                                       },
-                                      confirmText: locale.delete);;
+                                      confirmText: locale.delete);
                                 },
                                 icon: const Icon(Icons.close)),
                           ),

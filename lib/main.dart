@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:scored/home_screen.dart';
+import 'package:scored/models/app_settings_model.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/models/page_model.dart';
 import 'package:scored/models/score_model.dart';
 import 'package:scored/models/user_model.dart';
+import 'package:scored/theme_notifier.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -20,34 +23,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WakelockPlus.enable();
 
-  final database = await openDatabase(
-      // Set the path to the database. Note: Using the `join` function from the
-      // `path` package is best practice to ensure the path is correctly
-      // constructed for each platform.
-      join(await getDatabasesPath(), 'scored.db'),
-      onCreate: (db, version) async {
-    await createDb(db);
-  }, onUpgrade: (db, oldVersion, newVersion) async {
-    if (newVersion == 2 || newVersion == 3 || newVersion == 4 || newVersion == 5) {
-      await db.execute("DROP TABLE IF EXISTS config");
-      await db.execute("DROP TABLE IF EXISTS users");
-      await db.execute("DROP TABLE IF EXISTS scores");
-      await db.execute("DROP TABLE IF EXISTS pages");
-      await createDb(db);
-    }
+  AppSettingsModel appSettings = await AppSettingsModel.initialize();
 
-    if (newVersion == 6) {
-      await db.execute("ALTER TABLE pages ADD COLUMN `order` REAL;");
-      await db.execute("UPDATE pages SET `order` = id;");
-    }
-  }, version: 6);
-
-  runApp(ScoredApp(database: database));
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SettingsNotifier(appSettings),
+      child: const ScoredApp(),
+    ),
+  );
 }
 
 Future<void> createDb(Database db) async {
-
-  await db.execute("CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT, `order` REAL);");
+  await db.execute(
+      "CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT, `order` REAL);");
   await db.execute(
       'CREATE TABLE IF NOT EXISTS config(ranked INTEGER, reversed INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(pageId));');
   await db.execute(
@@ -57,14 +45,36 @@ Future<void> createDb(Database db) async {
 }
 
 class ScoredApp extends StatelessWidget {
-  final Database database;
 
   const ScoredApp({
-    required this.database,
     super.key,
   });
 
   Future<PersistedState> getState() async {
+    final database = await openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+        join(await getDatabasesPath(), 'scored.db'),
+        onCreate: (db, version) async {
+          await createDb(db);
+        }, onUpgrade: (db, oldVersion, newVersion) async {
+      if (newVersion >= 2 && newVersion <= 5) {
+        await db.execute("DROP TABLE IF EXISTS config");
+        await db.execute("DROP TABLE IF EXISTS users");
+        await db.execute("DROP TABLE IF EXISTS scores");
+        await db.execute("DROP TABLE IF EXISTS pages");
+        await createDb(db);
+      }
+
+      if (newVersion == 6) {
+        await db.execute("ALTER TABLE pages ADD COLUMN `order` REAL;");
+        await db.execute("UPDATE pages SET `order` = id;");
+      }
+
+      if (newVersion == 7) {}
+    }, version: 7);
+
     final List<Map<String, dynamic>> configs = await database.query('config');
     final List<Map<String, dynamic>> users =
         await database.query('users', orderBy: "name ASC");
@@ -104,12 +114,14 @@ class ScoredApp extends StatelessWidget {
       );
     });
 
-    PersistedState state = PersistedState(users: {}, pages: [], configs: {});
-
+    PersistedState state = PersistedState(users: {}, pages: [], configs: {}, db: database);
 
     for (var i = 0; i < configList.length; i++) {
       ConfigModel config = configList[i];
-      state.configs[config.pageId] = Config(ranked: config.ranked == 1 ? true : false, reversed: config.reversed == 1 ? true : false, pageId: config.pageId);
+      state.configs[config.pageId] = Config(
+          ranked: config.ranked == 1 ? true : false,
+          reversed: config.reversed == 1 ? true : false,
+          pageId: config.pageId);
     }
 
     state.pages = pagesList;
@@ -140,39 +152,37 @@ class ScoredApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Scored',
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-        ),
-        themeMode: ThemeMode.system,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: FutureBuilder(
-            future: getState(),
-            builder: (context, AsyncSnapshot<PersistedState> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Scaffold(
-                    body: Center(
-                  child: Transform.scale(
-                      scale: 3,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 1,
-                      )),
-                ));
-              } else {
-                return HomeScreen(db: database, state: snapshot.data);
-              }
-            }));
+    return Consumer<SettingsNotifier>(
+      builder: (context, notifier, child) {
+        return MaterialApp(
+            title: 'Scored',
+            theme: notifier.lightTheme,
+            darkTheme: notifier.darkTheme,
+            themeMode: notifier.themeMode,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: FutureBuilder(
+                future: getState(),
+                builder: (context, AsyncSnapshot<PersistedState> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return HomeScreen(
+                        db: snapshot.data!.db, state: snapshot.data, notifier: notifier);
+                  }
+                  return Scaffold(
+                      body: Center(
+                    child: Transform.scale(
+                        scale: 3,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 1,
+                        )),
+                  ));
+                }));
+      },
+    );
   }
 }

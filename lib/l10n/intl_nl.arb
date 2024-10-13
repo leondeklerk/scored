@@ -68,6 +68,17 @@
   "pageDeletePrompt": "Weet je zeker dat je dit scoreblad wilt verwijderen?",
   "page": "Scoreblad",
   "addPage": "Scoreblad toevoegen",
-  "rename": "Hernoem"
-
+  "rename": "Hernoem",
+  "selectColor": "Kleur",
+  "selectColorShade": "Tint",
+  "select": "Selecteer",
+  "selectColorTitle": "Selecteer een kleur",
+  "settingsTitle": "Instellingen",
+  "settingBaseColor": "Basis kleur",
+  "settingsCustomColorMode": "Gebruik custom kleuren",
+  "settingThemeModeTitle": "Thema modus",
+  "settingThemeModeAuto": "Auto",
+  "settingThemeModeLight": "Licht",
+  "settingThemeModeDark": "Donker",
+  "settingGroupThemeTitle": "Thema"
 }

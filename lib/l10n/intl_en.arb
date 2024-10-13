@@ -68,6 +68,18 @@
   "pageDeletePrompt": "Are you sure you want to remove this score sheet?",
   "page": "Score sheet",
   "addPage": "Add sheet",
-  "rename": "Rename"
+  "rename": "Rename",
+  "selectColor": "Color",
+  "selectColorShade": "Shade",
+  "select": "Select",
+  "selectColorTitle": "Select a color",
+  "settingsTitle": "Settings",
+  "settingBaseColor": "Base color",
+  "settingsCustomColorMode": "Use custom colors",
+  "settingThemeModeTitle": "Theme mode",
+  "settingThemeModeAuto": "Auto",
+  "settingThemeModeLight": "Light",
+  "settingThemeModeDark": "Dark",
+  "settingGroupThemeTitle": "Theme"
 
 }

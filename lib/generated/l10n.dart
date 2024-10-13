@@ -469,6 +469,126 @@ class S {
       args: [],
     );
   }
+
+  /// `Color`
+  String get selectColor {
+    return Intl.message(
+      'Color',
+      name: 'selectColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shade`
+  String get selectColorShade {
+    return Intl.message(
+      'Shade',
+      name: 'selectColorShade',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select`
+  String get select {
+    return Intl.message(
+      'Select',
+      name: 'select',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a color`
+  String get selectColorTitle {
+    return Intl.message(
+      'Select a color',
+      name: 'selectColorTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settingsTitle {
+    return Intl.message(
+      'Settings',
+      name: 'settingsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Base color`
+  String get settingBaseColor {
+    return Intl.message(
+      'Base color',
+      name: 'settingBaseColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use custom colors`
+  String get settingsCustomColorMode {
+    return Intl.message(
+      'Use custom colors',
+      name: 'settingsCustomColorMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme mode`
+  String get settingThemeModeTitle {
+    return Intl.message(
+      'Theme mode',
+      name: 'settingThemeModeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto`
+  String get settingThemeModeAuto {
+    return Intl.message(
+      'Auto',
+      name: 'settingThemeModeAuto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light`
+  String get settingThemeModeLight {
+    return Intl.message(
+      'Light',
+      name: 'settingThemeModeLight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dark`
+  String get settingThemeModeDark {
+    return Intl.message(
+      'Dark',
+      name: 'settingThemeModeDark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme`
+  String get settingGroupThemeTitle {
+    return Intl.message(
+      'Theme',
+      name: 'settingGroupThemeTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

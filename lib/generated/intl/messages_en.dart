@@ -65,6 +65,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Enter a valid number"),
         "scoreMissingError":
             MessageLookupByLibrary.simpleMessage("Enter the initial score"),
+        "select": MessageLookupByLibrary.simpleMessage("Select"),
+        "selectColor": MessageLookupByLibrary.simpleMessage("Color"),
+        "selectColorShade": MessageLookupByLibrary.simpleMessage("Shade"),
+        "selectColorTitle":
+            MessageLookupByLibrary.simpleMessage("Select a color"),
         "semanticAddPoints":
             MessageLookupByLibrary.simpleMessage("Add points to player."),
         "semanticList": MessageLookupByLibrary.simpleMessage("List of players"),
@@ -81,6 +86,16 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rank order - Highest score first"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang order - Lowest score first"),
+        "settingBaseColor": MessageLookupByLibrary.simpleMessage("Base color"),
+        "settingGroupThemeTitle": MessageLookupByLibrary.simpleMessage("Theme"),
+        "settingThemeModeAuto": MessageLookupByLibrary.simpleMessage("Auto"),
+        "settingThemeModeDark": MessageLookupByLibrary.simpleMessage("Dark"),
+        "settingThemeModeLight": MessageLookupByLibrary.simpleMessage("Light"),
+        "settingThemeModeTitle":
+            MessageLookupByLibrary.simpleMessage("Theme mode"),
+        "settingsCustomColorMode":
+            MessageLookupByLibrary.simpleMessage("Use custom colors"),
+        "settingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
         "standardPageName": MessageLookupByLibrary.simpleMessage("Score sheet"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit")
       };

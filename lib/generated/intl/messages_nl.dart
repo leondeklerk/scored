@@ -67,6 +67,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Voer een geldig nummer in"),
         "scoreMissingError":
             MessageLookupByLibrary.simpleMessage("Voer de initiele score in"),
+        "select": MessageLookupByLibrary.simpleMessage("Selecteer"),
+        "selectColor": MessageLookupByLibrary.simpleMessage("Kleur"),
+        "selectColorShade": MessageLookupByLibrary.simpleMessage("Tint"),
+        "selectColorTitle":
+            MessageLookupByLibrary.simpleMessage("Selecteer een kleur"),
         "semanticAddPoints": MessageLookupByLibrary.simpleMessage(
             "Voeg punten toe aan de speler."),
         "semanticList": MessageLookupByLibrary.simpleMessage("Spelerslijst"),
@@ -83,6 +88,16 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rang volgorde - Hoogste score eerst"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Laagste score eerst"),
+        "settingBaseColor": MessageLookupByLibrary.simpleMessage("Basis kleur"),
+        "settingGroupThemeTitle": MessageLookupByLibrary.simpleMessage("Thema"),
+        "settingThemeModeAuto": MessageLookupByLibrary.simpleMessage("Auto"),
+        "settingThemeModeDark": MessageLookupByLibrary.simpleMessage("Donker"),
+        "settingThemeModeLight": MessageLookupByLibrary.simpleMessage("Licht"),
+        "settingThemeModeTitle":
+            MessageLookupByLibrary.simpleMessage("Thema modus"),
+        "settingsCustomColorMode":
+            MessageLookupByLibrary.simpleMessage("Gebruik custom kleuren"),
+        "settingsTitle": MessageLookupByLibrary.simpleMessage("Instellingen"),
         "standardPageName": MessageLookupByLibrary.simpleMessage("Scoreblad"),
         "submit": MessageLookupByLibrary.simpleMessage("Oke")
       };
