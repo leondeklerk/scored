@@ -44,6 +44,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to remove this player?"),
         "deleteUser": m2,
+        "done": MessageLookupByLibrary.simpleMessage("Done"),
+        "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nameError": MessageLookupByLibrary.simpleMessage("Enter a name"),
         "page": MessageLookupByLibrary.simpleMessage("Score sheet"),
@@ -53,11 +55,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "points": MessageLookupByLibrary.simpleMessage("Points"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Enter the number of points"),
-        "ranked": MessageLookupByLibrary.simpleMessage("Ranked"),
+        "ranked": MessageLookupByLibrary.simpleMessage("Rank"),
         "rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "renamePage": MessageLookupByLibrary.simpleMessage("Rename sheet"),
         "reset": MessageLookupByLibrary.simpleMessage("Reset"),
-        "resetScores": MessageLookupByLibrary.simpleMessage("Reset scores"),
+        "resetScores": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to reset all scores?"),
         "score": MessageLookupByLibrary.simpleMessage("Score"),
@@ -87,7 +89,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang order - Lowest score first"),
         "settingBaseColor": MessageLookupByLibrary.simpleMessage("Base color"),
+        "settingGroupGeneralTitle":
+            MessageLookupByLibrary.simpleMessage("General"),
         "settingGroupThemeTitle": MessageLookupByLibrary.simpleMessage("Theme"),
+        "settingLanguageTitle":
+            MessageLookupByLibrary.simpleMessage("Language"),
         "settingThemeModeAuto": MessageLookupByLibrary.simpleMessage("Auto"),
         "settingThemeModeDark": MessageLookupByLibrary.simpleMessage("Dark"),
         "settingThemeModeLight": MessageLookupByLibrary.simpleMessage("Light"),

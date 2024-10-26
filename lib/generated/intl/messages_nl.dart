@@ -33,7 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "addPlayer": MessageLookupByLibrary.simpleMessage("Speler toevoegen"),
         "addPointsUser": m0,
         "cancel": MessageLookupByLibrary.simpleMessage("Annuleren"),
-        "clear": MessageLookupByLibrary.simpleMessage("Maak leeg"),
+        "clear": MessageLookupByLibrary.simpleMessage("Wis"),
         "clearButton": MessageLookupByLibrary.simpleMessage("Verwijderen"),
         "clearPrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je alle spelers wilt verwijderen?"),
@@ -45,6 +45,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je deze speler wilt verwijderen?"),
         "deleteUser": m2,
+        "done": MessageLookupByLibrary.simpleMessage("Klaar"),
+        "edit": MessageLookupByLibrary.simpleMessage("Bewerk"),
         "name": MessageLookupByLibrary.simpleMessage("Naam"),
         "nameError": MessageLookupByLibrary.simpleMessage(
             "Vul de naam van de speler in"),
@@ -55,10 +57,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "points": MessageLookupByLibrary.simpleMessage("Punten"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Vul het aantal punten int"),
-        "ranked": MessageLookupByLibrary.simpleMessage("Ranglijst"),
+        "ranked": MessageLookupByLibrary.simpleMessage("Stand"),
         "rename": MessageLookupByLibrary.simpleMessage("Hernoem"),
         "renamePage": MessageLookupByLibrary.simpleMessage("Hernoem scoreblad"),
-        "reset": MessageLookupByLibrary.simpleMessage("Herstarten"),
+        "reset": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je alle scores op nul wilt zetten?"),
@@ -89,7 +91,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Laagste score eerst"),
         "settingBaseColor": MessageLookupByLibrary.simpleMessage("Basis kleur"),
+        "settingGroupGeneralTitle":
+            MessageLookupByLibrary.simpleMessage("Algemeen"),
         "settingGroupThemeTitle": MessageLookupByLibrary.simpleMessage("Thema"),
+        "settingLanguageTitle": MessageLookupByLibrary.simpleMessage("Taal"),
         "settingThemeModeAuto": MessageLookupByLibrary.simpleMessage("Auto"),
         "settingThemeModeDark": MessageLookupByLibrary.simpleMessage("Donker"),
         "settingThemeModeLight": MessageLookupByLibrary.simpleMessage("Licht"),

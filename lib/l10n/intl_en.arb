@@ -8,10 +8,10 @@
   "clearTitle": "Clear all players",
   "clearPrompt": "Are you sure you want to remove all players?",
   "confirm": "Ok",
-  "resetScores": "Reset scores",
+  "resetScores": "Reset",
   "resetScoresPrompt": "Are you sure you want to reset all scores?",
   "reset": "Reset",
-  "ranked": "Ranked",
+  "ranked": "Rank",
   "deletePrompt": "Are you sure you want to remove this player?",
   "delete": "Remove",
   "addPlayer": "Add player",
@@ -80,6 +80,10 @@
   "settingThemeModeAuto": "Auto",
   "settingThemeModeLight": "Light",
   "settingThemeModeDark": "Dark",
-  "settingGroupThemeTitle": "Theme"
+  "settingLanguageTitle": "Language",
+  "settingGroupThemeTitle": "Theme",
+  "settingGroupGeneralTitle": "General",
+  "done": "Done",
+  "edit": "Edit"
 
 }

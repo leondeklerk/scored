@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/color_widget.dart';
+import 'package:scored/main.dart';
 import 'package:scored/theme_notifier.dart';
 
 import 'action_button_text.dart';
@@ -26,6 +27,47 @@ class SettingScreen {
           body: ListView(
             padding: const EdgeInsets.all(16.0),
             children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    locale.settingGroupGeneralTitle,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 4),
+                  Divider(
+                    color: Theme.of(context).dividerColor,
+                    thickness: 2,
+                  ),
+                  const SizedBox(height: 4),
+                ],
+              ),
+              // Language setting:
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    locale.settingLanguageTitle,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  // Dropdown for the language:
+                  DropdownButton<String>(
+                    value: locale.localeName,
+                    onChanged: (String? newValue) {
+                      // ScoredApp.of(context).setLocale(Locale.fromSubtags(languageCode: 'de')),!;
+                    },
+                    items: AppLocalizations.supportedLocales
+                        .map<DropdownMenuItem<String>>(
+                          (Locale locale) => DropdownMenuItem<String>(
+                            value: locale.languageCode,
+                            child: Text(locale.languageCode),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

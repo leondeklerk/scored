@@ -43,6 +43,15 @@ class ScoreSheet extends StatefulWidget {
 }
 
 class _ScoreSheetState extends State<ScoreSheet> {
+  bool _isEditMode = false;
+
+  void _toggleEditMode() {
+    setState(() {
+      // Always save the state of the edit mode on change (no dirty)
+      _isEditMode = !_isEditMode;
+    });
+  }
+
   void _setRanked(bool ranked) {
     widget.setConfig(Config(
         ranked: ranked, reversed: widget.config.reversed, pageId: pageId));
@@ -104,66 +113,134 @@ class _ScoreSheetState extends State<ScoreSheet> {
         Semantics(
           label: locale.semanticListControls,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Wrap(alignment: WrapAlignment.spaceEvenly, spacing: 8, children: [
-                Semantics(
-                  button: true,
-                  child: InputChip(
-                      isEnabled: widget.users.isNotEmpty,
-                      label: ActionButtonText(text: locale.clear),
-                      onPressed: () {
-                        ConfirmDialog.show(
-                          context: context,
-                          locale: locale,
-                          title: locale.clearTitle,
-                          content: locale.clearPrompt,
-                          confirmText: locale.clearButton,
-                          onConfirm: _clearScores,
-                        );
-                      }),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Wrap(
+                        alignment: WrapAlignment.spaceEvenly,
+                        spacing: 8,
+                        children: [
+                          // Semantics(
+                          //   button: true,
+                          //   child: InputChip(
+                          //       isEnabled: widget.users.isNotEmpty,
+                          //       label: ActionButtonText(text: locale.clear),
+                          //       onPressed: () {
+                          //         ConfirmDialog.show(
+                          //           context: context,
+                          //           locale: locale,
+                          //           title: locale.clearTitle,
+                          //           content: locale.clearPrompt,
+                          //           confirmText: locale.clearButton,
+                          //           onConfirm: _clearScores,
+                          //         );
+                          //       }),
+                          // ),
+                          Semantics(
+                            button: true,
+                            child: InputChip(
+                                isEnabled: widget.users.isNotEmpty,
+                                avatar: const Icon(Icons.refresh),
+                                label:
+                                    ActionButtonText(text: locale.resetScores),
+                                onPressed: () {
+                                  ConfirmDialog.show(
+                                    context: context,
+                                    locale: locale,
+                                    title: locale.resetScores,
+                                    content: locale.resetScoresPrompt,
+                                    confirmText: locale.reset,
+                                    onConfirm: _resetScores,
+                                  );
+                                }),
+                          ),
+                          FilterChip(
+                            avatar: (widget.config.ranked)
+                                ? const Icon(Icons.star)
+                                : const Icon(Icons.star_border),
+                            showCheckmark: false,
+                            label: ActionButtonText(
+                                text: locale.ranked,
+                                semantics: locale.semanticRanked),
+                            selected: widget.config.ranked,
+                            onSelected: _setRanked,
+                          ),
+                          Semantics(
+                            label: widget.config.reversed
+                                ? locale.semanticsReverseDesc
+                                : locale.semanticsReverseAsc,
+                            button: true,
+                            child: ActionChip(
+                                onPressed:
+                                    widget.config.ranked ? _reverse : null,
+                                label: Semantics(
+                                    excludeSemantics: true,
+                                    child: const Text("")),
+                                avatar: (() {
+                                  if (widget.config.reversed) {
+                                    return const Icon(
+                                        Icons.keyboard_arrow_down);
+                                  } else {
+                                    return const Icon(Icons.keyboard_arrow_up);
+                                  }
+                                })(),
+                                labelPadding: EdgeInsets.zero),
+                          ),
+                          Semantics(
+                            label: widget.config.reversed
+                                ? locale.semanticsReverseDesc
+                                : locale.semanticsReverseAsc,
+                            button: true,
+                            child: ActionChip(
+                                label: Semantics(
+                                    excludeSemantics: true,
+                                    child: const Text("")),
+                                avatar: const Icon(Icons.more_vert),
+                                labelPadding: EdgeInsets.zero),
+                          ),
+
+                          // Semantics(
+                          //   label: _isEditMode
+                          //   // TODO:
+                          //       ? locale.semanticsReverseDesc
+                          //       : locale.semanticsReverseAsc,
+                          //   button: true,
+                          //   child: ActionChip(
+                          //       label: Semantics(
+                          //           excludeSemantics: true, child: const Text("")),
+                          //       avatar: (() {
+                          //         if (_isEditMode) {
+                          //           return const Icon(Icons.done);
+                          //         } else {
+                          //           return const Icon(Icons.edit);
+                          //         }
+                          //       })(),
+                          //       labelPadding: EdgeInsets.zero),
+                          // ),
+                        ]),
+                  ],
                 ),
-                Semantics(
-                  button: true,
-                  child: InputChip(
-                      isEnabled: widget.users.isNotEmpty,
-                      label: ActionButtonText(text: locale.resetScores),
-                      onPressed: () {
-                        ConfirmDialog.show(
-                          context: context,
-                          locale: locale,
-                          title: locale.resetScores,
-                          content: locale.resetScoresPrompt,
-                          confirmText: locale.reset,
-                          onConfirm: _resetScores,
-                        );
-                      }),
-                ),
-                FilterChip(
-                  label: ActionButtonText(
-                      text: locale.ranked, semantics: locale.semanticRanked),
-                  selected: widget.config.ranked,
-                  onSelected: _setRanked,
-                ),
-                Semantics(
-                  label: widget.config.reversed
-                      ? locale.semanticsReverseDesc
-                      : locale.semanticsReverseAsc,
-                  button: true,
-                  child: ActionChip(
-                      onPressed: widget.config.ranked ? _reverse : null,
-                      label: Semantics(
-                          excludeSemantics: true, child: const Text("")),
-                      avatar: (() {
-                        if (widget.config.reversed) {
-                          return const Icon(Icons.keyboard_arrow_down);
-                        } else {
-                          return const Icon(Icons.keyboard_arrow_up);
-                        }
-                      })(),
-                      labelPadding: EdgeInsets.zero),
-                ),
-              ]),
+              ),
+              // PopupMenuButton<String>(
+              //   onSelected: (String result) {
+              //     switch (result) {
+              //       case 'edit':
+              //         _toggleEditMode();
+              //         break;
+              //     // Add more cases if needed
+              //     }
+              //   },
+              //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              //     PopupMenuItem<String>(
+              //       value: 'edit',
+              //       child: Text(_isEditMode ? locale.done : locale.edit),
+              //     ),
+              //     // Add more menu items if needed
+              //   ],
+              //   icon: Icon(Icons.more_vert),
+              // ),
             ],
           ),
         ),

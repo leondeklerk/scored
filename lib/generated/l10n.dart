@@ -130,10 +130,10 @@ class S {
     );
   }
 
-  /// `Reset scores`
+  /// `Reset`
   String get resetScores {
     return Intl.message(
-      'Reset scores',
+      'Reset',
       name: 'resetScores',
       desc: '',
       args: [],
@@ -160,10 +160,10 @@ class S {
     );
   }
 
-  /// `Ranked`
+  /// `Rank`
   String get ranked {
     return Intl.message(
-      'Ranked',
+      'Rank',
       name: 'ranked',
       desc: '',
       args: [],
@@ -580,11 +580,51 @@ class S {
     );
   }
 
+  /// `Language`
+  String get settingLanguageTitle {
+    return Intl.message(
+      'Language',
+      name: 'settingLanguageTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Theme`
   String get settingGroupThemeTitle {
     return Intl.message(
       'Theme',
       name: 'settingGroupThemeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General`
+  String get settingGroupGeneralTitle {
+    return Intl.message(
+      'General',
+      name: 'settingGroupGeneralTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message(
+      'Done',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message(
+      'Edit',
+      name: 'edit',
       desc: '',
       args: [],
     );
