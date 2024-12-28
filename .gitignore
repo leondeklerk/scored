@@ -47,3 +47,5 @@ app.*.map.json
 #Assets
 /assets
 /android/**/*.png
+/android/app/.gradle/config.properties
+/android/app/local.properties
