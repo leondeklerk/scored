@@ -20,9 +20,10 @@ class ScoreSheet extends StatefulWidget {
   final void Function(int pageId, User user) addUser;
   final void Function(int pageId) resetScores;
   final void Function(int pageId, int userIndex) deleteUser;
-  final void Function(int pageId) clearState;
   final void Function(int pageId, int userIndex, int score) addScore;
   final int topScore;
+  final void Function(bool isEditMode) setEditMode;
+  final bool isEditMode;
 
   const ScoreSheet(
       {super.key,
@@ -34,21 +35,22 @@ class ScoreSheet extends StatefulWidget {
       required this.addUser,
       required this.resetScores,
       required this.deleteUser,
-      required this.clearState,
       required this.addScore,
-      required this.topScore});
+      required this.topScore,
+      required this.setEditMode,
+      required this.isEditMode});
 
   @override
   State<ScoreSheet> createState() => _ScoreSheetState();
 }
 
 class _ScoreSheetState extends State<ScoreSheet> {
-  bool _isEditMode = false;
+  bool get _isEditMode => widget.isEditMode;
 
-  void _toggleEditMode() {
+  void _toggleEditMode(bool editMode) {
     setState(() {
-      // Always save the state of the edit mode on change (no dirty)
-      _isEditMode = !_isEditMode;
+      // TODO: ? Always save the state of the edit mode on change (no dirty)
+      widget.setEditMode(editMode);
     });
   }
 
@@ -78,16 +80,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
         where: "id = ? and pageId = ?", whereArgs: [id, pageId]);
     await widget.db.delete("scores",
         where: "userId = ? AND pageId = ?", whereArgs: [id, pageId]);
-  }
-
-  void _clearTables() async {
-    await widget.db.delete("users", where: "pageId = ?", whereArgs: [pageId]);
-    await widget.db.delete("scores", where: "pageId = ?", whereArgs: [pageId]);
-  }
-
-  void _clearScores() {
-    widget.clearState(pageId);
-    _clearTables();
   }
 
   void _resetScores() async {
@@ -120,28 +112,14 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   children: [
                     Wrap(
                         alignment: WrapAlignment.spaceEvenly,
-                        spacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 4,
                         children: [
-                          // Semantics(
-                          //   button: true,
-                          //   child: InputChip(
-                          //       isEnabled: widget.users.isNotEmpty,
-                          //       label: ActionButtonText(text: locale.clear),
-                          //       onPressed: () {
-                          //         ConfirmDialog.show(
-                          //           context: context,
-                          //           locale: locale,
-                          //           title: locale.clearTitle,
-                          //           content: locale.clearPrompt,
-                          //           confirmText: locale.clearButton,
-                          //           onConfirm: _clearScores,
-                          //         );
-                          //       }),
-                          // ),
                           Semantics(
                             button: true,
                             child: InputChip(
-                                isEnabled: widget.users.isNotEmpty,
+                                isEnabled:
+                                    widget.users.isNotEmpty && !_isEditMode,
                                 avatar: const Icon(Icons.refresh),
                                 label:
                                     ActionButtonText(text: locale.resetScores),
@@ -156,16 +134,19 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   );
                                 }),
                           ),
-                          FilterChip(
-                            avatar: (widget.config.ranked)
-                                ? const Icon(Icons.star)
-                                : const Icon(Icons.star_border),
-                            showCheckmark: false,
-                            label: ActionButtonText(
-                                text: locale.ranked,
-                                semantics: locale.semanticRanked),
-                            selected: widget.config.ranked,
-                            onSelected: _setRanked,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 4),
+                            child: FilterChip(
+                              avatar: (widget.config.ranked)
+                                  ? const Icon(Icons.star)
+                                  : const Icon(Icons.star_border),
+                              showCheckmark: false,
+                              label: ActionButtonText(
+                                  text: locale.ranked,
+                                  semantics: locale.semanticRanked),
+                              selected: widget.config.ranked,
+                              onSelected: _isEditMode ? null : _setRanked,
+                            ),
                           ),
                           Semantics(
                             label: widget.config.reversed
@@ -173,8 +154,9 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 : locale.semanticsReverseAsc,
                             button: true,
                             child: ActionChip(
-                                onPressed:
-                                    widget.config.ranked ? _reverse : null,
+                                onPressed: widget.config.ranked && !_isEditMode
+                                    ? _reverse
+                                    : null,
                                 label: Semantics(
                                     excludeSemantics: true,
                                     child: const Text("")),
@@ -188,37 +170,17 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 })(),
                                 labelPadding: EdgeInsets.zero),
                           ),
-                          Semantics(
-                            label: widget.config.reversed
-                                ? locale.semanticsReverseDesc
-                                : locale.semanticsReverseAsc,
-                            button: true,
-                            child: ActionChip(
-                                label: Semantics(
-                                    excludeSemantics: true,
-                                    child: const Text("")),
-                                avatar: const Icon(Icons.more_vert),
-                                labelPadding: EdgeInsets.zero),
+                          FilterChip(
+                            avatar: (_isEditMode)
+                                ? const Icon(Icons.done)
+                                : const Icon(Icons.edit),
+                            showCheckmark: false,
+                            label: Semantics(
+                                excludeSemantics: true, child: const Text("")),
+                            labelPadding: const EdgeInsets.all(0),
+                            selected: _isEditMode,
+                            onSelected: _toggleEditMode,
                           ),
-
-                          // Semantics(
-                          //   label: _isEditMode
-                          //   // TODO:
-                          //       ? locale.semanticsReverseDesc
-                          //       : locale.semanticsReverseAsc,
-                          //   button: true,
-                          //   child: ActionChip(
-                          //       label: Semantics(
-                          //           excludeSemantics: true, child: const Text("")),
-                          //       avatar: (() {
-                          //         if (_isEditMode) {
-                          //           return const Icon(Icons.done);
-                          //         } else {
-                          //           return const Icon(Icons.edit);
-                          //         }
-                          //       })(),
-                          //       labelPadding: EdgeInsets.zero),
-                          // ),
                         ]),
                   ],
                 ),

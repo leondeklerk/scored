@@ -42,6 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController controller = PageController(initialPage: 0);
   Map<int, int> topScores = {};
   final ValueNotifier<int> _pageNotifier = ValueNotifier<int>(0);
+  bool _editMode = false;
+
+  void _setEditMode(bool value) {
+    setState(() {
+      _editMode = value;
+    });
+  }
 
   void _addPage(String? name) async {
     var id = _nextPageId();
@@ -234,7 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Scored'),
         actions: [
           IconButton(
-              onPressed: () {
+
+              onPressed: _editMode ? null : () {
                 SettingScreen.showSettings(context, locale, widget.notifier);
               },
               icon: const Icon(Icons.tune))
@@ -253,9 +261,9 @@ class _HomeScreenState extends State<HomeScreen> {
               count: pages.length,
               effect: ScrollingDotsEffect(
                 maxVisibleDots: 13,
-                activeDotColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                activeDotColor: _editMode ? Theme.of(context).colorScheme.surfaceContainerHighest : Theme.of(context).colorScheme.onSurfaceVariant,
                 // Use primary color for active dot
-                dotColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                dotColor: _editMode ? Theme.of(context).colorScheme.surfaceContainerLow  : Theme.of(context).colorScheme.surfaceContainerHighest,
                 dotWidth: 8,
                 dotHeight: 8,
                 activeDotScale: 1,
@@ -266,6 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: PageView(
               controller: controller,
+              physics: _editMode ? NeverScrollableScrollPhysics() : null,
               onPageChanged: (index) {
                 setState(() {
                   _pageNotifier.value = index;
@@ -295,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .textTheme
                                         .bodyMedium
                                         ?.fontWeight)),
-                            onPressed: () {
+                            onPressed: _editMode ? null : () {
                               PageRenameFormWidget.showPageRenameDialog(
                                   context, locale, page, (PageModel model) {
                                 _renamePage(index, model);
@@ -320,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             maintainInteractivity: false,
                             maintainSize: true,
                             child: IconButton(
-                                onPressed: () {
+                                onPressed: _editMode ? null : () {
                                   if (pages.length == 1) {
                                     return;
                                   }
@@ -372,11 +381,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               _determineOrder(pageId);
                             });
                           },
-                          clearState: (pageId) {
-                            setState(() {
-                              userLists[pageId] = [];
-                            });
-                          },
+                          isEditMode: _editMode,
+                          setEditMode: _setEditMode,
                           deleteUser: (pageId, userIndex) {
                             setState(() {
                               userLists[pageId]?.removeAt(userIndex);
@@ -419,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: _editMode ? null : FloatingActionButton.extended(
           onPressed: () {
             PageFormWidget.showAddPageDialog(context, locale,
                 "${locale.page} - ${DateFormat('HH:mm dd/MM/yy', locale.localeName).format(DateTime.now())}",
