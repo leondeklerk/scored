@@ -60,6 +60,16 @@ class S {
     );
   }
 
+  /// `Set`
+  String get set {
+    return Intl.message(
+      'Set',
+      name: 'set',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Submit`
   String get submit {
     return Intl.message(
@@ -290,6 +300,16 @@ class S {
     );
   }
 
+  /// `{userName} - Set points`
+  String setPointsUser(String userName) {
+    return Intl.message(
+      '$userName - Set points',
+      name: 'setPointsUser',
+      desc: 'Set points with for user',
+      args: [userName],
+    );
+  }
+
   /// `Name`
   String get name {
     return Intl.message(
@@ -417,6 +437,16 @@ class S {
       name: 'renamePage',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Rename {userName}`
+  String renameUser(String userName) {
+    return Intl.message(
+      'Rename $userName',
+      name: 'renameUser',
+      desc: 'Rename with username template',
+      args: [userName],
     );
   }
 
@@ -625,6 +655,46 @@ class S {
     return Intl.message(
       'Edit',
       name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save changes`
+  String get saveChangesTitle {
+    return Intl.message(
+      'Save changes',
+      name: 'saveChangesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to save the changes?`
+  String get saveChangesContent {
+    return Intl.message(
+      'Do you want to save the changes?',
+      name: 'saveChangesContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discard`
+  String get discard {
+    return Intl.message(
+      'Discard',
+      name: 'discard',
       desc: '',
       args: [],
     );

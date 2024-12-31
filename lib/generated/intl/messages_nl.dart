@@ -26,6 +26,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(userName) => "Verwijder ${userName}";
 
+  static String m3(userName) => "Hernoem ${userName}";
+
+  static String m4(userName) => "${userName} - Punten instellen";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Voeg toe"),
@@ -45,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je deze speler wilt verwijderen?"),
         "deleteUser": m2,
+        "discard": MessageLookupByLibrary.simpleMessage("Annuleren"),
         "done": MessageLookupByLibrary.simpleMessage("Klaar"),
         "edit": MessageLookupByLibrary.simpleMessage("Bewerk"),
         "name": MessageLookupByLibrary.simpleMessage("Naam"),
@@ -60,10 +65,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "ranked": MessageLookupByLibrary.simpleMessage("Stand"),
         "rename": MessageLookupByLibrary.simpleMessage("Hernoem"),
         "renamePage": MessageLookupByLibrary.simpleMessage("Hernoem scoreblad"),
+        "renameUser": m3,
         "reset": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je alle scores op nul wilt zetten?"),
+        "save": MessageLookupByLibrary.simpleMessage("Opslaan"),
+        "saveChangesContent": MessageLookupByLibrary.simpleMessage(
+            "Wil je de wijzigingen opslaan?"),
+        "saveChangesTitle":
+            MessageLookupByLibrary.simpleMessage("Wijzigingen opslaan"),
         "score": MessageLookupByLibrary.simpleMessage("Score"),
         "scoreInvalidError":
             MessageLookupByLibrary.simpleMessage("Voer een geldig nummer in"),
@@ -90,6 +101,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rang volgorde - Hoogste score eerst"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Laagste score eerst"),
+        "set": MessageLookupByLibrary.simpleMessage("Instellen"),
+        "setPointsUser": m4,
         "settingBaseColor": MessageLookupByLibrary.simpleMessage("Basis kleur"),
         "settingGroupGeneralTitle":
             MessageLookupByLibrary.simpleMessage("Algemeen"),

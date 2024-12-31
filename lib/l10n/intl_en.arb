@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "add": "Add",
+  "set": "Set",
   "submit": "Submit",
   "cancel": "Cancel",
   "clear": "Clear",
@@ -42,6 +43,16 @@
       }
     }
   },
+  "setPointsUser": "{userName} - Set points",
+  "@setPointsUser": {
+    "description": "Set points with for user",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "name": "Name",
   "semanticRank": "Rank:",
   "semanticName": "Name:",
@@ -55,6 +66,16 @@
   "semanticsReverseDesc": "Rang order - Lowest score first",
   "standardPageName": "Score sheet",
   "renamePage": "Rename sheet",
+  "renameUser": "Rename {userName}",
+  "@renameUser": {
+    "description": "Rename with username template",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "deletePage": "Remove {page}",
   "@deletePage": {
     "description": "Remove with page name template",
@@ -84,6 +105,9 @@
   "settingGroupThemeTitle": "Theme",
   "settingGroupGeneralTitle": "General",
   "done": "Done",
-  "edit": "Edit"
-
+  "edit": "Edit",
+  "saveChangesTitle": "Save changes",
+  "saveChangesContent": "Do you want to save the changes?",
+  "save": "Save",
+  "discard": "Discard"
 }

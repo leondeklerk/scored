@@ -1,6 +1,7 @@
 {
   "@@locale": "nl",
   "add": "Voeg toe",
+  "set": "Instellen",
   "submit": "Oke",
   "cancel": "Annuleren",
   "clear": "Wis",
@@ -42,6 +43,16 @@
       }
     }
   },
+  "setPointsUser": "{userName} - Punten instellen",
+  "@setPointsUser": {
+    "description": "Set points with for user",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "name": "Naam",
   "semanticRank": "Rang:",
   "semanticName": "Naam:",
@@ -55,6 +66,16 @@
   "semanticsReverseDesc": "Rang volgorde - Laagste score eerst",
   "standardPageName": "Scoreblad",
   "renamePage": "Hernoem scoreblad",
+  "renameUser": "Hernoem {userName}",
+  "@renameUser": {
+    "description": "Rename with username template",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "deletePage": "Verwijder {page}",
   "@deletePage": {
     "description": "Delete with page name template",
@@ -84,5 +105,9 @@
   "settingGroupThemeTitle": "Thema",
   "settingGroupGeneralTitle": "Algemeen",
   "done": "Klaar",
-  "edit": "Bewerk"
+  "edit": "Bewerk",
+  "saveChangesTitle": "Wijzigingen opslaan",
+  "saveChangesContent": "Wil je de wijzigingen opslaan?",
+  "save": "Opslaan",
+  "discard": "Annuleren"
 }

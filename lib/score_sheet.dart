@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:scored/add_player_widget.dart';
 import 'package:scored/models/config.dart';
-import 'package:scored/points_form_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:scored/user_form_widget.dart';
+import 'package:scored/user_edit_tile.dart';
+import 'package:scored/user_tile.dart';
 import 'action_button_text.dart';
 import 'confirm_dialog.dart';
 import 'models/user.dart';
@@ -21,8 +22,11 @@ class ScoreSheet extends StatefulWidget {
   final void Function(int pageId) resetScores;
   final void Function(int pageId, int userIndex) deleteUser;
   final void Function(int pageId, int userIndex, int score) addScore;
+  final void Function(int pageId, int userIndex, int score) setScore;
+  final void Function(int pageId, int userIndex, User user) renameUser;
   final int topScore;
-  final void Function(bool isEditMode) setEditMode;
+  final void Function(bool isEditMode, int? pageId) setEditMode;
+  final void Function(List<User> users, int pageId) setUsers;
   final bool isEditMode;
 
   const ScoreSheet(
@@ -36,7 +40,10 @@ class ScoreSheet extends StatefulWidget {
       required this.resetScores,
       required this.deleteUser,
       required this.addScore,
+      required this.setScore,
+      required this.renameUser,
       required this.topScore,
+      required this.setUsers,
       required this.setEditMode,
       required this.isEditMode});
 
@@ -46,12 +53,40 @@ class ScoreSheet extends StatefulWidget {
 
 class _ScoreSheetState extends State<ScoreSheet> {
   bool get _isEditMode => widget.isEditMode;
+  List<User> startUsers = [];
 
   void _toggleEditMode(bool editMode) {
-    setState(() {
-      // TODO: ? Always save the state of the edit mode on change (no dirty)
-      widget.setEditMode(editMode);
-    });
+    if (_isEditMode) {
+      AppLocalizations locale = AppLocalizations.of(context)!;
+      ConfirmDialog.show(
+          context: context,
+          locale: locale,
+          title: locale.saveChangesTitle,
+          content: locale.saveChangesContent,
+          cancelText: locale.discard,
+          confirmText: locale.save,
+          onConfirm: () {
+            // Update order of users based on current order in the array:
+            for (int i = 0; i < widget.users.length; i++) {
+              widget.users[i].order = i;
+            }
+            // Store in the db:
+
+            widget.setEditMode(editMode, pageId);
+          },
+          onCancel: () {
+            widget.setUsers(List<User>.from(startUsers), pageId);
+            widget.setEditMode(editMode, null);
+          });
+
+      // store all current users for now:
+    } else {
+      // Switching to edit mode
+      // Store current state in a temp variable:
+      startUsers = List<User>.from(widget.users);
+
+      widget.setEditMode(editMode, null);
+    }
   }
 
   void _setRanked(bool ranked) {
@@ -86,6 +121,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
     widget.resetScores(pageId);
     widget.db
         .rawUpdate('UPDATE scores SET score = 0 WHERE pageId = ?', [pageId]);
+  }
+
+  void _renameUser(int pageId, int index, User model) {
+    setState(() {});
   }
 
   int pageId = 0;
@@ -185,24 +224,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   ],
                 ),
               ),
-              // PopupMenuButton<String>(
-              //   onSelected: (String result) {
-              //     switch (result) {
-              //       case 'edit':
-              //         _toggleEditMode();
-              //         break;
-              //     // Add more cases if needed
-              //     }
-              //   },
-              //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              //     PopupMenuItem<String>(
-              //       value: 'edit',
-              //       child: Text(_isEditMode ? locale.done : locale.edit),
-              //     ),
-              //     // Add more menu items if needed
-              //   ],
-              //   icon: Icon(Icons.more_vert),
-              // ),
             ],
           ),
         ),
@@ -210,114 +231,73 @@ class _ScoreSheetState extends State<ScoreSheet> {
         Expanded(
           child: Semantics(
             label: "Player list",
-            child: ListView.builder(
-                semanticChildCount: widget.users.length + 1,
-                padding: const EdgeInsets.only(bottom: 96),
-                itemCount: widget.users.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == widget.users.length) {
-                    // Add a button that looks like a list item but uses a secondary color and is a button to add a new player
-                    return Semantics(
-                      label: locale.addPlayer,
-                      child: Card(
-                        color: Theme.of(context).colorScheme.surface,
-                        // color: Theme.of(context).colorScheme.secondaryContainer,
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).colorScheme.outline),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.add),
-                              const SizedBox(width: 8),
-                              ActionButtonText(text: locale.addPlayer),
-                              // Add spacing between the text and the icon:
-                            ],
-                          ),
-                          onTap: () {
-                            User model = User(
-                                name: "", id: "$pageId-${widget.users.length}");
-                            UserFormWidget.showUserFormDialog(
-                                context, locale, model, () {
-                              widget.addUser(pageId, model);
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  } else {
-                    User activeUser = widget.users[index];
-
-                    String capitalizeFirstLetter(String text) {
-                      if (text.isEmpty) return text;
-                      return text[0].toUpperCase() + text.substring(1);
-                    }
-
-                    return Semantics(
-                      child: Card(
-                        elevation: 4,
-                        child: ListTile(
-                          title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Wrap(
-                                  spacing: 16,
-                                  children: [
-                                    if (widget.config.ranked)
-                                      Semantics(
-                                          label: locale.semanticRank,
-                                          child: Text("${activeUser.rank}.")),
-                                    Semantics(
-                                      label: locale.semanticName,
-                                      child: Text(capitalizeFirstLetter(
-                                          activeUser.name)),
-                                    ),
-                                  ],
-                                ),
-                                Semantics(
-                                    label: locale.semanticScore,
-                                    child: Text("${activeUser.score}"))
-                              ]),
-                          trailing: (() {
-                            if (widget.config.ranked) {
-                              if (activeUser.score == widget.topScore) {
-                                return Semantics(
-                                    excludeSemantics: true,
-                                    child: const Icon(Icons.star,
-                                        color: Colors.amber));
-                              }
-                              return Semantics(
-                                  excludeSemantics: true,
-                                  child: const Icon(null));
-                            }
-                            return null;
-                          })(),
-                          onLongPress: () {
-                            ConfirmDialog.show(
-                              context: context,
+            child: _isEditMode
+                ? ReorderableListView(
+                    buildDefaultDragHandles: false,
+                    onReorder: (int oldIndex, int newIndex) {
+                      setState(() {
+                        if (newIndex > oldIndex) {
+                          newIndex -= 1;
+                        }
+                        final User user = widget.users.removeAt(oldIndex);
+                        widget.users.insert(newIndex, user);
+                      });
+                    },
+                    children: [
+                      for (int index = 0; index < widget.users.length; index++)
+                        Semantics(
+                          key: ValueKey(widget.users[index]),
+                          child: Card(
+                            elevation: 4,
+                            child: UserEditTile(
                               locale: locale,
-                              title: locale.deleteUser(activeUser.name),
-                              content: locale.deletePrompt,
-                              confirmText: locale.delete,
-                              onConfirm: () {
-                                _deleteUser(index);
-                              },
-                            );
-                          },
-                          onTap: () {
-                            PointsFormWidget.showPointsDialog(
-                                context, locale, activeUser.name, (int points) {
-                              widget.addScore(pageId, index, points);
-                            });
-                          },
+                              ranked: widget.config.ranked,
+                              activeUser: widget.users[index],
+                              topScore: widget.topScore,
+                              index: index,
+                              pageId: pageId,
+                              deleteUser: _deleteUser,
+                              setScore: widget.setScore,
+                              renameUser: (User model) =>
+                                  widget.renameUser(pageId, index, model),
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                }),
+                    ],
+                  )
+                : ListView.builder(
+                    semanticChildCount: widget.users.length + 1,
+                    padding: const EdgeInsets.only(bottom: 96),
+                    itemCount: widget.users.length + 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == widget.users.length) {
+                        return AddPlayerWidget(
+                          locale: locale,
+                          pageId: pageId,
+                          widget: widget,
+                          enabled: !_isEditMode,
+                        );
+                      } else {
+                        User activeUser = widget.users[index];
+
+                        return Semantics(
+                          child: Card(
+                            elevation: 4,
+                            child: UserTile(
+                              locale: locale,
+                              ranked: widget.config.ranked,
+                              activeUser: activeUser,
+                              topScore: widget.topScore,
+                              index: index,
+                              pageId: pageId,
+                              deleteUser: _deleteUser,
+                              addScore: widget.addScore,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ),
         ),
       ],

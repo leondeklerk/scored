@@ -26,6 +26,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(userName) => "Remove ${userName}";
 
+  static String m3(userName) => "Rename ${userName}";
+
+  static String m4(userName) => "${userName} - Set points";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "add": MessageLookupByLibrary.simpleMessage("Add"),
@@ -44,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to remove this player?"),
         "deleteUser": m2,
+        "discard": MessageLookupByLibrary.simpleMessage("Discard"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -58,10 +63,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "ranked": MessageLookupByLibrary.simpleMessage("Rank"),
         "rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "renamePage": MessageLookupByLibrary.simpleMessage("Rename sheet"),
+        "renameUser": m3,
         "reset": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to reset all scores?"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "saveChangesContent": MessageLookupByLibrary.simpleMessage(
+            "Do you want to save the changes?"),
+        "saveChangesTitle":
+            MessageLookupByLibrary.simpleMessage("Save changes"),
         "score": MessageLookupByLibrary.simpleMessage("Score"),
         "scoreInvalidError":
             MessageLookupByLibrary.simpleMessage("Enter a valid number"),
@@ -88,6 +99,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rank order - Highest score first"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang order - Lowest score first"),
+        "set": MessageLookupByLibrary.simpleMessage("Set"),
+        "setPointsUser": m4,
         "settingBaseColor": MessageLookupByLibrary.simpleMessage("Base color"),
         "settingGroupGeneralTitle":
             MessageLookupByLibrary.simpleMessage("General"),

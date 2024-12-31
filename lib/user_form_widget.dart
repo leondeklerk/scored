@@ -63,7 +63,6 @@ class UserFormWidget extends StatefulWidget {
 class UserFormWidgetState extends State<UserFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
-  // final User _user = User(name: "");
   final _scoreRegex = RegExp(r'^-?[0-9]*');
 
   bool validateAndSave() {

@@ -9,6 +9,7 @@ import 'package:scored/theme_notifier.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 
@@ -39,26 +40,25 @@ Future<void> createDb(Database db) async {
   await db.execute(
       'CREATE TABLE IF NOT EXISTS config(ranked INTEGER, reversed INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(pageId));');
   await db.execute(
-      'CREATE TABLE IF NOT EXISTS users(id TEXT, name TEXT, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(id, pageId));');
+      'CREATE TABLE IF NOT EXISTS users(id TEXT, name TEXT, `order` INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(id, pageId));');
   await db.execute(
       'CREATE TABLE IF NOT EXISTS scores(userId TEXT, pageId INTEGER, score INTEGER, FOREIGN KEY(userId) REFERENCES users(id), FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(userId, pageId));');
 }
 
 class ScoredApp extends StatelessWidget {
-
   const ScoredApp({
     super.key,
   });
 
   Future<PersistedState> getState() async {
     final database = await openDatabase(
-      // Set the path to the database. Note: Using the `join` function from the
-      // `path` package is best practice to ensure the path is correctly
-      // constructed for each platform.
+        // Set the path to the database. Note: Using the `join` function from the
+        // `path` package is best practice to ensure the path is correctly
+        // constructed for each platform.
         join(await getDatabasesPath(), 'scored.db'),
         onCreate: (db, version) async {
-          await createDb(db);
-        }, onUpgrade: (db, oldVersion, newVersion) async {
+      await createDb(db);
+    }, onUpgrade: (db, oldVersion, newVersion) async {
       if (newVersion >= 2 && newVersion <= 5) {
         await db.execute("DROP TABLE IF EXISTS config");
         await db.execute("DROP TABLE IF EXISTS users");
@@ -73,11 +73,33 @@ class ScoredApp extends StatelessWidget {
       }
 
       if (newVersion == 7) {}
-    }, version: 7);
+
+      if (newVersion == 8) {
+        await db.execute("ALTER TABLE users ADD COLUMN `order` INTEGER;");
+        // Get all users from the database:
+        final List<Map<String, dynamic>> users = await db.query('users');
+        for (var i = 0; i < users.length; i++) {
+          String id = users[i]['id'];
+          // Get the id and split it based on "-":
+          List<String> idParts = id.split("-");
+
+          String newId = Uuid().v4();
+
+          // Update the order of the user based on the second part of the id
+          await db.update(
+              'users', {'order': int.parse(idParts[1]), 'id': newId},
+              where: 'id = ?', whereArgs: [id]);
+
+          // Update the user ID in the scores table
+          await db.update('scores', {'userId': newId},
+              where: 'userId = ?', whereArgs: [id]);
+        }
+      }
+    }, version: 8);
 
     final List<Map<String, dynamic>> configs = await database.query('config');
     final List<Map<String, dynamic>> users =
-        await database.query('users', orderBy: "name ASC");
+        await database.query('users', orderBy: "`order` ASC");
     final List<Map<String, dynamic>> scores = await database.query('scores');
     final List<Map<String, dynamic>> pages =
         await database.query('pages', orderBy: "`order` ASC");
@@ -103,6 +125,7 @@ class ScoredApp extends StatelessWidget {
         id: users[i]['id'] as String,
         name: users[i]['name'] as String,
         pageId: users[i]['pageId'] as int,
+        order: users[i]['order'] as int,
       );
     });
 
@@ -114,7 +137,8 @@ class ScoredApp extends StatelessWidget {
       );
     });
 
-    PersistedState state = PersistedState(users: {}, pages: [], configs: {}, db: database);
+    PersistedState state =
+        PersistedState(users: {}, pages: [], configs: {}, db: database);
 
     for (var i = 0; i < configList.length; i++) {
       ConfigModel config = configList[i];
@@ -132,8 +156,8 @@ class ScoredApp extends StatelessWidget {
 
     for (var i = 0; i < usersList.length; i++) {
       var userEntry = usersList[i];
-      var user = User(name: userEntry.name);
-      user.id = userEntry.id;
+      var user =
+          User(name: userEntry.name, order: userEntry.order, id: userEntry.id);
       if (state.users[userEntry.pageId] == null) {
         state.users[userEntry.pageId] = {};
       }
@@ -171,7 +195,9 @@ class ScoredApp extends StatelessWidget {
                 builder: (context, AsyncSnapshot<PersistedState> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return HomeScreen(
-                        db: snapshot.data!.db, state: snapshot.data, notifier: notifier);
+                        db: snapshot.data!.db,
+                        state: snapshot.data,
+                        notifier: notifier);
                   }
                   return Scaffold(
                       body: Center(

@@ -4,39 +4,41 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'action_button_text.dart';
 
-
 class PointsFormWidget extends StatefulWidget {
-  const PointsFormWidget({super.key});
+  final int initialPoints;
+
+  const PointsFormWidget({super.key, required this.initialPoints}) : super();
 
   @override
   PointsFormWidgetState createState() {
     return PointsFormWidgetState();
   }
 
-  static void showPointsDialog(BuildContext context, AppLocalizations locale,
-      String name, Function(int score) onSubmitted) {
+  static void showPointsDialog(
+      BuildContext context,
+      int initialPoints,
+      AppLocalizations locale,
+      String title,
+      String confirm,
+      Function(int score) onSubmitted) {
     final GlobalKey<PointsFormWidgetState> pointsFormKey =
-    GlobalKey<PointsFormWidgetState>();
+        GlobalKey<PointsFormWidgetState>();
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             insetPadding: const EdgeInsets.all(16.0),
-            title: Text(
-                locale.addPointsUser(name)),
+            title: Text(title),
             content: SizedBox(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   PointsFormWidget(
                     key: pointsFormKey,
+                    initialPoints: initialPoints,
                   ),
                 ],
               ),
@@ -46,8 +48,7 @@ class PointsFormWidget extends StatefulWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: ActionButtonText(
-                      text: locale.cancel)),
+                  child: ActionButtonText(text: locale.cancel)),
               TextButton(
                   onPressed: () {
                     if (pointsFormKey.currentState!.validateAndSave()) {
@@ -55,8 +56,7 @@ class PointsFormWidget extends StatefulWidget {
                       onSubmitted(pointsFormKey.currentState!.score);
                     }
                   },
-                  child: ActionButtonText(
-                      text: locale.add))
+                  child: ActionButtonText(text: confirm))
             ],
           );
         });
@@ -83,6 +83,7 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _controller.value = TextEditingValue(text: widget.initialPoints.toString());
     AppLocalizations locale = AppLocalizations.of(context)!;
     _controller.selection = TextSelection(
         baseOffset: 0, extentOffset: _controller.value.text.length);
