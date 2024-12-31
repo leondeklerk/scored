@@ -14,7 +14,7 @@ class UserTile extends StatelessWidget {
   final void Function(int index) deleteUser;
   final void Function(int pageId, int index, int points) addScore;
 
-  UserTile({
+  const UserTile({super.key, 
     required this.locale,
     required this.ranked,
     required this.activeUser,

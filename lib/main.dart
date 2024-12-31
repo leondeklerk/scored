@@ -183,6 +183,7 @@ class ScoredApp extends StatelessWidget {
             theme: notifier.lightTheme,
             darkTheme: notifier.darkTheme,
             themeMode: notifier.themeMode,
+            locale: notifier.locale,
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -195,9 +196,9 @@ class ScoredApp extends StatelessWidget {
                 builder: (context, AsyncSnapshot<PersistedState> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return HomeScreen(
-                        db: snapshot.data!.db,
-                        state: snapshot.data,
-                        notifier: notifier);
+                      db: snapshot.data!.db,
+                      state: snapshot.data,
+                    );
                   }
                   return Scaffold(
                       body: Center(

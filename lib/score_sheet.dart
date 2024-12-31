@@ -123,10 +123,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
         .rawUpdate('UPDATE scores SET score = 0 WHERE pageId = ?', [pageId]);
   }
 
-  void _renameUser(int pageId, int index, User model) {
-    setState(() {});
-  }
-
   int pageId = 0;
 
   @override

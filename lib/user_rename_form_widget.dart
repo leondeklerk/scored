@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/models/user.dart';
-import 'package:scored/models/user_model.dart';
 import 'action_button_text.dart';
-import 'models/user_model.dart';
 
 class UserRenameFormWidget extends StatefulWidget {
   const UserRenameFormWidget({super.key, required this.baseModel});

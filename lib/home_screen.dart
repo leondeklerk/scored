@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/page_form_widget.dart';
 import 'package:scored/page_rename_form_widget.dart';
 import 'package:scored/score_sheet.dart';
-import 'package:scored/theme_notifier.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'setting_screen.dart';
@@ -23,13 +22,8 @@ import 'package:sqflite/sqflite.dart';
 class HomeScreen extends StatefulWidget {
   final Database db;
   final PersistedState? state;
-  final SettingsNotifier notifier;
 
-  const HomeScreen(
-      {super.key,
-      required this.db,
-      required this.state,
-      required this.notifier});
+  const HomeScreen({super.key, required this.db, required this.state});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -268,8 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: _editMode
                   ? null
                   : () {
-                      SettingScreen.showSettings(
-                          context, locale, widget.notifier);
+                      SettingScreen.showSettings(context);
                     },
               icon: const Icon(Icons.tune))
         ],
