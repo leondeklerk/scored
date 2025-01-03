@@ -247,7 +247,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 ),
                                 labelPadding: const EdgeInsets.all(0),
                                 selected: _isEditMode,
-                                onSelected: widget.users.isEmpty
+                                onSelected: widget.users.isEmpty && !_isEditMode
                                     ? null
                                     : _toggleEditMode,
                               ),
