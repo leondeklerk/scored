@@ -13,7 +13,7 @@ class UserEditTile extends StatelessWidget {
   final int index;
   final int pageId;
   final void Function(int index) deleteUser;
-  final void Function(int pageId, int index, int points) setScore;
+  final void Function(int points) setScore;
   final void Function(User model) renameUser;
 
   const UserEditTile({
@@ -41,48 +41,57 @@ class UserEditTile extends StatelessWidget {
         horizontalTitleGap: 0,
         title:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          InkWell(
-            borderRadius: BorderRadius.circular(8.0), // Adjust the ra
-            onTap: () {
-              UserRenameFormWidget.showUserRenameDialog(
-                  context, locale, activeUser, (User model) {
-                renameUser(model);
-              });
-            },
-            child: Container(
-              margin:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-              child: Text(
-                activeUser.name,
+          Semantics(
+            label: locale.semanticEditName,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8.0), // Adjust the ra
+              onTap: () {
+                UserRenameFormWidget.showUserRenameDialog(
+                    context, locale, activeUser, (User model) {
+                  renameUser(model);
+                });
+              },
+              child: Container(
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                child: Text(
+                  activeUser.name,
+                ),
               ),
             ),
           ),
-          InkWell(
-            borderRadius: BorderRadius.circular(8.0), // Adjust the ra
-            onTap: () {
-              PointsFormWidget.showPointsDialog(
-                  context,
-                  activeUser.score,
-                  locale,
-                  locale.setPointsUser(activeUser.name),
-                  locale.set, (int points) {
-                setScore(pageId, index, points);
-              });
-            },
-            child: Container(
-              margin:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-              child: Text(
-                "${activeUser.score}",
+          Semantics(
+            label: locale.semanticEditScore,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8.0), // Adjust the ra
+              onTap: () {
+                PointsFormWidget.showPointsDialog(
+                    context,
+                    activeUser.score,
+                    locale,
+                    locale.setPointsUser(activeUser.name),
+                    locale.set, (int points) {
+                  setScore(points);
+                });
+              },
+              child: Container(
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                child: Text(
+                  "${activeUser.score}",
+                ),
               ),
             ),
           ),
         ]),
         leading: ReorderableDragStartListener(
           index: index,
-          child: IconButton(
-            icon: const Icon(Icons.drag_indicator),
-            onPressed: () {},
+          child: Semantics(
+            label: locale.semanticReorder,
+            child: IconButton(
+              icon: const Icon(Icons.drag_indicator),
+              onPressed: () {},
+            ),
           ),
         ),
         trailing: Semantics(

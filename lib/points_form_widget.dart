@@ -28,6 +28,7 @@ class PointsFormWidget extends StatefulWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             insetPadding: const EdgeInsets.all(16.0),
             title: Text(title),
             content: SizedBox(
@@ -75,6 +76,9 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
   bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      if (int.tryParse(_controller.value.text) == null) {
+        return false;
+      }
       score = int.parse(_controller.value.text);
       return true;
     }
@@ -107,6 +111,26 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
 
               if (!_pointsRegex.hasMatch(value) || value == "-") {
                 return locale.scoreInvalidError;
+              }
+
+              int max = 5;
+
+              if (widget.initialPoints != 0) {
+                max = widget.initialPoints.toString().length;
+                if (widget.initialPoints < 0) {
+                  max = max - 1;
+                }
+              }
+
+              // Numbers can be the initial amount of digits (excluding the sign)
+              if (value.contains("-")) {
+                if (value.length > max + 1) {
+                  return locale.pointsLengthError(max);
+                }
+              } else {
+                if (value.length > max) {
+                  return locale.pointsLengthError(max);
+                }
               }
 
               return null;

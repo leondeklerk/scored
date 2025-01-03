@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/models/page_model.dart';
 
 import 'action_button_text.dart';
 
@@ -21,6 +22,7 @@ class PageFormWidget extends StatefulWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
           title: Text(locale.addPage),
           content: SizedBox(
@@ -100,6 +102,11 @@ class PageFormWidgetState extends State<PageFormWidget> {
                 if (value == null || value.isEmpty) {
                   return locale.nameError;
                 }
+
+                if (value.length > PageModel.maxNameLength) {
+                  return locale.nameLengthError(PageModel.maxNameLength);
+                }
+
                 return null;
               },
               decoration: InputDecoration(

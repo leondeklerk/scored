@@ -52,22 +52,85 @@ class SettingScreen {
                       locale.settingLanguageTitle,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    // Dropdown for the language:
-                    DropdownButton<String>(
-                      value: notifier.locale.languageCode,
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          notifier.setLocale(newValue);
-                        }
-                      },
-                      items: AppLocalizations.supportedLocales
-                          .map<DropdownMenuItem<String>>(
-                            (Locale locale) => DropdownMenuItem<String>(
-                              value: locale.languageCode,
-                              child: Text(locale.languageCode.toUpperCase()),
-                            ),
-                          )
-                          .toList(),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Builder(
+                          builder: (BuildContext buttonContext) {
+                            return InkWell(
+                              borderRadius: BorderRadius.circular(8.0),
+                              onTap: () {
+                                final RenderBox button = buttonContext
+                                    .findRenderObject() as RenderBox;
+                                final RenderBox overlay =
+                                    Overlay.of(buttonContext)
+                                        .context
+                                        .findRenderObject() as RenderBox;
+
+                                final Offset buttonPosition =
+                                    button.localToGlobal(Offset.zero,
+                                        ancestor: overlay);
+                                final Size buttonSize = button.size;
+
+                                // Add spacing by increasing the top offset
+                                const double menuPadding = 8.0;
+
+                                showMenu<String>(
+                                  context: buttonContext,
+                                  position: RelativeRect.fromLTRB(
+                                    buttonPosition
+                                        .dx, // Left aligned with the button
+                                    buttonPosition.dy +
+                                        buttonSize.height +
+                                        menuPadding, // Add padding here
+                                    overlay.size.width -
+                                        (buttonPosition.dx) -
+                                        buttonSize.width,
+                                    overlay.size.height -
+                                        (buttonPosition.dy +
+                                            buttonSize.height +
+                                            menuPadding),
+                                  ),
+                                  items: AppLocalizations.supportedLocales
+                                      .map<PopupMenuItem<String>>(
+                                        (Locale locale) =>
+                                            PopupMenuItem<String>(
+                                          value: locale.languageCode,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Text(locale.languageCode
+                                                .toUpperCase()),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Round the menu
+                                  ),
+                                ).then((String? result) {
+                                  if (result != null) {
+                                    notifier.setLocale(result);
+                                  }
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                child: Text(
+                                    notifier.locale.languageCode.toUpperCase(),
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),

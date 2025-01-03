@@ -26,9 +26,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(userName) => "Remove ${userName}";
 
-  static String m3(userName) => "Rename ${userName}";
+  static String m3(length) => "Name can\'t be longer than ${length} characters";
 
-  static String m4(userName) => "${userName} - Set points";
+  static String m4(size) => "Points can\'t be larger than ${size} digits";
+
+  static String m5(userName) => "Rename ${userName}";
+
+  static String m6(userName) => "${userName} - Set points";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -51,8 +55,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "discard": MessageLookupByLibrary.simpleMessage("Discard"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "editableList":
+            MessageLookupByLibrary.simpleMessage("Editable player list"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nameError": MessageLookupByLibrary.simpleMessage("Enter a name"),
+        "nameLengthError": m3,
         "page": MessageLookupByLibrary.simpleMessage("Score sheet"),
         "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to remove this score sheet?"),
@@ -60,10 +67,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "points": MessageLookupByLibrary.simpleMessage("Points"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Enter the number of points"),
+        "pointsLengthError": m4,
         "ranked": MessageLookupByLibrary.simpleMessage("Rank"),
         "rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "renamePage": MessageLookupByLibrary.simpleMessage("Rename sheet"),
-        "renameUser": m3,
+        "renameUser": m5,
         "reset": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Reset"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
@@ -85,6 +93,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Select a color"),
         "semanticAddPoints":
             MessageLookupByLibrary.simpleMessage("Add points to player."),
+        "semanticEditName": MessageLookupByLibrary.simpleMessage("Edit name"),
+        "semanticEditScore": MessageLookupByLibrary.simpleMessage("Edit score"),
         "semanticList": MessageLookupByLibrary.simpleMessage("List of players"),
         "semanticListControls":
             MessageLookupByLibrary.simpleMessage("Player list controls"),
@@ -94,13 +104,15 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Show player ranks"),
         "semanticRemovePlayer":
             MessageLookupByLibrary.simpleMessage("Remove player."),
+        "semanticReorder":
+            MessageLookupByLibrary.simpleMessage("Reorder handle"),
         "semanticScore": MessageLookupByLibrary.simpleMessage("Score"),
         "semanticsReverseAsc": MessageLookupByLibrary.simpleMessage(
             "Rank order - Highest score first"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang order - Lowest score first"),
         "set": MessageLookupByLibrary.simpleMessage("Set"),
-        "setPointsUser": m4,
+        "setPointsUser": m6,
         "settingBaseColor": MessageLookupByLibrary.simpleMessage("Base color"),
         "settingGroupGeneralTitle":
             MessageLookupByLibrary.simpleMessage("General"),

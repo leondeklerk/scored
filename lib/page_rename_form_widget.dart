@@ -25,6 +25,7 @@ class PageRenameFormWidget extends StatefulWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
           title: Text(locale.renamePage),
           content: SizedBox(
@@ -45,8 +46,7 @@ class PageRenameFormWidget extends StatefulWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: ActionButtonText(
-                    text: locale.cancel)),
+                child: ActionButtonText(text: locale.cancel)),
             TextButton(
                 onPressed: () {
                   if (pageKey.currentState!.validateAndSave()) {
@@ -54,8 +54,7 @@ class PageRenameFormWidget extends StatefulWidget {
                     onSubmitted(pageKey.currentState!.getResult());
                   }
                 },
-                child: ActionButtonText(
-                    text: locale.rename))
+                child: ActionButtonText(text: locale.rename))
           ],
         );
       },
@@ -98,6 +97,11 @@ class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
                 if (value == null || value.isEmpty) {
                   return locale.nameError;
                 }
+
+                if (value.length > PageModel.maxNameLength) {
+                  return locale.nameLengthError(PageModel.maxNameLength);
+                }
+
                 return null;
               },
               decoration: InputDecoration(

@@ -436,22 +436,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               return;
                             }
                             setState(() {
-                              list[userIndex].score += points;
+                              if (list[userIndex].score + points >
+                                  0x7fffffffffffffff) {
+                                list[userIndex].score = 0x7fffffffffffffff;
+                              } else {
+                                list[userIndex].score += points;
+                              }
                               _storeUser(pageId, list[userIndex]);
                               _determineOrder(pageId);
                             });
                           },
-                          setScore: (pageId, userIndex, points) {
-                            var list = userLists[pageId];
-                            if (list == null) {
-                              return;
-                            }
-                            setState(() {
-                              list[userIndex].score = points;
-                            });
-                          },
+                          // setScore: (pageId, userIndex, points) {
+                          //   setState(() {
+                          //     userLists[pageId]![userIndex].score = points;
+                          //   });
+                          // },
                           setUsers: (users, pageId) => _setUsers(users, pageId),
-                          renameUser: (pageId, userIndex, user) {
+                          updateUser: (pageId, userIndex, user) {
                             setState(() {
                               userLists[pageId]![userIndex] = user;
                             });

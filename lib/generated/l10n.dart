@@ -230,6 +230,16 @@ class S {
     );
   }
 
+  /// `Points can't be larger than {size} digits`
+  String pointsLengthError(int size) {
+    return Intl.message(
+      'Points can\'t be larger than $size digits',
+      name: 'pointsLengthError',
+      desc: 'Points length error template',
+      args: [size],
+    );
+  }
+
   /// `Enter a name`
   String get nameError {
     return Intl.message(
@@ -237,6 +247,16 @@ class S {
       name: 'nameError',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Name can't be longer than {length} characters`
+  String nameLengthError(int length) {
+    return Intl.message(
+      'Name can\'t be longer than $length characters',
+      name: 'nameLengthError',
+      desc: 'Name length error template',
+      args: [length],
     );
   }
 
@@ -695,6 +715,46 @@ class S {
     return Intl.message(
       'Discard',
       name: 'discard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Editable player list`
+  String get editableList {
+    return Intl.message(
+      'Editable player list',
+      name: 'editableList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reorder handle`
+  String get semanticReorder {
+    return Intl.message(
+      'Reorder handle',
+      name: 'semanticReorder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit score`
+  String get semanticEditScore {
+    return Intl.message(
+      'Edit score',
+      name: 'semanticEditScore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit name`
+  String get semanticEditName {
+    return Intl.message(
+      'Edit name',
+      name: 'semanticEditName',
       desc: '',
       args: [],
     );

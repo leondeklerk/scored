@@ -18,7 +18,27 @@
   "addPlayer": "Add player",
   "points": "Points",
   "pointsError": "Enter the number of points",
+  "pointsLengthError": "Points can't be larger than {size} digits",
+  "@pointsLengthError": {
+    "description": "Points length error template",
+    "placeholders": {
+      "size": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "nameError": "Enter a name",
+  "nameLengthError": "Name can't be longer than {length} characters",
+  "@nameLengthError": {
+    "description": "Name length error template",
+    "placeholders": {
+      "length": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
   "player": "Player",
   "scoreMissingError": "Enter the initial score",
   "scoreInvalidError": "Enter a valid number",
@@ -109,5 +129,9 @@
   "saveChangesTitle": "Save changes",
   "saveChangesContent": "Do you want to save the changes?",
   "save": "Save",
-  "discard": "Discard"
+  "discard": "Discard",
+  "editableList": "Editable player list",
+  "semanticReorder": "Reorder handle",
+  "semanticEditScore": "Edit score",
+  "semanticEditName": "Edit name"
 }

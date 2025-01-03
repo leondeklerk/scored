@@ -18,7 +18,27 @@
   "addPlayer": "Speler toevoegen",
   "points": "Punten",
   "pointsError": "Vul het aantal punten int",
+  "pointsLengthError": "Punten mogen maximaal {size} cijfers lang zijn",
+  "@pointsLengthError": {
+    "description": "Points length error template",
+    "placeholders": {
+      "size": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "nameError": "Vul de naam van de speler in",
+  "nameLengthError": "De naam mag niet langer zijn dan {length} karakters",
+  "@nameLengthError": {
+    "description": "Name length error template",
+    "placeholders": {
+      "length": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
   "player": "Speler",
   "scoreMissingError": "Voer de initiele score in",
   "scoreInvalidError": "Voer een geldig nummer in",
@@ -109,5 +129,9 @@
   "saveChangesTitle": "Wijzigingen opslaan",
   "saveChangesContent": "Wil je de wijzigingen opslaan?",
   "save": "Opslaan",
-  "discard": "Annuleren"
+  "discard": "Annuleren",
+  "editableList": "Bewerkbare spelerslijst",
+  "semanticReorder": "Herorden handvat",
+  "semanticEditScore": "Bewerk score",
+  "semanticEditName": "Bewerk naam"
 }

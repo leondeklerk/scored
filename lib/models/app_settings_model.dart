@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
+import 'dart:ui' as ui;
 
 class AppSettingsModel {
   Color seedColor;
@@ -22,7 +22,8 @@ class AppSettingsModel {
       seedColor: Color(prefs.getInt('seed_color') ?? 0xFF673AB7),
       useCustomTheme: prefs.getBool('is_custom_theme') ?? false,
       themeMode: getThemeMode(prefs.getString('theme_mode') ?? 'system'),
-      locale: Locale(prefs.getString('locale') ?? Platform.localeName),
+      locale: Locale(prefs.getString('locale') ??
+          ui.PlatformDispatcher.instance.locale.languageCode),
     );
 
     return appSettings;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scored/add_player_widget.dart';
+import 'package:scored/generated/l10n.dart';
 import 'package:scored/models/config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/user_edit_tile.dart';
@@ -22,8 +23,7 @@ class ScoreSheet extends StatefulWidget {
   final void Function(int pageId) resetScores;
   final void Function(int pageId, int userIndex) deleteUser;
   final void Function(int pageId, int userIndex, int score) addScore;
-  final void Function(int pageId, int userIndex, int score) setScore;
-  final void Function(int pageId, int userIndex, User user) renameUser;
+  final void Function(int pageId, int userIndex, User user) updateUser;
   final int topScore;
   final void Function(bool isEditMode, int? pageId) setEditMode;
   final void Function(List<User> users, int pageId) setUsers;
@@ -40,8 +40,7 @@ class ScoreSheet extends StatefulWidget {
       required this.resetScores,
       required this.deleteUser,
       required this.addScore,
-      required this.setScore,
-      required this.renameUser,
+      required this.updateUser,
       required this.topScore,
       required this.setUsers,
       required this.setEditMode,
@@ -55,8 +54,34 @@ class _ScoreSheetState extends State<ScoreSheet> {
   bool get _isEditMode => widget.isEditMode;
   List<User> startUsers = [];
 
+  bool get _isDirty {
+    if (_isEditMode) {
+      // Check if users and startUsers are the same:
+      if (widget.users.length != startUsers.length) {
+        return true;
+      } else {
+        for (int i = 0; i < widget.users.length; i++) {
+          User oldUser = startUsers[i];
+          User newUser = widget.users[i];
+          if (oldUser.id != newUser.id ||
+              oldUser.name != newUser.name ||
+              oldUser.order != newUser.order ||
+              oldUser.score != newUser.score) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   void _toggleEditMode(bool editMode) {
     if (_isEditMode) {
+      if (!_isDirty) {
+        widget.setEditMode(editMode, null);
+        return;
+      }
+
       AppLocalizations locale = AppLocalizations.of(context)!;
       ConfirmDialog.show(
           context: context,
@@ -70,12 +95,14 @@ class _ScoreSheetState extends State<ScoreSheet> {
             for (int i = 0; i < widget.users.length; i++) {
               widget.users[i].order = i;
             }
-            // Store in the db:
+
+            startUsers = [];
 
             widget.setEditMode(editMode, pageId);
           },
           onCancel: () {
             widget.setUsers(List<User>.from(startUsers), pageId);
+            startUsers = [];
             widget.setEditMode(editMode, null);
           });
 
@@ -205,16 +232,49 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 })(),
                                 labelPadding: EdgeInsets.zero),
                           ),
-                          FilterChip(
-                            avatar: (_isEditMode)
-                                ? const Icon(Icons.done)
-                                : const Icon(Icons.edit),
-                            showCheckmark: false,
-                            label: Semantics(
-                                excludeSemantics: true, child: const Text("")),
-                            labelPadding: const EdgeInsets.all(0),
-                            selected: _isEditMode,
-                            onSelected: _toggleEditMode,
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              FilterChip(
+                                avatar: (_isEditMode)
+                                    ? const Icon(Icons.done)
+                                    : const Icon(Icons.edit),
+                                showCheckmark: false,
+                                label: Semantics(
+                                  excludeSemantics: false,
+                                  label:
+                                      _isEditMode ? locale.done : locale.edit,
+                                  child: const Text(""),
+                                ),
+                                labelPadding: const EdgeInsets.all(0),
+                                selected: _isEditMode,
+                                onSelected: _toggleEditMode,
+                              ),
+                              Visibility(
+                                visible: _isDirty,
+                                maintainSize: false,
+                                child: Positioned(
+                                  top: 0, // Adjust positioning for the badge
+                                  right: 0, // Adjust positioning for the badge
+                                  child: Container(
+                                    height: 12, // Adjust badge size
+                                    width: 12,
+                                    decoration: BoxDecoration(
+                                      color: Colors
+                                          .transparent, // Badge background color from theme
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceTint,
+                                      Icons.emergency,
+                                      size: 12, // Icon size inside the badge
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ]),
                   ],
@@ -226,7 +286,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
         const Divider(),
         Expanded(
           child: Semantics(
-            label: "Player list",
+            label: locale.editableList,
             child: _isEditMode
                 ? ReorderableListView(
                     buildDefaultDragHandles: false,
@@ -253,9 +313,13 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               index: index,
                               pageId: pageId,
                               deleteUser: _deleteUser,
-                              setScore: widget.setScore,
+                              setScore: (int points) {
+                                User activeUser = widget.users[index];
+                                widget.updateUser(pageId, index,
+                                    activeUser.copyWith(score: points));
+                              },
                               renameUser: (User model) =>
-                                  widget.renameUser(pageId, index, model),
+                                  widget.updateUser(pageId, index, model),
                             ),
                           ),
                         ),

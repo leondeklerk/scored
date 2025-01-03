@@ -26,9 +26,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(userName) => "Verwijder ${userName}";
 
-  static String m3(userName) => "Hernoem ${userName}";
+  static String m3(length) =>
+      "De naam mag niet langer zijn dan ${length} karakters";
 
-  static String m4(userName) => "${userName} - Punten instellen";
+  static String m4(size) => "Punten mogen maximaal ${size} cijfers lang zijn";
+
+  static String m5(userName) => "Hernoem ${userName}";
+
+  static String m6(userName) => "${userName} - Punten instellen";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -52,9 +57,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "discard": MessageLookupByLibrary.simpleMessage("Annuleren"),
         "done": MessageLookupByLibrary.simpleMessage("Klaar"),
         "edit": MessageLookupByLibrary.simpleMessage("Bewerk"),
+        "editableList":
+            MessageLookupByLibrary.simpleMessage("Bewerkbare spelerslijst"),
         "name": MessageLookupByLibrary.simpleMessage("Naam"),
         "nameError": MessageLookupByLibrary.simpleMessage(
             "Vul de naam van de speler in"),
+        "nameLengthError": m3,
         "page": MessageLookupByLibrary.simpleMessage("Scoreblad"),
         "pageDeletePrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je dit scoreblad wilt verwijderen?"),
@@ -62,10 +70,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "points": MessageLookupByLibrary.simpleMessage("Punten"),
         "pointsError":
             MessageLookupByLibrary.simpleMessage("Vul het aantal punten int"),
+        "pointsLengthError": m4,
         "ranked": MessageLookupByLibrary.simpleMessage("Stand"),
         "rename": MessageLookupByLibrary.simpleMessage("Hernoem"),
         "renamePage": MessageLookupByLibrary.simpleMessage("Hernoem scoreblad"),
-        "renameUser": m3,
+        "renameUser": m5,
         "reset": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScores": MessageLookupByLibrary.simpleMessage("Herstart"),
         "resetScoresPrompt": MessageLookupByLibrary.simpleMessage(
@@ -87,6 +96,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Selecteer een kleur"),
         "semanticAddPoints": MessageLookupByLibrary.simpleMessage(
             "Voeg punten toe aan de speler."),
+        "semanticEditName": MessageLookupByLibrary.simpleMessage("Bewerk naam"),
+        "semanticEditScore":
+            MessageLookupByLibrary.simpleMessage("Bewerk score"),
         "semanticList": MessageLookupByLibrary.simpleMessage("Spelerslijst"),
         "semanticListControls":
             MessageLookupByLibrary.simpleMessage("Spelerslijst knoppen"),
@@ -96,13 +108,15 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Toon speler rangen"),
         "semanticRemovePlayer":
             MessageLookupByLibrary.simpleMessage("Verwijder de speler."),
+        "semanticReorder":
+            MessageLookupByLibrary.simpleMessage("Herorden handvat"),
         "semanticScore": MessageLookupByLibrary.simpleMessage("Score: "),
         "semanticsReverseAsc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Hoogste score eerst"),
         "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
             "Rang volgorde - Laagste score eerst"),
         "set": MessageLookupByLibrary.simpleMessage("Instellen"),
-        "setPointsUser": m4,
+        "setPointsUser": m6,
         "settingBaseColor": MessageLookupByLibrary.simpleMessage("Basis kleur"),
         "settingGroupGeneralTitle":
             MessageLookupByLibrary.simpleMessage("Algemeen"),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scored/confirm_dialog.dart';
 import 'package:scored/models/user.dart';
 import 'package:scored/points_form_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +13,8 @@ class UserTile extends StatelessWidget {
   final void Function(int index) deleteUser;
   final void Function(int pageId, int index, int points) addScore;
 
-  const UserTile({super.key, 
+  const UserTile({
+    super.key,
     required this.locale,
     required this.ranked,
     required this.activeUser,
@@ -61,18 +61,6 @@ class UserTile extends StatelessWidget {
         }
         return null;
       })(),
-      onLongPress: () {
-        ConfirmDialog.show(
-          context: context,
-          locale: locale,
-          title: locale.deleteUser(activeUser.name),
-          content: locale.deletePrompt,
-          confirmText: locale.delete,
-          onConfirm: () {
-            deleteUser(index);
-          },
-        );
-      },
       onTap: () {
         PointsFormWidget.showPointsDialog(context, 0, locale,
             locale.addPointsUser(activeUser.name), locale.add, (int points) {

@@ -22,6 +22,7 @@ class UserRenameFormWidget extends StatefulWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
           title: Text(locale.renameUser(startModel.name)),
           content: SizedBox(
@@ -71,11 +72,7 @@ class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
   }
 
   User getResult() {
-    return User(
-      id: widget.baseModel.id,
-      name: name,
-      order: widget.baseModel.order,
-    );
+    return widget.baseModel.copyWith(name: name);
   }
 
   @override
@@ -95,6 +92,9 @@ class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale.nameError;
+                }
+                if (value.length > User.maxNameLength) {
+                  return locale.nameLengthError(User.maxNameLength);
                 }
                 return null;
               },
