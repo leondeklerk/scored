@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scored/add_player_widget.dart';
-import 'package:scored/generated/l10n.dart';
 import 'package:scored/models/config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/user_edit_tile.dart';
