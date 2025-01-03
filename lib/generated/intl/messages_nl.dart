@@ -54,7 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePrompt": MessageLookupByLibrary.simpleMessage(
             "Weet je zeker dat je deze speler wilt verwijderen?"),
         "deleteUser": m2,
-        "discard": MessageLookupByLibrary.simpleMessage("Annuleren"),
+        "discard": MessageLookupByLibrary.simpleMessage("Niet opslaan"),
         "done": MessageLookupByLibrary.simpleMessage("Klaar"),
         "edit": MessageLookupByLibrary.simpleMessage("Bewerk"),
         "editableList":

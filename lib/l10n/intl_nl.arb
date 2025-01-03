@@ -129,7 +129,7 @@
   "saveChangesTitle": "Wijzigingen opslaan",
   "saveChangesContent": "Wil je de wijzigingen opslaan?",
   "save": "Opslaan",
-  "discard": "Annuleren",
+  "discard": "Niet opslaan",
   "editableList": "Bewerkbare spelerslijst",
   "semanticReorder": "Herorden handvat",
   "semanticEditScore": "Bewerk score",
