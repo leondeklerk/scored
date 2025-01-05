@@ -4,39 +4,42 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'action_button_text.dart';
 
-
 class PointsFormWidget extends StatefulWidget {
-  const PointsFormWidget({super.key});
+  final int initialPoints;
+
+  const PointsFormWidget({super.key, required this.initialPoints}) : super();
 
   @override
   PointsFormWidgetState createState() {
     return PointsFormWidgetState();
   }
 
-  static void showPointsDialog(BuildContext context, AppLocalizations locale,
-      String name, Function(int score) onSubmitted) {
+  static void showPointsDialog(
+      BuildContext context,
+      int initialPoints,
+      AppLocalizations locale,
+      String title,
+      String confirm,
+      Function(int score) onSubmitted) {
     final GlobalKey<PointsFormWidgetState> pointsFormKey =
-    GlobalKey<PointsFormWidgetState>();
+        GlobalKey<PointsFormWidgetState>();
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             insetPadding: const EdgeInsets.all(16.0),
-            title: Text(
-                locale.addPointsUser(name)),
+            title: Text(title),
             content: SizedBox(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   PointsFormWidget(
                     key: pointsFormKey,
+                    initialPoints: initialPoints,
                   ),
                 ],
               ),
@@ -46,8 +49,7 @@ class PointsFormWidget extends StatefulWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: ActionButtonText(
-                      text: locale.cancel)),
+                  child: ActionButtonText(text: locale.cancel)),
               TextButton(
                   onPressed: () {
                     if (pointsFormKey.currentState!.validateAndSave()) {
@@ -55,8 +57,7 @@ class PointsFormWidget extends StatefulWidget {
                       onSubmitted(pointsFormKey.currentState!.score);
                     }
                   },
-                  child: ActionButtonText(
-                      text: locale.add))
+                  child: ActionButtonText(text: confirm))
             ],
           );
         });
@@ -75,6 +76,9 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
   bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      if (int.tryParse(_controller.value.text) == null) {
+        return false;
+      }
       score = int.parse(_controller.value.text);
       return true;
     }
@@ -83,6 +87,7 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _controller.value = TextEditingValue(text: widget.initialPoints.toString());
     AppLocalizations locale = AppLocalizations.of(context)!;
     _controller.selection = TextSelection(
         baseOffset: 0, extentOffset: _controller.value.text.length);
@@ -106,6 +111,26 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
 
               if (!_pointsRegex.hasMatch(value) || value == "-") {
                 return locale.scoreInvalidError;
+              }
+
+              int max = 5;
+
+              if (widget.initialPoints != 0) {
+                max = widget.initialPoints.toString().length;
+                if (widget.initialPoints < 0) {
+                  max = max - 1;
+                }
+              }
+
+              // Numbers can be the initial amount of digits (excluding the sign)
+              if (value.contains("-")) {
+                if (value.length > max + 1) {
+                  return locale.pointsLengthError(max);
+                }
+              } else {
+                if (value.length > max) {
+                  return locale.pointsLengthError(max);
+                }
               }
 
               return null;

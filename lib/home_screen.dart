@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/page_form_widget.dart';
 import 'package:scored/page_rename_form_widget.dart';
 import 'package:scored/score_sheet.dart';
-import 'package:scored/theme_notifier.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'setting_screen.dart';
@@ -23,13 +22,8 @@ import 'package:sqflite/sqflite.dart';
 class HomeScreen extends StatefulWidget {
   final Database db;
   final PersistedState? state;
-  final SettingsNotifier notifier;
 
-  const HomeScreen(
-      {super.key,
-      required this.db,
-      required this.state,
-      required this.notifier});
+  const HomeScreen({super.key, required this.db, required this.state});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -42,6 +36,23 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController controller = PageController(initialPage: 0);
   Map<int, int> topScores = {};
   final ValueNotifier<int> _pageNotifier = ValueNotifier<int>(0);
+  bool _editMode = false;
+
+  void _setEditMode(bool value, int? pageId) {
+    setState(() {
+      _editMode = value;
+    });
+
+    if (pageId != null) {
+      _storeUsers(pageId);
+      _determineOrder(pageId);
+    }
+  }
+
+  void _setUsers(List<User> users, int pageId) {
+    userLists[pageId] = users;
+    _determineOrder(pageId);
+  }
 
   void _addPage(String? name) async {
     var id = _nextPageId();
@@ -155,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (!config.ranked) {
-      users.sort((userA, userB) => userA.id.compareTo(userB.id));
+      users.sort((userA, userB) => userA.order.compareTo(userB.order));
       return;
     }
 
@@ -186,14 +197,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _storeUser(int pageId, User user) async {
-    UserModel userModel =
-        UserModel(id: user.id, name: user.name, pageId: pageId);
+    UserModel userModel = UserModel(
+        id: user.id, name: user.name, pageId: pageId, order: user.order);
     ScoreModel scoreModel =
         ScoreModel(pageId: pageId, userId: user.id, score: user.score);
     await widget.db.insert('users', userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     await widget.db.insert('scores', scoreModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  void _storeUsers(int pageId) async {
+    var users = userLists[pageId];
+    if (users == null) {
+      return;
+    }
+
+    // Store many at once:
+    var batch = widget.db.batch();
+    for (var user in users) {
+      _storeUser(pageId, user);
+    }
+    batch.commit();
   }
 
   void createInitialPage(String defaultPageName) {
@@ -234,9 +259,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Scored'),
         actions: [
           IconButton(
-              onPressed: () {
-                SettingScreen.showSettings(context, locale, widget.notifier);
-              },
+              onPressed: _editMode
+                  ? null
+                  : () {
+                      SettingScreen.showSettings(context);
+                    },
               icon: const Icon(Icons.tune))
         ],
       ),
@@ -253,9 +280,13 @@ class _HomeScreenState extends State<HomeScreen> {
               count: pages.length,
               effect: ScrollingDotsEffect(
                 maxVisibleDots: 13,
-                activeDotColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                activeDotColor: _editMode
+                    ? Theme.of(context).colorScheme.surfaceContainerHighest
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 // Use primary color for active dot
-                dotColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                dotColor: _editMode
+                    ? Theme.of(context).colorScheme.surfaceContainerLow
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
                 dotWidth: 8,
                 dotHeight: 8,
                 activeDotScale: 1,
@@ -266,6 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: PageView(
               controller: controller,
+              physics: _editMode ? NeverScrollableScrollPhysics() : null,
               onPageChanged: (index) {
                 setState(() {
                   _pageNotifier.value = index;
@@ -295,12 +327,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .textTheme
                                         .bodyMedium
                                         ?.fontWeight)),
-                            onPressed: () {
-                              PageRenameFormWidget.showPageRenameDialog(
-                                  context, locale, page, (PageModel model) {
-                                _renamePage(index, model);
-                              });
-                            },
+                            onPressed: _editMode
+                                ? null
+                                : () {
+                                    PageRenameFormWidget.showPageRenameDialog(
+                                        context, locale, page,
+                                        (PageModel model) {
+                                      _renamePage(index, model);
+                                    });
+                                  },
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: () {
@@ -320,20 +355,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             maintainInteractivity: false,
                             maintainSize: true,
                             child: IconButton(
-                                onPressed: () {
-                                  if (pages.length == 1) {
-                                    return;
-                                  }
-                                  ConfirmDialog.show(
-                                      context: context,
-                                      locale: locale,
-                                      title: locale.deletePage(page.name),
-                                      content: locale.pageDeletePrompt,
-                                      onConfirm: () {
-                                        _deletePage(page.id, index);
+                                onPressed: _editMode
+                                    ? null
+                                    : () {
+                                        if (pages.length == 1) {
+                                          return;
+                                        }
+                                        ConfirmDialog.show(
+                                            context: context,
+                                            locale: locale,
+                                            title: locale.deletePage(page.name),
+                                            content: locale.pageDeletePrompt,
+                                            onConfirm: () {
+                                              _deletePage(page.id, index);
+                                            },
+                                            confirmText: locale.delete);
                                       },
-                                      confirmText: locale.delete);
-                                },
                                 icon: const Icon(Icons.close)),
                           ),
                         ],
@@ -372,11 +409,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               _determineOrder(pageId);
                             });
                           },
-                          clearState: (pageId) {
-                            setState(() {
-                              userLists[pageId] = [];
-                            });
-                          },
+                          isEditMode: _editMode,
+                          setEditMode: _setEditMode,
                           deleteUser: (pageId, userIndex) {
                             setState(() {
                               userLists[pageId]?.removeAt(userIndex);
@@ -402,9 +436,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               return;
                             }
                             setState(() {
-                              list[userIndex].score += points;
+                              if (list[userIndex].score + points >
+                                  0x7fffffffffffffff) {
+                                list[userIndex].score = 0x7fffffffffffffff;
+                              } else {
+                                list[userIndex].score += points;
+                              }
                               _storeUser(pageId, list[userIndex]);
                               _determineOrder(pageId);
+                            });
+                          },
+                          // setScore: (pageId, userIndex, points) {
+                          //   setState(() {
+                          //     userLists[pageId]![userIndex].score = points;
+                          //   });
+                          // },
+                          setUsers: (users, pageId) => _setUsers(users, pageId),
+                          updateUser: (pageId, userIndex, user) {
+                            setState(() {
+                              userLists[pageId]![userIndex] = user;
                             });
                           },
                           topScore: topScores[page.id]!,
@@ -419,17 +469,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            PageFormWidget.showAddPageDialog(context, locale,
-                "${locale.page} - ${DateFormat('HH:mm dd/MM/yy', locale.localeName).format(DateTime.now())}",
-                (String name) {
-              _addPage(name);
-            });
-          },
-          label: Text(locale.addPage.toUpperCase(),
-              style: const TextStyle(fontFamily: "OpenSans")),
-          icon: const Icon(Icons.add)),
+      floatingActionButton: _editMode
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () {
+                PageFormWidget.showAddPageDialog(context, locale,
+                    "${locale.page} - ${DateFormat('HH:mm dd/MM/yy', locale.localeName).format(DateTime.now())}",
+                    (String name) {
+                  _addPage(name);
+                });
+              },
+              label: Text(locale.addPage.toUpperCase(),
+                  style: const TextStyle(fontFamily: "OpenSans")),
+              icon: const Icon(Icons.add)),
     );
   }
 }

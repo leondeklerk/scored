@@ -24,6 +24,7 @@ class UserFormWidget extends StatefulWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
           title: Text(locale.addPlayer),
           content: SizedBox(
@@ -63,7 +64,6 @@ class UserFormWidget extends StatefulWidget {
 class UserFormWidgetState extends State<UserFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
-  // final User _user = User(name: "");
   final _scoreRegex = RegExp(r'^-?[0-9]*');
 
   bool validateAndSave() {
@@ -92,6 +92,9 @@ class UserFormWidgetState extends State<UserFormWidget> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale.nameError;
+                }
+                if (value.length > User.maxNameLength) {
+                  return locale.nameLengthError(User.maxNameLength);
                 }
                 return null;
               },
@@ -122,6 +125,19 @@ class UserFormWidgetState extends State<UserFormWidget> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale.scoreMissingError;
+                }
+
+                int max = 5;
+
+                // Numbers can be 5 digits (6 including the sign)
+                if (value.contains("-")) {
+                  if (value.length > max + 1) {
+                    return locale.pointsLengthError(max);
+                  }
+                } else {
+                  if (value.length > max) {
+                    return locale.pointsLengthError(max);
+                  }
                 }
 
                 if (!_scoreRegex.hasMatch(value) || value == "-") {

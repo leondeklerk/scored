@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "add": "Add",
+  "set": "Set",
   "submit": "Submit",
   "cancel": "Cancel",
   "clear": "Clear",
@@ -8,16 +9,36 @@
   "clearTitle": "Clear all players",
   "clearPrompt": "Are you sure you want to remove all players?",
   "confirm": "Ok",
-  "resetScores": "Reset scores",
+  "resetScores": "Reset",
   "resetScoresPrompt": "Are you sure you want to reset all scores?",
   "reset": "Reset",
-  "ranked": "Ranked",
+  "ranked": "Rank",
   "deletePrompt": "Are you sure you want to remove this player?",
   "delete": "Remove",
   "addPlayer": "Add player",
   "points": "Points",
   "pointsError": "Enter the number of points",
+  "pointsLengthError": "Points can't be larger than {size} digits",
+  "@pointsLengthError": {
+    "description": "Points length error template",
+    "placeholders": {
+      "size": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "nameError": "Enter a name",
+  "nameLengthError": "Name can't be longer than {length} characters",
+  "@nameLengthError": {
+    "description": "Name length error template",
+    "placeholders": {
+      "length": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
   "player": "Player",
   "scoreMissingError": "Enter the initial score",
   "scoreInvalidError": "Enter a valid number",
@@ -42,6 +63,16 @@
       }
     }
   },
+  "setPointsUser": "{userName} - Set points",
+  "@setPointsUser": {
+    "description": "Set points with for user",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "name": "Name",
   "semanticRank": "Rank:",
   "semanticName": "Name:",
@@ -55,6 +86,16 @@
   "semanticsReverseDesc": "Rang order - Lowest score first",
   "standardPageName": "Score sheet",
   "renamePage": "Rename sheet",
+  "renameUser": "Rename {userName}",
+  "@renameUser": {
+    "description": "Rename with username template",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "deletePage": "Remove {page}",
   "@deletePage": {
     "description": "Remove with page name template",
@@ -80,6 +121,17 @@
   "settingThemeModeAuto": "Auto",
   "settingThemeModeLight": "Light",
   "settingThemeModeDark": "Dark",
-  "settingGroupThemeTitle": "Theme"
-
+  "settingLanguageTitle": "Language",
+  "settingGroupThemeTitle": "Theme",
+  "settingGroupGeneralTitle": "General",
+  "done": "Done",
+  "edit": "Edit",
+  "saveChangesTitle": "Save changes",
+  "saveChangesContent": "Do you want to save the changes?",
+  "save": "Save",
+  "discard": "Discard",
+  "editableList": "Editable player list",
+  "semanticReorder": "Reorder handle",
+  "semanticEditScore": "Edit score",
+  "semanticEditName": "Edit name"
 }

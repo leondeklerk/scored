@@ -60,6 +60,16 @@ class S {
     );
   }
 
+  /// `Set`
+  String get set {
+    return Intl.message(
+      'Set',
+      name: 'set',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Submit`
   String get submit {
     return Intl.message(
@@ -130,10 +140,10 @@ class S {
     );
   }
 
-  /// `Reset scores`
+  /// `Reset`
   String get resetScores {
     return Intl.message(
-      'Reset scores',
+      'Reset',
       name: 'resetScores',
       desc: '',
       args: [],
@@ -160,10 +170,10 @@ class S {
     );
   }
 
-  /// `Ranked`
+  /// `Rank`
   String get ranked {
     return Intl.message(
-      'Ranked',
+      'Rank',
       name: 'ranked',
       desc: '',
       args: [],
@@ -220,6 +230,16 @@ class S {
     );
   }
 
+  /// `Points can't be larger than {size} digits`
+  String pointsLengthError(int size) {
+    return Intl.message(
+      'Points can\'t be larger than $size digits',
+      name: 'pointsLengthError',
+      desc: 'Points length error template',
+      args: [size],
+    );
+  }
+
   /// `Enter a name`
   String get nameError {
     return Intl.message(
@@ -227,6 +247,16 @@ class S {
       name: 'nameError',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Name can't be longer than {length} characters`
+  String nameLengthError(int length) {
+    return Intl.message(
+      'Name can\'t be longer than $length characters',
+      name: 'nameLengthError',
+      desc: 'Name length error template',
+      args: [length],
     );
   }
 
@@ -286,6 +316,16 @@ class S {
       '$userName - Add points',
       name: 'addPointsUser',
       desc: 'Add points with included username',
+      args: [userName],
+    );
+  }
+
+  /// `{userName} - Set points`
+  String setPointsUser(String userName) {
+    return Intl.message(
+      '$userName - Set points',
+      name: 'setPointsUser',
+      desc: 'Set points with for user',
       args: [userName],
     );
   }
@@ -417,6 +457,16 @@ class S {
       name: 'renamePage',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Rename {userName}`
+  String renameUser(String userName) {
+    return Intl.message(
+      'Rename $userName',
+      name: 'renameUser',
+      desc: 'Rename with username template',
+      args: [userName],
     );
   }
 
@@ -580,11 +630,131 @@ class S {
     );
   }
 
+  /// `Language`
+  String get settingLanguageTitle {
+    return Intl.message(
+      'Language',
+      name: 'settingLanguageTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Theme`
   String get settingGroupThemeTitle {
     return Intl.message(
       'Theme',
       name: 'settingGroupThemeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General`
+  String get settingGroupGeneralTitle {
+    return Intl.message(
+      'General',
+      name: 'settingGroupGeneralTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message(
+      'Done',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message(
+      'Edit',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save changes`
+  String get saveChangesTitle {
+    return Intl.message(
+      'Save changes',
+      name: 'saveChangesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to save the changes?`
+  String get saveChangesContent {
+    return Intl.message(
+      'Do you want to save the changes?',
+      name: 'saveChangesContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discard`
+  String get discard {
+    return Intl.message(
+      'Discard',
+      name: 'discard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Editable player list`
+  String get editableList {
+    return Intl.message(
+      'Editable player list',
+      name: 'editableList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reorder handle`
+  String get semanticReorder {
+    return Intl.message(
+      'Reorder handle',
+      name: 'semanticReorder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit score`
+  String get semanticEditScore {
+    return Intl.message(
+      'Edit score',
+      name: 'semanticEditScore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit name`
+  String get semanticEditName {
+    return Intl.message(
+      'Edit name',
+      name: 'semanticEditName',
       desc: '',
       args: [],
     );

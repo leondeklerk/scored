@@ -30,6 +30,8 @@ class SettingsNotifier extends ChangeNotifier {
 
   Color get baseColor => _baseColor;
 
+  Locale get locale => _settings.locale;
+
   SettingsNotifier(this._settings) {
     _baseColor = _settings.seedColor;
   }
@@ -41,6 +43,7 @@ class SettingsNotifier extends ChangeNotifier {
     await prefs.setBool('is_custom_theme', useCustomTheme);
     await prefs.setString(
         'theme_mode', AppSettingsModel.themeModeToString(themeMode));
+    await prefs.setString('locale', locale.languageCode);
   }
 
   void setUseCustomTheme(bool value) {
@@ -59,6 +62,11 @@ class SettingsNotifier extends ChangeNotifier {
 
   void setThemeMode(ThemeMode mode) {
     _settings.themeMode = mode;
+    saveSettings();
+  }
+
+  void setLocale(String newLocale) {
+    _settings.locale = Locale(newLocale);
     saveSettings();
   }
 }

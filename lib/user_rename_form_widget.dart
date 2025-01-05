@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/models/user.dart';
 import 'action_button_text.dart';
-import 'models/page_model.dart';
 
-class PageRenameFormWidget extends StatefulWidget {
-  const PageRenameFormWidget({super.key, required this.baseModel});
+class UserRenameFormWidget extends StatefulWidget {
+  const UserRenameFormWidget({super.key, required this.baseModel});
 
-  final PageModel baseModel;
+  final User baseModel;
 
   @override
-  PageRenameFormWidgetState createState() {
-    return PageRenameFormWidgetState();
+  UserRenameFormWidgetState createState() {
+    return UserRenameFormWidgetState();
   }
 
-  static void showPageRenameDialog(
-      BuildContext context,
-      AppLocalizations locale,
-      PageModel startModel,
-      Function(PageModel) onSubmitted) {
-    final GlobalKey<PageRenameFormWidgetState> pageKey =
-        GlobalKey<PageRenameFormWidgetState>();
+  static void showUserRenameDialog(BuildContext context,
+      AppLocalizations locale, User startModel, Function(User) onSubmitted) {
+    final GlobalKey<UserRenameFormWidgetState> userKey =
+        GlobalKey<UserRenameFormWidgetState>();
 
     showDialog<void>(
       context: context,
@@ -27,15 +24,15 @@ class PageRenameFormWidget extends StatefulWidget {
         return AlertDialog(
           actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
-          title: Text(locale.renamePage),
+          title: Text(locale.renameUser(startModel.name)),
           content: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                PageRenameFormWidget(
-                  key: pageKey,
+                UserRenameFormWidget(
+                  key: userKey,
                   baseModel: startModel,
                 ),
               ],
@@ -49,9 +46,9 @@ class PageRenameFormWidget extends StatefulWidget {
                 child: ActionButtonText(text: locale.cancel)),
             TextButton(
                 onPressed: () {
-                  if (pageKey.currentState!.validateAndSave()) {
+                  if (userKey.currentState!.validateAndSave()) {
                     Navigator.pop(context);
-                    onSubmitted(pageKey.currentState!.getResult());
+                    onSubmitted(userKey.currentState!.getResult());
                   }
                 },
                 child: ActionButtonText(text: locale.rename))
@@ -62,7 +59,7 @@ class PageRenameFormWidget extends StatefulWidget {
   }
 }
 
-class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
+class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
   final _formKey = GlobalKey<FormState>();
   String name = "";
 
@@ -74,9 +71,8 @@ class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
     return false;
   }
 
-  PageModel getResult() {
-    return PageModel(
-        id: widget.baseModel.id, name: name, order: widget.baseModel.order);
+  User getResult() {
+    return widget.baseModel.copyWith(name: name);
   }
 
   @override
@@ -97,11 +93,9 @@ class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
                 if (value == null || value.isEmpty) {
                   return locale.nameError;
                 }
-
-                if (value.length > PageModel.maxNameLength) {
-                  return locale.nameLengthError(PageModel.maxNameLength);
+                if (value.length > User.maxNameLength) {
+                  return locale.nameLengthError(User.maxNameLength);
                 }
-
                 return null;
               },
               decoration: InputDecoration(

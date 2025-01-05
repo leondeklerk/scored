@@ -1,23 +1,44 @@
 {
   "@@locale": "nl",
   "add": "Voeg toe",
+  "set": "Instellen",
   "submit": "Oke",
   "cancel": "Annuleren",
-  "clear": "Maak leeg",
+  "clear": "Wis",
   "clearButton": "Verwijderen",
   "clearTitle": "Verwijder alle spelers",
   "clearPrompt": "Weet je zeker dat je alle spelers wilt verwijderen?",
   "confirm": "Oke",
   "resetScores": "Herstart",
   "resetScoresPrompt": "Weet je zeker dat je alle scores op nul wilt zetten?",
-  "reset": "Herstarten",
-  "ranked": "Ranglijst",
+  "reset": "Herstart",
+  "ranked": "Stand",
   "deletePrompt": "Weet je zeker dat je deze speler wilt verwijderen?",
   "delete": "Verwijder",
   "addPlayer": "Speler toevoegen",
   "points": "Punten",
   "pointsError": "Vul het aantal punten int",
+  "pointsLengthError": "Punten mogen maximaal {size} cijfers lang zijn",
+  "@pointsLengthError": {
+    "description": "Points length error template",
+    "placeholders": {
+      "size": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "nameError": "Vul de naam van de speler in",
+  "nameLengthError": "De naam mag niet langer zijn dan {length} karakters",
+  "@nameLengthError": {
+    "description": "Name length error template",
+    "placeholders": {
+      "length": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
   "player": "Speler",
   "scoreMissingError": "Voer de initiele score in",
   "scoreInvalidError": "Voer een geldig nummer in",
@@ -42,6 +63,16 @@
       }
     }
   },
+  "setPointsUser": "{userName} - Punten instellen",
+  "@setPointsUser": {
+    "description": "Set points with for user",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "name": "Naam",
   "semanticRank": "Rang:",
   "semanticName": "Naam:",
@@ -55,6 +86,16 @@
   "semanticsReverseDesc": "Rang volgorde - Laagste score eerst",
   "standardPageName": "Scoreblad",
   "renamePage": "Hernoem scoreblad",
+  "renameUser": "Hernoem {userName}",
+  "@renameUser": {
+    "description": "Rename with username template",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Alice"
+      }
+    }
+  },
   "deletePage": "Verwijder {page}",
   "@deletePage": {
     "description": "Delete with page name template",
@@ -80,5 +121,17 @@
   "settingThemeModeAuto": "Auto",
   "settingThemeModeLight": "Licht",
   "settingThemeModeDark": "Donker",
-  "settingGroupThemeTitle": "Thema"
+  "settingLanguageTitle": "Taal",
+  "settingGroupThemeTitle": "Thema",
+  "settingGroupGeneralTitle": "Algemeen",
+  "done": "Klaar",
+  "edit": "Bewerk",
+  "saveChangesTitle": "Wijzigingen opslaan",
+  "saveChangesContent": "Wil je de wijzigingen opslaan?",
+  "save": "Opslaan",
+  "discard": "Niet opslaan",
+  "editableList": "Bewerkbare spelerslijst",
+  "semanticReorder": "Herorden handvat",
+  "semanticEditScore": "Bewerk score",
+  "semanticEditName": "Bewerk naam"
 }
