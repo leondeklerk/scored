@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:scored/confirm_dialog.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/models/config_model.dart';
 import 'package:scored/models/page_model.dart';

@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:scored/home_screen.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/app_settings_model.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/models/page_model.dart';
@@ -213,7 +213,7 @@ class ScoredApp extends StatelessWidget {
           roundEntry.userId: 0,
           // Note: currently scores are not yet parts of rounds
         });
-      } else {
+      } else if (roundEntry.number == currentRound.number) {
         // If it is the same round we need to add the userId to the current round
         currentRound.scores[roundEntry.userId] = 0;
         currentRound.id = roundEntry.id;

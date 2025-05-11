@@ -1,7 +1,8 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/theme_notifier.dart';
+
 import 'action_button_text.dart';
 
 class ColorWidget {

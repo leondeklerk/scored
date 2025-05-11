@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/page_model.dart';
 
 import 'action_button_text.dart';

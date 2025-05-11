@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/user.dart';
 import 'package:scored/points_form_widget.dart';
 

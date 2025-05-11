@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/add_player_widget.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/user_edit_tile.dart';
 import 'package:scored/user_tile.dart';
@@ -374,7 +374,6 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       .surfaceContainerHighest,
                                   activeForegroundColor:
                                       Theme.of(context).colorScheme.surfaceTint,
-                                  highlightCompletedSteps: true,
                                   stepLineStyle: StepLineStyle(
                                     lineThickness: 14,
                                     borderRadius: Radius.circular(4),
