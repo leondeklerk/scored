@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'action_button_text.dart';
 import 'models/page_model.dart';
 
@@ -76,7 +77,10 @@ class PageRenameFormWidgetState extends State<PageRenameFormWidget> {
 
   PageModel getResult() {
     return PageModel(
-        id: widget.baseModel.id, name: name, order: widget.baseModel.order);
+        id: widget.baseModel.id,
+        name: name,
+        order: widget.baseModel.order,
+        currentRound: widget.baseModel.currentRound);
   }
 
   @override

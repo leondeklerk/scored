@@ -108,7 +108,7 @@
   },
   "pageDeletePrompt": "Weet je zeker dat je dit scoreblad wilt verwijderen?",
   "page": "Scoreblad",
-  "addPage": "Scoreblad toevoegen",
+  "addPage": "Blad toevoegen",
   "rename": "Hernoem",
   "selectColor": "Kleur",
   "selectColorShade": "Tint",
@@ -133,5 +133,8 @@
   "editableList": "Bewerkbare spelerslijst",
   "semanticReorder": "Herorden handvat",
   "semanticEditScore": "Bewerk score",
-  "semanticEditName": "Bewerk naam"
+  "semanticEditName": "Bewerk naam",
+  "nextRound": "Volgende ronde",
+  "nextRoundPrompt": "Niet bij elke speler zijn punten toegevoegd, weet je zeker dat je de volgende ronde wilt starten?",
+  "next": "Volgende"
 }

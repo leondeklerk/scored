@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/add_player_widget.dart';
 import 'package:scored/models/config.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/user_edit_tile.dart';
 import 'package:scored/user_tile.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:step_progress/step_progress.dart';
+
 import 'action_button_text.dart';
 import 'confirm_dialog.dart';
+import 'models/round.dart';
 import 'models/user.dart';
-import 'package:sqflite/sqflite.dart';
 
 typedef ScoreSheetSubmit = void Function(
     int pageId, void Function(User user) submitFunction);
@@ -20,6 +23,7 @@ class ScoreSheet extends StatefulWidget {
   final Config config;
   final void Function(int pageId, User user) addUser;
   final void Function(int pageId) resetScores;
+  final void Function(int pageId) completeRound;
   final void Function(int pageId, int userIndex) deleteUser;
   final void Function(int pageId, int userIndex, int score) addScore;
   final void Function(int pageId, int userIndex, User user) updateUser;
@@ -27,6 +31,7 @@ class ScoreSheet extends StatefulWidget {
   final void Function(bool isEditMode, int? pageId) setEditMode;
   final void Function(List<User> users, int pageId) setUsers;
   final bool isEditMode;
+  final Round round;
 
   const ScoreSheet(
       {super.key,
@@ -37,13 +42,15 @@ class ScoreSheet extends StatefulWidget {
       required this.users,
       required this.addUser,
       required this.resetScores,
+      required this.completeRound,
       required this.deleteUser,
       required this.addScore,
       required this.updateUser,
       required this.topScore,
       required this.setUsers,
       required this.setEditMode,
-      required this.isEditMode});
+      required this.isEditMode,
+      required this.round});
 
   @override
   State<ScoreSheet> createState() => _ScoreSheetState();
@@ -134,6 +141,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
 
     _removeUserRows(id);
     widget.deleteUser(pageId, index);
+    widget.round.scores.remove(id);
   }
 
   void _removeUserRows(String id) async {
@@ -141,12 +149,24 @@ class _ScoreSheetState extends State<ScoreSheet> {
         where: "id = ? and pageId = ?", whereArgs: [id, pageId]);
     await widget.db.delete("scores",
         where: "userId = ? AND pageId = ?", whereArgs: [id, pageId]);
+
+    await widget.db.delete("rounds",
+        where: "userId = ? AND pageId = ?", whereArgs: [id, pageId]);
   }
 
   void _resetScores() async {
     widget.resetScores(pageId);
     widget.db
         .rawUpdate('UPDATE scores SET score = 0 WHERE pageId = ?', [pageId]);
+
+    widget.db.rawUpdate('UPDATE pages SET currentRound = ? WHERE id = ?',
+        [widget.round.number + 1, pageId]);
+  }
+
+  void _completeRound() async {
+    widget.completeRound(pageId);
+    widget.db.rawUpdate('UPDATE pages SET currentRound = ? WHERE id = ?',
+        [widget.round.number + 1, pageId]);
   }
 
   int pageId = 0;
@@ -261,8 +281,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                     height: 12, // Adjust badge size
                                     width: 12,
                                     decoration: BoxDecoration(
-                                      color: Colors
-                                          .transparent, // Badge background color from theme
+                                      color: Colors.transparent,
+                                      // Badge background color from theme
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -326,38 +346,112 @@ class _ScoreSheetState extends State<ScoreSheet> {
                         ),
                     ],
                   )
-                : ListView.builder(
-                    semanticChildCount: widget.users.length + 1,
-                    padding: const EdgeInsets.only(bottom: 96),
-                    itemCount: widget.users.length + 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == widget.users.length) {
-                        return AddPlayerWidget(
-                          locale: locale,
-                          pageId: pageId,
-                          widget: widget,
-                          enabled: !_isEditMode,
-                        );
-                      } else {
-                        User activeUser = widget.users[index];
+                : Column(
+                    children: [
+                      if (widget.users.length > 1)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12.0),
+                              child: Text(
+                                "${widget.round.number}.",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                            Expanded(
+                              child: StepProgress(
+                                margin: EdgeInsets.zero,
+                                padding: EdgeInsets.zero,
+                                totalSteps: widget.users.length + 1,
+                                visibilityOptions:
+                                    StepProgressVisibilityOptions.lineOnly,
+                                currentStep: widget.round.scores.length,
+                                theme: StepProgressThemeData(
+                                  stepLineSpacing: 4,
+                                  defaultForegroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest,
+                                  activeForegroundColor:
+                                      Theme.of(context).colorScheme.surfaceTint,
+                                  highlightCompletedSteps: true,
+                                  stepLineStyle: StepLineStyle(
+                                    lineThickness: 14,
+                                    borderRadius: Radius.circular(4),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(50),
+                                onTap: () {
+                                  if (widget.round.scores.length ==
+                                      widget.users.length) {
+                                    _completeRound();
+                                    return;
+                                  }
+                                  ConfirmDialog.show(
+                                    context: context,
+                                    locale: locale,
+                                    title: locale.nextRound,
+                                    content: locale.nextRoundPrompt,
+                                    confirmText: locale.next,
+                                    onConfirm: _completeRound,
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Icon(Icons.check_circle_outline,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      Expanded(
+                        child: ListView.builder(
+                          semanticChildCount: widget.users.length + 1,
+                          padding: const EdgeInsets.only(bottom: 96),
+                          itemCount: widget.users.length + 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index == widget.users.length) {
+                              return AddPlayerWidget(
+                                locale: locale,
+                                pageId: pageId,
+                                widget: widget,
+                                enabled: !_isEditMode,
+                              );
+                            } else {
+                              User activeUser = widget.users[index];
 
-                        return Semantics(
+                              return Semantics(
                           child: Card(
-                            elevation: 4,
+                            elevation: widget.round.scores
+                                .containsKey(activeUser.id)
+                                ? 2
+                                : 4,
                             child: UserTile(
+                              hasRoundEntry: widget.round.scores
+                                  .containsKey(activeUser.id),
                               locale: locale,
                               ranked: widget.config.ranked,
                               activeUser: activeUser,
                               topScore: widget.topScore,
                               index: index,
                               pageId: pageId,
-                              deleteUser: _deleteUser,
                               addScore: widget.addScore,
                             ),
                           ),
                         );
                       }
                     },
+                  ),
+                ),
+              ],
                   ),
           ),
         ),
