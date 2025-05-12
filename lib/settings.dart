@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/app_settings_model.dart';
 
-class SettingsNotifier extends ChangeNotifier {
+class Settings extends ChangeNotifier {
   static const Color defaultColor = Color(0xFF673AB7);
 
   Color _baseColor = defaultColor;
@@ -32,7 +32,9 @@ class SettingsNotifier extends ChangeNotifier {
 
   Locale get locale => _settings.locale;
 
-  SettingsNotifier(this._settings) {
+  bool get showNextRoundConfirmDialog => _settings.showNextRoundConfirmDialog;
+
+  Settings(this._settings) {
     _baseColor = _settings.seedColor;
   }
 
@@ -44,6 +46,8 @@ class SettingsNotifier extends ChangeNotifier {
     await prefs.setString(
         'theme_mode', AppSettingsModel.themeModeToString(themeMode));
     await prefs.setString('locale', locale.languageCode);
+    await prefs.setBool(
+        'show_next_round_confirm_dialog', showNextRoundConfirmDialog);
   }
 
   void setUseCustomTheme(bool value) {
@@ -67,6 +71,11 @@ class SettingsNotifier extends ChangeNotifier {
 
   void setLocale(String newLocale) {
     _settings.locale = Locale(newLocale);
+    saveSettings();
+  }
+
+  void setShowNextRoundConfirmDialog(bool value) {
+    _settings.showNextRoundConfirmDialog = value;
     saveSettings();
   }
 }

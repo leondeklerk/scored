@@ -624,6 +624,16 @@ class S {
   String get next {
     return Intl.message('Next', name: 'next', desc: '', args: []);
   }
+
+  /// `Next round confirmation`
+  String get settingShowNextRoundConfirmDialogTitle {
+    return Intl.message(
+      'Next round confirmation',
+      name: 'settingShowNextRoundConfirmDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

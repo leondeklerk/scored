@@ -1,18 +1,21 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:ui' as ui;
 
 class AppSettingsModel {
   Color seedColor;
   bool useCustomTheme;
   ThemeMode themeMode;
   Locale locale;
+  bool showNextRoundConfirmDialog;
 
   AppSettingsModel({
     this.seedColor = const Color(0xFF673AB7),
     this.useCustomTheme = false,
     this.themeMode = ThemeMode.system,
     this.locale = const Locale('en'),
+    this.showNextRoundConfirmDialog = true,
   });
 
   static Future<AppSettingsModel> initialize() async {
@@ -24,6 +27,8 @@ class AppSettingsModel {
       themeMode: getThemeMode(prefs.getString('theme_mode') ?? 'system'),
       locale: Locale(prefs.getString('locale') ??
           ui.PlatformDispatcher.instance.locale.languageCode),
+      showNextRoundConfirmDialog:
+          prefs.getBool('show_next_round_confirm_dialog') ?? true,
     );
 
     return appSettings;

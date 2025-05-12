@@ -136,5 +136,6 @@
   "semanticEditName": "Bewerk naam",
   "nextRound": "Volgende ronde",
   "nextRoundPrompt": "Niet bij elke speler zijn punten toegevoegd, weet je zeker dat je de volgende ronde wilt starten?",
-  "next": "Volgende"
+  "next": "Volgende",
+  "settingShowNextRoundConfirmDialogTitle": "Bevestiging volgende ronde"
 }

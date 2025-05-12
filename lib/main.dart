@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:scored/home_screen.dart';
@@ -11,7 +10,7 @@ import 'package:scored/models/config.dart';
 import 'package:scored/models/page_model.dart';
 import 'package:scored/models/score_model.dart';
 import 'package:scored/models/user_model.dart';
-import 'package:scored/theme_notifier.dart';
+import 'package:scored/settings.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -30,7 +29,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => SettingsNotifier(appSettings),
+      create: (_) => Settings(appSettings),
       child: const ScoredApp(),
     ),
   );
@@ -225,7 +224,7 @@ class ScoredApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SettingsNotifier>(
+    return Consumer<Settings>(
       builder: (context, notifier, child) {
         return MaterialApp(
             title: 'Scored',
@@ -233,12 +232,7 @@ class ScoredApp extends StatelessWidget {
             darkTheme: notifier.darkTheme,
             themeMode: notifier.themeMode,
             locale: notifier.locale,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: FutureBuilder(
                 future: getState(),

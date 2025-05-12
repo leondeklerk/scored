@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scored/add_player_widget.dart';
 import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/config.dart';
+import 'package:scored/settings.dart';
 import 'package:scored/user_edit_tile.dart';
 import 'package:scored/user_tile.dart';
 import 'package:sqflite/sqflite.dart';
@@ -180,6 +182,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
+    final settings = Provider.of<Settings>(context);
 
     return Column(
       children: [
@@ -391,14 +394,19 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                     _completeRound();
                                     return;
                                   }
-                                  ConfirmDialog.show(
-                                    context: context,
-                                    locale: locale,
-                                    title: locale.nextRound,
-                                    content: locale.nextRoundPrompt,
-                                    confirmText: locale.next,
-                                    onConfirm: _completeRound,
-                                  );
+
+                                  if (settings.showNextRoundConfirmDialog) {
+                                    ConfirmDialog.show(
+                                      context: context,
+                                      locale: locale,
+                                      title: locale.nextRound,
+                                      content: locale.nextRoundPrompt,
+                                      confirmText: locale.next,
+                                      onConfirm: _completeRound,
+                                    );
+                                  } else {
+                                    _completeRound();
+                                  }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scored/color_widget.dart';
 import 'package:scored/l10n/app_localizations.dart';
-import 'package:scored/theme_notifier.dart';
+import 'package:scored/settings.dart';
 
 import 'action_button_text.dart';
 
@@ -13,7 +13,7 @@ class SettingScreen {
       useSafeArea: true,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Consumer<SettingsNotifier>(builder: (context, notifier, child) {
+        return Consumer<Settings>(builder: (context, notifier, child) {
           List<bool> isSelected = [
             notifier.themeMode == ThemeMode.light,
             notifier.themeMode == ThemeMode.dark,
@@ -131,6 +131,21 @@ class SettingScreen {
                           },
                         ),
                       ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      locale.settingShowNextRoundConfirmDialogTitle,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Switch(
+                      value: notifier.showNextRoundConfirmDialog,
+                      onChanged: (bool value) {
+                        notifier.setShowNextRoundConfirmDialog(value);
+                      },
                     ),
                   ],
                 ),

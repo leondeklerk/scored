@@ -147,6 +147,8 @@ class MessageLookup extends MessageLookupByLibrary {
         ),
         "settingGroupThemeTitle": MessageLookupByLibrary.simpleMessage("Thema"),
         "settingLanguageTitle": MessageLookupByLibrary.simpleMessage("Taal"),
+        "settingShowNextRoundConfirmDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Bevestiging volgende ronde"),
         "settingThemeModeAuto": MessageLookupByLibrary.simpleMessage("Auto"),
         "settingThemeModeDark": MessageLookupByLibrary.simpleMessage("Donker"),
         "settingThemeModeLight": MessageLookupByLibrary.simpleMessage("Licht"),

@@ -249,4 +249,8 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get next => 'Volgende';
+
+  @override
+  String get settingShowNextRoundConfirmDialogTitle =>
+      'Bevestiging volgende ronde';
 }

@@ -138,6 +138,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingGroupThemeTitle": MessageLookupByLibrary.simpleMessage("Theme"),
         "settingLanguageTitle":
             MessageLookupByLibrary.simpleMessage("Language"),
+        "settingShowNextRoundConfirmDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Next round confirmation"),
         "settingThemeModeAuto": MessageLookupByLibrary.simpleMessage("Auto"),
         "settingThemeModeDark": MessageLookupByLibrary.simpleMessage("Dark"),
         "settingThemeModeLight": MessageLookupByLibrary.simpleMessage("Light"),
