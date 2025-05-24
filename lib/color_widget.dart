@@ -1,12 +1,13 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:scored/theme_notifier.dart';
+import 'package:scored/l10n/app_localizations.dart';
+import 'package:scored/settings.dart';
+
 import 'action_button_text.dart';
 
 class ColorWidget {
-  static void showColorDialog(BuildContext context, AppLocalizations locale,
-      SettingsNotifier notifier) {
+  static void showColorDialog(
+      BuildContext context, AppLocalizations locale, Settings notifier) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -47,7 +48,7 @@ class ColorWidget {
           actions: [
             TextButton(
                 onPressed: () {
-                  notifier.updateTheme(SettingsNotifier.defaultColor);
+                  notifier.updateTheme(Settings.defaultColor);
                 },
                 child: ActionButtonText(text: locale.reset)),
             TextButton(

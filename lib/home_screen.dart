@@ -3,21 +3,24 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scored/confirm_dialog.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/models/config_model.dart';
 import 'package:scored/models/page_model.dart';
+import 'package:scored/models/round.dart';
 import 'package:scored/models/state.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/page_form_widget.dart';
 import 'package:scored/page_rename_form_widget.dart';
 import 'package:scored/score_sheet.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
-import 'setting_screen.dart';
-import 'models/score_model.dart';
-import 'models/user_model.dart';
-import 'models/user.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
+
+import 'models/round_model.dart';
+import 'models/score_model.dart';
+import 'models/user.dart';
+import 'models/user_model.dart';
+import 'setting_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Database db;
@@ -66,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
       index = _pageNotifier.value + 1;
     }
 
-    var model = PageModel(id: id, name: name, order: order);
+    var model = PageModel(id: id, name: name, order: order, currentRound: 1);
     await widget.db.insert('pages', model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail);
     setState(() {
@@ -204,6 +207,14 @@ class _HomeScreenState extends State<HomeScreen> {
     await widget.db.insert('users', userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     await widget.db.insert('scores', scoreModel.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  void _storeUserRound(int pageId, String userId, Round round) async {
+    RoundModel roundModel = RoundModel(
+        id: round.id, number: round.number, pageId: pageId, userId: userId);
+
+    await widget.db.insert('rounds', roundModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -384,6 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ScoreSheet(
                           db: widget.db,
                           users: userLists[page.id]!,
+                          round: widget.state!.rounds[page.id]!,
                           pageId: page.id,
                           setConfig: (configData) {
                             setState(() {
@@ -428,6 +440,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 user.rank = 1;
                               }
                               _determineOrder(pageId);
+
+                              widget.state!.rounds[pageId] = Round(
+                                  id: Uuid().v4(),
+                                  number:
+                                      widget.state!.rounds[pageId]!.number + 1,
+                                  scores: {});
+                            });
+                          },
+                          completeRound: (pageId) {
+                            setState(() {
+                              widget.state!.rounds[pageId] = Round(
+                                  id: Uuid().v4(),
+                                  number:
+                                      widget.state!.rounds[pageId]!.number + 1,
+                                  scores: {});
                             });
                           },
                           addScore: (pageId, userIndex, points) {
@@ -436,13 +463,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               return;
                             }
                             setState(() {
-                              if (list[userIndex].score + points >
-                                  0x7fffffffffffffff) {
-                                list[userIndex].score = 0x7fffffffffffffff;
+                              var user = list[userIndex];
+                              if (user.score + points > 0x7fffffffffffffff) {
+                                user.score = 0x7fffffffffffffff;
                               } else {
-                                list[userIndex].score += points;
+                                user.score += points;
                               }
-                              _storeUser(pageId, list[userIndex]);
+
+                              widget.state!.rounds[pageId]!.scores[user.id] = 0;
+                              _storeUser(pageId, user);
+                              _storeUserRound(pageId, user.id,
+                                  widget.state!.rounds[pageId]!);
                               _determineOrder(pageId);
                             });
                           },

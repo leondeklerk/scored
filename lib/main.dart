@@ -1,22 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 import 'package:scored/home_screen.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/app_settings_model.dart';
 import 'package:scored/models/config.dart';
 import 'package:scored/models/page_model.dart';
 import 'package:scored/models/score_model.dart';
 import 'package:scored/models/user_model.dart';
-import 'package:scored/theme_notifier.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:async';
-import 'package:provider/provider.dart';
-
-import 'package:path/path.dart';
+import 'package:scored/settings.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'models/config_model.dart';
+import 'models/round.dart';
+import 'models/round_model.dart';
 import 'models/state.dart';
 import 'models/user.dart';
 
@@ -28,7 +29,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => SettingsNotifier(appSettings),
+      create: (_) => Settings(appSettings),
       child: const ScoredApp(),
     ),
   );
@@ -36,13 +37,17 @@ void main() async {
 
 Future<void> createDb(Database db) async {
   await db.execute(
-      "CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT, `order` REAL);");
+      "CREATE TABLE IF NOT EXISTS pages(id INTEGER PRIMARY KEY, name TEXT, `order` REAL, currentRound INTEGER);");
   await db.execute(
       'CREATE TABLE IF NOT EXISTS config(ranked INTEGER, reversed INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(pageId));');
   await db.execute(
       'CREATE TABLE IF NOT EXISTS users(id TEXT, name TEXT, `order` INTEGER, pageId INTEGER, FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(id, pageId));');
   await db.execute(
       'CREATE TABLE IF NOT EXISTS scores(userId TEXT, pageId INTEGER, score INTEGER, FOREIGN KEY(userId) REFERENCES users(id), FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(userId, pageId));');
+
+  await db.execute(
+    'CREATE TABLE IF NOT EXISTS rounds(id TEXT PRIMARY KEY, number INTEGER, pageId INTEGER, userId TEXT, FOREIGN KEY(userId) REFERENCES users(id), FOREIGN KEY(pageId) REFERENCES pages(id), UNIQUE(number, pageId, userId));',
+  );
 }
 
 class ScoredApp extends StatelessWidget {
@@ -95,7 +100,13 @@ class ScoredApp extends StatelessWidget {
               where: 'userId = ?', whereArgs: [id]);
         }
       }
-    }, version: 8);
+
+      if (newVersion == 9) {
+        await createDb(db);
+        await db.execute("ALTER TABLE pages ADD COLUMN currentRound INTEGER;");
+        await db.execute("UPDATE pages SET currentRound = 1;");
+      }
+    }, version: 9);
 
     final List<Map<String, dynamic>> configs = await database.query('config');
     final List<Map<String, dynamic>> users =
@@ -103,6 +114,8 @@ class ScoredApp extends StatelessWidget {
     final List<Map<String, dynamic>> scores = await database.query('scores');
     final List<Map<String, dynamic>> pages =
         await database.query('pages', orderBy: "`order` ASC");
+    final List<Map<String, dynamic>> rounds =
+        await database.query('rounds', orderBy: "`number` ASC");
 
     List<ConfigModel> configList = List.generate(configs.length, (i) {
       return ConfigModel(
@@ -134,11 +147,21 @@ class ScoredApp extends StatelessWidget {
         id: pages[i]['id'] as int,
         name: pages[i]['name'] as String,
         order: pages[i]['order'] as double,
+        currentRound: pages[i]['currentRound'] as int,
       );
     });
 
-    PersistedState state =
-        PersistedState(users: {}, pages: [], configs: {}, db: database);
+    List<RoundModel> roundsList = List.generate(rounds.length, (i) {
+      return RoundModel(
+        id: rounds[i]['id'] as String,
+        number: rounds[i]['number'] as int,
+        pageId: rounds[i]['pageId'] as int,
+        userId: rounds[i]['userId'] as String,
+      );
+    });
+
+    PersistedState state = PersistedState(
+        users: {}, pages: [], configs: {}, rounds: {}, db: database);
 
     for (var i = 0; i < configList.length; i++) {
       ConfigModel config = configList[i];
@@ -152,6 +175,9 @@ class ScoredApp extends StatelessWidget {
 
     for (var i = 0; i < pagesList.length; i++) {
       state.users[pagesList[i].id] = {};
+      // Make sure every page has a round (default is round 1 no users)
+      state.rounds[pagesList[i].id] =
+          Round(id: Uuid().v4(), number: pagesList[i].currentRound, scores: {});
     }
 
     for (var i = 0; i < usersList.length; i++) {
@@ -171,12 +197,31 @@ class ScoredApp extends StatelessWidget {
           scoreEntry.score;
     }
 
+    for (var i = 0; i < roundsList.length; i++) {
+      var roundEntry = roundsList[i];
+      var key = roundEntry.pageId;
+
+      var currentRound = state.rounds[key]!;
+      // If it is a newer round we need to overwrite the current round (inefficient)
+      if (roundEntry.number > currentRound.number) {
+        state.rounds[roundEntry.pageId] =
+            Round(id: roundEntry.id, number: roundEntry.number, scores: {
+          roundEntry.userId: 0,
+          // Note: currently scores are not yet parts of rounds
+        });
+      } else if (roundEntry.number == currentRound.number) {
+        // If it is the same round we need to add the userId to the current round
+        currentRound.scores[roundEntry.userId] = 0;
+        currentRound.id = roundEntry.id;
+      }
+    }
+
     return state;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SettingsNotifier>(
+    return Consumer<Settings>(
       builder: (context, notifier, child) {
         return MaterialApp(
             title: 'Scored',
@@ -184,12 +229,7 @@ class ScoredApp extends StatelessWidget {
             darkTheme: notifier.darkTheme,
             themeMode: notifier.themeMode,
             locale: notifier.locale,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: FutureBuilder(
                 future: getState(),

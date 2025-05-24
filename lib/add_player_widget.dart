@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scored/action_button_text.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/user.dart';
 import 'package:scored/score_sheet.dart';
 import 'package:scored/user_form_widget.dart';

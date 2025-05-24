@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -18,8 +19,10 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +44,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,62 +57,32 @@ class S {
 
   /// `Add`
   String get add {
-    return Intl.message(
-      'Add',
-      name: 'add',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Add', name: 'add', desc: '', args: []);
   }
 
   /// `Set`
   String get set {
-    return Intl.message(
-      'Set',
-      name: 'set',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Set', name: 'set', desc: '', args: []);
   }
 
   /// `Submit`
   String get submit {
-    return Intl.message(
-      'Submit',
-      name: 'submit',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Submit', name: 'submit', desc: '', args: []);
   }
 
   /// `Cancel`
   String get cancel {
-    return Intl.message(
-      'Cancel',
-      name: 'cancel',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
   }
 
   /// `Clear`
   String get clear {
-    return Intl.message(
-      'Clear',
-      name: 'clear',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Clear', name: 'clear', desc: '', args: []);
   }
 
   /// `Clear`
   String get clearButton {
-    return Intl.message(
-      'Clear',
-      name: 'clearButton',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Clear', name: 'clearButton', desc: '', args: []);
   }
 
   /// `Clear all players`
@@ -132,22 +107,12 @@ class S {
 
   /// `Ok`
   String get confirm {
-    return Intl.message(
-      'Ok',
-      name: 'confirm',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Ok', name: 'confirm', desc: '', args: []);
   }
 
   /// `Reset`
   String get resetScores {
-    return Intl.message(
-      'Reset',
-      name: 'resetScores',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Reset', name: 'resetScores', desc: '', args: []);
   }
 
   /// `Are you sure you want to reset all scores?`
@@ -162,22 +127,12 @@ class S {
 
   /// `Reset`
   String get reset {
-    return Intl.message(
-      'Reset',
-      name: 'reset',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Reset', name: 'reset', desc: '', args: []);
   }
 
   /// `Rank`
   String get ranked {
-    return Intl.message(
-      'Rank',
-      name: 'ranked',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Rank', name: 'ranked', desc: '', args: []);
   }
 
   /// `Are you sure you want to remove this player?`
@@ -192,32 +147,17 @@ class S {
 
   /// `Remove`
   String get delete {
-    return Intl.message(
-      'Remove',
-      name: 'delete',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Remove', name: 'delete', desc: '', args: []);
   }
 
   /// `Add player`
   String get addPlayer {
-    return Intl.message(
-      'Add player',
-      name: 'addPlayer',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Add player', name: 'addPlayer', desc: '', args: []);
   }
 
   /// `Points`
   String get points {
-    return Intl.message(
-      'Points',
-      name: 'points',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Points', name: 'points', desc: '', args: []);
   }
 
   /// `Enter the number of points`
@@ -242,12 +182,7 @@ class S {
 
   /// `Enter a name`
   String get nameError {
-    return Intl.message(
-      'Enter a name',
-      name: 'nameError',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Enter a name', name: 'nameError', desc: '', args: []);
   }
 
   /// `Name can't be longer than {length} characters`
@@ -262,12 +197,7 @@ class S {
 
   /// `Player`
   String get player {
-    return Intl.message(
-      'Player',
-      name: 'player',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Player', name: 'player', desc: '', args: []);
   }
 
   /// `Enter the initial score`
@@ -292,12 +222,7 @@ class S {
 
   /// `Score`
   String get score {
-    return Intl.message(
-      'Score',
-      name: 'score',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Score', name: 'score', desc: '', args: []);
   }
 
   /// `Remove {userName}`
@@ -332,42 +257,22 @@ class S {
 
   /// `Name`
   String get name {
-    return Intl.message(
-      'Name',
-      name: 'name',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Name', name: 'name', desc: '', args: []);
   }
 
   /// `Rank:`
   String get semanticRank {
-    return Intl.message(
-      'Rank:',
-      name: 'semanticRank',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Rank:', name: 'semanticRank', desc: '', args: []);
   }
 
   /// `Name:`
   String get semanticName {
-    return Intl.message(
-      'Name:',
-      name: 'semanticName',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Name:', name: 'semanticName', desc: '', args: []);
   }
 
   /// `Score`
   String get semanticScore {
-    return Intl.message(
-      'Score',
-      name: 'semanticScore',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Score', name: 'semanticScore', desc: '', args: []);
   }
 
   /// `List of players`
@@ -452,12 +357,7 @@ class S {
 
   /// `Rename sheet`
   String get renamePage {
-    return Intl.message(
-      'Rename sheet',
-      name: 'renamePage',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Rename sheet', name: 'renamePage', desc: '', args: []);
   }
 
   /// `Rename {userName}`
@@ -492,62 +392,32 @@ class S {
 
   /// `Score sheet`
   String get page {
-    return Intl.message(
-      'Score sheet',
-      name: 'page',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Score sheet', name: 'page', desc: '', args: []);
   }
 
   /// `Add sheet`
   String get addPage {
-    return Intl.message(
-      'Add sheet',
-      name: 'addPage',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Add sheet', name: 'addPage', desc: '', args: []);
   }
 
   /// `Rename`
   String get rename {
-    return Intl.message(
-      'Rename',
-      name: 'rename',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Rename', name: 'rename', desc: '', args: []);
   }
 
   /// `Color`
   String get selectColor {
-    return Intl.message(
-      'Color',
-      name: 'selectColor',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Color', name: 'selectColor', desc: '', args: []);
   }
 
   /// `Shade`
   String get selectColorShade {
-    return Intl.message(
-      'Shade',
-      name: 'selectColorShade',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Shade', name: 'selectColorShade', desc: '', args: []);
   }
 
   /// `Select`
   String get select {
-    return Intl.message(
-      'Select',
-      name: 'select',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Select', name: 'select', desc: '', args: []);
   }
 
   /// `Select a color`
@@ -562,12 +432,7 @@ class S {
 
   /// `Settings`
   String get settingsTitle {
-    return Intl.message(
-      'Settings',
-      name: 'settingsTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Settings', name: 'settingsTitle', desc: '', args: []);
   }
 
   /// `Base color`
@@ -662,22 +527,12 @@ class S {
 
   /// `Done`
   String get done {
-    return Intl.message(
-      'Done',
-      name: 'done',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Done', name: 'done', desc: '', args: []);
   }
 
   /// `Edit`
   String get edit {
-    return Intl.message(
-      'Edit',
-      name: 'edit',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Edit', name: 'edit', desc: '', args: []);
   }
 
   /// `Save changes`
@@ -702,22 +557,12 @@ class S {
 
   /// `Save`
   String get save {
-    return Intl.message(
-      'Save',
-      name: 'save',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Save', name: 'save', desc: '', args: []);
   }
 
   /// `Discard`
   String get discard {
-    return Intl.message(
-      'Discard',
-      name: 'discard',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Discard', name: 'discard', desc: '', args: []);
   }
 
   /// `Editable player list`
@@ -755,6 +600,36 @@ class S {
     return Intl.message(
       'Edit name',
       name: 'semanticEditName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next round`
+  String get nextRound {
+    return Intl.message('Next round', name: 'nextRound', desc: '', args: []);
+  }
+
+  /// `Not all players have scores for this round. Are you sure you want to proceed to the next round?`
+  String get nextRoundPrompt {
+    return Intl.message(
+      'Not all players have scores for this round. Are you sure you want to proceed to the next round?',
+      name: 'nextRoundPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next`
+  String get next {
+    return Intl.message('Next', name: 'next', desc: '', args: []);
+  }
+
+  /// `Next round confirmation`
+  String get settingShowNextRoundConfirmDialogTitle {
+    return Intl.message(
+      'Next round confirmation',
+      name: 'settingShowNextRoundConfirmDialogTitle',
       desc: '',
       args: [],
     );

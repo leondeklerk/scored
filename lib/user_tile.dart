@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scored/l10n/app_localizations.dart';
 import 'package:scored/models/user.dart';
 import 'package:scored/points_form_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserTile extends StatelessWidget {
   final AppLocalizations locale;
@@ -10,20 +10,19 @@ class UserTile extends StatelessWidget {
   final int topScore;
   final int index;
   final int pageId;
-  final void Function(int index) deleteUser;
   final void Function(int pageId, int index, int points) addScore;
+  final bool hasRoundEntry;
 
-  const UserTile({
-    super.key,
-    required this.locale,
-    required this.ranked,
-    required this.activeUser,
-    required this.topScore,
-    required this.index,
-    required this.pageId,
-    required this.deleteUser,
-    required this.addScore,
-  });
+  const UserTile(
+      {super.key,
+      required this.locale,
+      required this.ranked,
+      required this.activeUser,
+      required this.topScore,
+      required this.index,
+      required this.pageId,
+      required this.addScore,
+      required this.hasRoundEntry});
 
   String capitalizeFirstLetter(String text) {
     if (text.isEmpty) return text;
@@ -32,6 +31,11 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var textStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+        color: hasRoundEntry
+            ? Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(128)
+            : null);
+
     return ListTile(
       title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Wrap(
@@ -40,15 +44,17 @@ class UserTile extends StatelessWidget {
             if (ranked)
               Semantics(
                   label: locale.semanticRank,
-                  child: Text("${activeUser.rank}.")),
+                  child: Text("${activeUser.rank}.", style: textStyle)),
             Semantics(
               label: locale.semanticName,
-              child: Text(capitalizeFirstLetter(activeUser.name)),
+              child: Text(capitalizeFirstLetter(activeUser.name),
+                  style: textStyle),
             ),
           ],
         ),
         Semantics(
-            label: locale.semanticScore, child: Text("${activeUser.score}"))
+            label: locale.semanticScore,
+            child: Text("${activeUser.score}", style: textStyle)),
       ]),
       trailing: (() {
         if (ranked) {

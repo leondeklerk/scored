@@ -133,5 +133,9 @@
   "editableList": "Editable player list",
   "semanticReorder": "Reorder handle",
   "semanticEditScore": "Edit score",
-  "semanticEditName": "Edit name"
+  "semanticEditName": "Edit name",
+  "nextRound": "Next round",
+  "nextRoundPrompt": "Not all players have scores for this round. Are you sure you want to proceed to the next round?",
+  "next": "Next",
+  "settingShowNextRoundConfirmDialogTitle": "Next round confirmation"
 }
