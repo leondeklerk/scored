@@ -61,9 +61,6 @@ android {
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.release
-            ndk {
-                debugSymbolLevel 'FULL'
-            }
             resValue "string", "app_name", "Scored"
         }
 
