@@ -2,5 +2,37 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "enabledManagers": [
+    "pub",
+    "github-actions"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "pub"
+      ],
+      "groupName": "Dart dependencies",
+      "matchPackagePatterns": [
+        ".*"
+      ]
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true
+    }
+  ],
+  "dependencyDashboard": false,
+  "commitMessagePrefix": "chore(deps): ",
+  "schedule": [
+    "after 10pm and before 5am on every weekday"
   ]
 }
