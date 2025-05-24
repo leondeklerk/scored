@@ -22,7 +22,8 @@ class PageFormWidget extends StatefulWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          actionsPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
           title: Text(locale.addPage),
           content: SizedBox(

@@ -54,7 +54,8 @@ class AddPlayerWidget extends StatelessWidget {
                             .reduce(max) +
                         1;
                   }
-                  User model = User(name: "", id: Uuid().v4(), order: order);
+                  User model =
+                      User(name: "", id: const Uuid().v4(), order: order);
                   UserFormWidget.showUserFormDialog(context, locale, model, () {
                     widget.addUser(pageId, model);
                   });

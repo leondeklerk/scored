@@ -313,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: PageView(
               controller: controller,
-              physics: _editMode ? NeverScrollableScrollPhysics() : null,
+              physics: _editMode ? const NeverScrollableScrollPhysics() : null,
               onPageChanged: (index) {
                 setState(() {
                   _pageNotifier.value = index;
@@ -448,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               if (widget.useRounds) {
                                 widget.state!.rounds[pageId] = Round(
-                                    id: Uuid().v4(),
+                                    id: const Uuid().v4(),
                                     number:
                                         widget.state!.rounds[pageId]!.number +
                                             1,
@@ -459,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           completeRound: (pageId) {
                             setState(() {
                               widget.state!.rounds[pageId] = Round(
-                                  id: Uuid().v4(),
+                                  id: const Uuid().v4(),
                                   number:
                                       widget.state!.rounds[pageId]!.number + 1,
                                   scores: {});

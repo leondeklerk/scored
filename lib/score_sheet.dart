@@ -288,7 +288,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   child: Container(
                                     height: 12, // Adjust badge size
                                     width: 12,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       color: Colors.transparent,
                                       // Badge background color from theme
                                       shape: BoxShape.circle,
@@ -382,7 +382,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       .surfaceContainerHighest,
                                   activeForegroundColor:
                                       Theme.of(context).colorScheme.surfaceTint,
-                                  stepLineStyle: StepLineStyle(
+                                  stepLineStyle: const StepLineStyle(
                                     lineThickness: 14,
                                     borderRadius: Radius.circular(4),
                                   ),

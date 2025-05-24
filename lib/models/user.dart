@@ -13,7 +13,7 @@ class User {
 
   String name;
   int score = 0;
-  String id = Uuid().v4();
+  String id = const Uuid().v4();
   int rank = 0;
   int order = 0;
 

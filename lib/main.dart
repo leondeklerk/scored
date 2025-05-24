@@ -88,7 +88,7 @@ class ScoredApp extends StatelessWidget {
           // Get the id and split it based on "-":
           List<String> idParts = id.split("-");
 
-          String newId = Uuid().v4();
+          String newId = const Uuid().v4();
 
           // Update the order of the user based on the second part of the id
           await db.update(
@@ -176,8 +176,8 @@ class ScoredApp extends StatelessWidget {
     for (var i = 0; i < pagesList.length; i++) {
       state.users[pagesList[i].id] = {};
       // Make sure every page has a round (default is round 1 no users)
-      state.rounds[pagesList[i].id] =
-          Round(id: Uuid().v4(), number: pagesList[i].currentRound, scores: {});
+      state.rounds[pagesList[i].id] = Round(
+          id: const Uuid().v4(), number: pagesList[i].currentRound, scores: {});
     }
 
     for (var i = 0; i < usersList.length; i++) {
