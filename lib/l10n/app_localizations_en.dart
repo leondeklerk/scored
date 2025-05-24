@@ -250,4 +250,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingShowNextRoundConfirmDialogTitle =>
       'Next round confirmation';
+
+  @override
+  String get settingUseRoundsTitle => 'Enable rounds';
 }

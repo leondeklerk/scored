@@ -634,6 +634,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Enable rounds`
+  String get settingUseRoundsTitle {
+    return Intl.message(
+      'Enable rounds',
+      name: 'settingUseRoundsTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

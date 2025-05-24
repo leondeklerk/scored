@@ -9,6 +9,7 @@ class AppSettingsModel {
   ThemeMode themeMode;
   Locale locale;
   bool showNextRoundConfirmDialog;
+  bool useRounds;
 
   AppSettingsModel({
     this.seedColor = const Color(0xFF673AB7),
@@ -16,6 +17,7 @@ class AppSettingsModel {
     this.themeMode = ThemeMode.system,
     this.locale = const Locale('en'),
     this.showNextRoundConfirmDialog = true,
+    this.useRounds = true,
   });
 
   static Future<AppSettingsModel> initialize() async {
@@ -29,6 +31,7 @@ class AppSettingsModel {
           ui.PlatformDispatcher.instance.locale.languageCode),
       showNextRoundConfirmDialog:
           prefs.getBool('show_next_round_confirm_dialog') ?? true,
+      useRounds: prefs.getBool('use_rounds') ?? true,
     );
 
     return appSettings;

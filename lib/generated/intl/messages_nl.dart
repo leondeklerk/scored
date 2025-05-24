@@ -155,6 +155,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingThemeModeTitle": MessageLookupByLibrary.simpleMessage(
           "Thema modus",
         ),
+        "settingUseRoundsTitle": MessageLookupByLibrary.simpleMessage(
+          "Rondes inschakelen",
+        ),
         "settingsCustomColorMode": MessageLookupByLibrary.simpleMessage(
           "Gebruik custom kleuren",
         ),

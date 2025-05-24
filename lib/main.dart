@@ -238,6 +238,7 @@ class ScoredApp extends StatelessWidget {
                     return HomeScreen(
                       db: snapshot.data!.db,
                       state: snapshot.data,
+                      useRounds: notifier.useRounds,
                     );
                   }
                   return Scaffold(

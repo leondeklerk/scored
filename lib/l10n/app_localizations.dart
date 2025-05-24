@@ -547,6 +547,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next round confirmation'**
   String get settingShowNextRoundConfirmDialogTitle;
+
+  /// No description provided for @settingUseRoundsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable rounds'**
+  String get settingUseRoundsTitle;
 }
 
 class _AppLocalizationsDelegate

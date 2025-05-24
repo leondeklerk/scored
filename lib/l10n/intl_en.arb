@@ -137,5 +137,6 @@
   "nextRound": "Next round",
   "nextRoundPrompt": "Not all players have scores for this round. Are you sure you want to proceed to the next round?",
   "next": "Next",
-  "settingShowNextRoundConfirmDialogTitle": "Next round confirmation"
+  "settingShowNextRoundConfirmDialogTitle": "Next round confirmation",
+  "settingUseRoundsTitle": "Enable rounds"
 }

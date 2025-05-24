@@ -34,6 +34,8 @@ class Settings extends ChangeNotifier {
 
   bool get showNextRoundConfirmDialog => _settings.showNextRoundConfirmDialog;
 
+  bool get useRounds => _settings.useRounds;
+
   Settings(this._settings) {
     _baseColor = _settings.seedColor;
   }
@@ -48,6 +50,7 @@ class Settings extends ChangeNotifier {
     await prefs.setString('locale', locale.languageCode);
     await prefs.setBool(
         'show_next_round_confirm_dialog', showNextRoundConfirmDialog);
+    await prefs.setBool('use_rounds', useRounds);
   }
 
   void setUseCustomTheme(bool value) {
@@ -76,6 +79,11 @@ class Settings extends ChangeNotifier {
 
   void setShowNextRoundConfirmDialog(bool value) {
     _settings.showNextRoundConfirmDialog = value;
+    saveSettings();
+  }
+
+  void setUseRounds(bool value) {
+    _settings.useRounds = value;
     saveSettings();
   }
 }

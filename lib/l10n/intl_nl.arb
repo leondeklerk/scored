@@ -137,5 +137,6 @@
   "nextRound": "Volgende ronde",
   "nextRoundPrompt": "Niet bij elke speler zijn punten toegevoegd, weet je zeker dat je de volgende ronde wilt starten?",
   "next": "Volgende",
-  "settingShowNextRoundConfirmDialogTitle": "Bevestiging volgende ronde"
+  "settingShowNextRoundConfirmDialogTitle": "Bevestiging volgende ronde",
+  "settingUseRoundsTitle": "Rondes inschakelen"
 }

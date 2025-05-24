@@ -138,14 +138,34 @@ class SettingScreen {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      locale.settingShowNextRoundConfirmDialogTitle,
+                      locale.settingUseRoundsTitle,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Switch(
-                      value: notifier.showNextRoundConfirmDialog,
+                      value: notifier.useRounds,
                       onChanged: (bool value) {
-                        notifier.setShowNextRoundConfirmDialog(value);
+                        notifier.setUseRounds(value);
                       },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      locale.settingShowNextRoundConfirmDialogTitle,
+                      style: notifier.useRounds
+                          ? Theme.of(context).textTheme.bodyLarge
+                          : Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Theme.of(context).disabledColor),
+                    ),
+                    Switch(
+                      value: notifier.showNextRoundConfirmDialog,
+                      onChanged: notifier.useRounds
+                          ? (bool value) {
+                              notifier.setShowNextRoundConfirmDialog(value);
+                            }
+                          : null,
                     ),
                   ],
                 ),

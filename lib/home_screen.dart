@@ -25,8 +25,13 @@ import 'setting_screen.dart';
 class HomeScreen extends StatefulWidget {
   final Database db;
   final PersistedState? state;
+  final bool useRounds;
 
-  const HomeScreen({super.key, required this.db, required this.state});
+  const HomeScreen(
+      {super.key,
+      required this.db,
+      required this.state,
+      required this.useRounds});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -441,11 +446,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                               _determineOrder(pageId);
 
-                              widget.state!.rounds[pageId] = Round(
-                                  id: Uuid().v4(),
-                                  number:
-                                      widget.state!.rounds[pageId]!.number + 1,
-                                  scores: {});
+                              if (widget.useRounds) {
+                                widget.state!.rounds[pageId] = Round(
+                                    id: Uuid().v4(),
+                                    number:
+                                        widget.state!.rounds[pageId]!.number +
+                                            1,
+                                    scores: {});
+                              }
                             });
                           },
                           completeRound: (pageId) {
@@ -464,16 +472,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                             setState(() {
                               var user = list[userIndex];
-                              if (user.score + points > 0x7fffffffffffffff) {
-                                user.score = 0x7fffffffffffffff;
+                              if (user.score + points >=
+                                  double.maxFinite.toInt()) {
+                                user.score = double.maxFinite.toInt();
                               } else {
                                 user.score += points;
                               }
 
-                              widget.state!.rounds[pageId]!.scores[user.id] = 0;
+                              if (widget.useRounds) {
+                                widget.state!.rounds[pageId]!.scores[user.id] =
+                                    0;
+                              }
                               _storeUser(pageId, user);
-                              _storeUserRound(pageId, user.id,
-                                  widget.state!.rounds[pageId]!);
+                              if (widget.useRounds) {
+                                _storeUserRound(pageId, user.id,
+                                    widget.state!.rounds[pageId]!);
+                              }
                               _determineOrder(pageId);
                             });
                           },
@@ -489,6 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                           },
                           topScore: topScores[page.id]!,
+                          useRounds: widget.useRounds,
                         ),
                       ),
                     ],

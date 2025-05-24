@@ -34,6 +34,7 @@ class ScoreSheet extends StatefulWidget {
   final void Function(List<User> users, int pageId) setUsers;
   final bool isEditMode;
   final Round round;
+  final bool useRounds;
 
   const ScoreSheet(
       {super.key,
@@ -52,7 +53,8 @@ class ScoreSheet extends StatefulWidget {
       required this.setUsers,
       required this.setEditMode,
       required this.isEditMode,
-      required this.round});
+      required this.round,
+      required this.useRounds});
 
   @override
   State<ScoreSheet> createState() => _ScoreSheetState();
@@ -162,8 +164,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
     widget.db
         .rawUpdate('UPDATE scores SET score = 0 WHERE pageId = ?', [pageId]);
 
-    widget.db.rawUpdate('UPDATE pages SET currentRound = ? WHERE id = ?',
-        [widget.round.number + 1, pageId]);
+    if (widget.useRounds) {
+      widget.db.rawUpdate('UPDATE pages SET currentRound = ? WHERE id = ?',
+          [widget.round.number + 1, pageId]);
+    }
   }
 
   void _completeRound() async {
@@ -352,7 +356,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                   )
                 : Column(
                     children: [
-                      if (widget.users.length > 1)
+                      if (settings.useRounds && widget.users.length > 1)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -443,8 +447,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       ? 2
                                       : 4,
                                   child: UserTile(
-                                    hasRoundEntry: widget.round.scores
-                                        .containsKey(activeUser.id),
+                                    hasRoundEntry: settings.useRounds
+                                        ? widget.round.scores
+                                            .containsKey(activeUser.id)
+                                        : false,
                                     locale: locale,
                                     ranked: widget.config.ranked,
                                     activeUser: activeUser,
