@@ -103,13 +103,10 @@ class ScoredApp extends StatelessWidget {
 
       if (newVersion == 9) {
         await createDb(db);
-      }
-
-      if (newVersion == 10) {
         await db.execute("ALTER TABLE pages ADD COLUMN currentRound INTEGER;");
         await db.execute("UPDATE pages SET currentRound = 1;");
       }
-    }, version: 10);
+    }, version: 9);
 
     final List<Map<String, dynamic>> configs = await database.query('config');
     final List<Map<String, dynamic>> users =
