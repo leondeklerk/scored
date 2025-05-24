@@ -116,7 +116,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
 
       // store all current users for now:
     } else {
-      // Switching to edit mode
+      _setRanked(false);
+      // Switching to edit mode;
       // Store current state in a temp variable:
       startUsers = List<User>.from(widget.users);
 
@@ -436,29 +437,29 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               User activeUser = widget.users[index];
 
                               return Semantics(
-                          child: Card(
-                            elevation: widget.round.scores
-                                .containsKey(activeUser.id)
-                                ? 2
-                                : 4,
-                            child: UserTile(
-                              hasRoundEntry: widget.round.scores
-                                  .containsKey(activeUser.id),
-                              locale: locale,
-                              ranked: widget.config.ranked,
-                              activeUser: activeUser,
-                              topScore: widget.topScore,
-                              index: index,
-                              pageId: pageId,
-                              addScore: widget.addScore,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
+                                child: Card(
+                                  elevation: widget.round.scores
+                                          .containsKey(activeUser.id)
+                                      ? 2
+                                      : 4,
+                                  child: UserTile(
+                                    hasRoundEntry: widget.round.scores
+                                        .containsKey(activeUser.id),
+                                    locale: locale,
+                                    ranked: widget.config.ranked,
+                                    activeUser: activeUser,
+                                    topScore: widget.topScore,
+                                    index: index,
+                                    pageId: pageId,
+                                    addScore: widget.addScore,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ),
