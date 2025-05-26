@@ -78,6 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
     await widget.db.insert('pages', model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.fail);
     setState(() {
+      widget.state!.rounds[id] = Round(
+        id: const Uuid().v4(),
+        number: 1,
+        scores: {},
+      );
       configs[id] = null;
       userLists[id] = [];
       topScores[id] = 0;
