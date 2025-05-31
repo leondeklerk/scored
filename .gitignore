@@ -47,6 +47,11 @@ app.*.map.json
 #Assets
 /assets/icon
 /android/**/*.png
+/android/app/src/main/res/mipmap-*/ic_launcher*.xml
+/android/app/src/main/res/drawable*/ic_launcher*.xml
+/android/app/src/main/res/drawable/ic_launcher_foreground_mono.xml
+/android/app/src/main/res/mipmap-*/ic_launcher*.webp
+!/android/app/src/main/res/mipmap-*/ic_launcher.xml
 /android/app/.gradle/config.properties
 /android/app/local.properties
 /android/app/.cxx/**
