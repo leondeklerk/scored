@@ -21,4 +21,8 @@ In Android studio go to `File > New > Vector Asset` to start add the monochrome 
 
 ### IOS
 
-
+- In Flutter assets icon folder add the following files
+  - foreground-ios.png
+  - background-ios.png
+  - foreground-mono-ios.png
+- Generate icons with `dart run flutter_launcher_icons`
