@@ -26,3 +26,11 @@ In Android studio go to `File > New > Vector Asset` to start add the monochrome 
   - background-ios.png
   - foreground-mono-ios.png
 - Generate icons with `dart run flutter_launcher_icons`
+
+- In Xcode go to `Assets.xcassets > LaunchImage` and add the following files for 1x, 2x, and 3x sizes:
+  - launch_image_ios100.png
+  - launch_image_ios200.png
+  - launch_image_ios300.png
+
+- In Xcode go to `Assets.xcassets > LaunchBackground` and add the following files for 1x, 2x, and 3x sizes:
+  - splash_ios.png
