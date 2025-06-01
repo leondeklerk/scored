@@ -270,12 +270,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     if (pages.isEmpty) {
       createInitialPage(locale.standardPageName);
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Scored'),
         actions: [
@@ -302,12 +304,12 @@ class _HomeScreenState extends State<HomeScreen> {
               effect: ScrollingDotsEffect(
                 maxVisibleDots: 13,
                 activeDotColor: _editMode
-                    ? Theme.of(context).colorScheme.surfaceContainerHighest
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ? theme.colorScheme.surfaceContainerHighest
+                    : theme.colorScheme.onSurfaceVariant,
                 // Use primary color for active dot
                 dotColor: _editMode
-                    ? Theme.of(context).colorScheme.surfaceContainerLow
-                    : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ? theme.colorScheme.surfaceContainerLow
+                    : theme.colorScheme.surfaceContainerHighest,
                 dotWidth: 8,
                 dotHeight: 8,
                 activeDotScale: 1,
@@ -339,12 +341,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     left: 16, bottom: 8, right: 0, top: 8),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
-                                foregroundColor: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
+                                foregroundColor:
+                                    theme.textTheme.bodyMedium
                                     ?.color,
                                 textStyle: TextStyle(
-                                    fontWeight: Theme.of(context)
+                                    fontWeight: theme
                                         .textTheme
                                         .bodyMedium
                                         ?.fontWeight)),

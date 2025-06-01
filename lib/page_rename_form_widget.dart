@@ -25,39 +25,43 @@ class PageRenameFormWidget extends StatefulWidget {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          insetPadding: const EdgeInsets.all(16.0),
-          title: Text(locale.renamePage),
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                PageRenameFormWidget(
-                  key: pageKey,
-                  baseModel: startModel,
+        return Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+              actionsPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              insetPadding: const EdgeInsets.all(16.0),
+              title: Text(locale.renamePage),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    PageRenameFormWidget(
+                      key: pageKey,
+                      baseModel: startModel,
+                    ),
+                  ],
                 ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: ActionButtonText(text: locale.cancel)),
+                TextButton(
+                    onPressed: () {
+                      if (pageKey.currentState!.validateAndSave()) {
+                        Navigator.pop(context);
+                        onSubmitted(pageKey.currentState!.getResult());
+                      }
+                    },
+                    child: ActionButtonText(text: locale.rename))
               ],
             ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: ActionButtonText(text: locale.cancel)),
-            TextButton(
-                onPressed: () {
-                  if (pageKey.currentState!.validateAndSave()) {
-                    Navigator.pop(context);
-                    onSubmitted(pageKey.currentState!.getResult());
-                  }
-                },
-                child: ActionButtonText(text: locale.rename))
-          ],
         );
       },
     );

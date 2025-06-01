@@ -23,39 +23,43 @@ class UserFormWidget extends StatefulWidget {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          insetPadding: const EdgeInsets.all(16.0),
-          title: Text(locale.addPlayer),
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                UserFormWidget(
-                  key: userFormKey,
-                  user: model,
+        return Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+              actionsPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              insetPadding: const EdgeInsets.all(16.0),
+              title: Text(locale.addPlayer),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    UserFormWidget(
+                      key: userFormKey,
+                      user: model,
+                    ),
+                  ],
                 ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: ActionButtonText(text: locale.cancel)),
+                TextButton(
+                    onPressed: () {
+                      if (userFormKey.currentState!.validateAndSave()) {
+                        Navigator.pop(context);
+                        onSubmitted();
+                      }
+                    },
+                    child: ActionButtonText(text: locale.add))
               ],
             ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: ActionButtonText(text: locale.cancel)),
-            TextButton(
-                onPressed: () {
-                  if (userFormKey.currentState!.validateAndSave()) {
-                    Navigator.pop(context);
-                    onSubmitted();
-                  }
-                },
-                child: ActionButtonText(text: locale.add))
-          ],
         );
       },
     );
@@ -66,6 +70,7 @@ class UserFormWidgetState extends State<UserFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
   final _scoreRegex = RegExp(r'^-?[0-9]*');
+  late FocusNode _focusNode;
 
   bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
@@ -78,6 +83,22 @@ class UserFormWidgetState extends State<UserFormWidget> {
   final _scoreController = TextEditingController(text: "0");
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
     return Form(
@@ -88,7 +109,7 @@ class UserFormWidgetState extends State<UserFormWidget> {
           Container(
             margin: const EdgeInsets.only(bottom: 8),
             child: TextFormField(
-              autofocus: true,
+              focusNode: _focusNode,
               onSaved: (String? value) => {widget.user.name = value!},
               validator: (value) {
                 if (value == null || value.isEmpty) {

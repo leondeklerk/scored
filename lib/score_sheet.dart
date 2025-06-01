@@ -188,6 +188,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
     final settings = Provider.of<Settings>(context);
+    final theme = Theme.of(context);
 
     return Column(
       children: [
@@ -294,9 +295,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceTint,
+                                      color: theme.colorScheme.surfaceTint,
                                       Icons.emergency,
                                       size: 12, // Icon size inside the badge
                                     ),
@@ -364,7 +363,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               padding: const EdgeInsets.only(left: 12.0),
                               child: Text(
                                 "${widget.round.number}.",
-                                style: Theme.of(context).textTheme.bodyLarge,
+                                style: theme.textTheme.bodyLarge,
                               ),
                             ),
                             Expanded(
@@ -377,11 +376,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 currentStep: widget.round.scores.length,
                                 theme: StepProgressThemeData(
                                   stepLineSpacing: 4,
-                                  defaultForegroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerHighest,
+                                  defaultForegroundColor:
+                                      theme.colorScheme.surfaceContainerHighest,
                                   activeForegroundColor:
-                                      Theme.of(context).colorScheme.surfaceTint,
+                                      theme.colorScheme.surfaceTint,
                                   stepLineStyle: const StepLineStyle(
                                     lineThickness: 14,
                                     borderRadius: Radius.circular(4),
@@ -416,9 +414,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   child: Icon(Icons.check_circle_outline,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant),
+                                      color:
+                                          theme.colorScheme.onSurfaceVariant),
                                 ),
                               ),
                             ),
@@ -444,8 +441,8 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                 child: Card(
                                   elevation: widget.round.scores
                                           .containsKey(activeUser.id)
-                                      ? 2
-                                      : 4,
+                                      ? 1
+                                      : 2,
                                   child: UserTile(
                                     hasRoundEntry: settings.useRounds
                                         ? widget.round.scores

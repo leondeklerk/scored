@@ -235,11 +235,23 @@ class ScoredApp extends StatelessWidget {
                 future: getState(),
                 builder: (context, AsyncSnapshot<PersistedState> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    return HomeScreen(
-                      db: snapshot.data!.db,
-                      state: snapshot.data,
-                      useRounds: notifier.useRounds,
-                    );
+                    return OrientationBuilder(builder: (content, orientation) {
+                      return SafeArea(
+                        bottom: false,
+                        left: orientation == Orientation.landscape
+                            ? MediaQuery.of(context).viewPadding.left > 0
+                            : false,
+                        right: orientation == Orientation.landscape
+                            ? MediaQuery.of(context).viewPadding.right > 0
+                            : false,
+                        top: false,
+                        child: HomeScreen(
+                          db: snapshot.data!.db,
+                          state: snapshot.data,
+                          useRounds: notifier.useRounds,
+                        ),
+                      );
+                    });
                   }
                   return Scaffold(
                       body: Center(

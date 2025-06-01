@@ -21,39 +21,43 @@ class PageFormWidget extends StatefulWidget {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          insetPadding: const EdgeInsets.all(16.0),
-          title: Text(locale.addPage),
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                PageFormWidget(
-                  key: pageFormKey,
-                  initialName: initialName,
+        return Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+              actionsPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              insetPadding: const EdgeInsets.all(16.0),
+              title: Text(locale.addPage),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    PageFormWidget(
+                      key: pageFormKey,
+                      initialName: initialName,
+                    ),
+                  ],
                 ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: ActionButtonText(text: locale.cancel)),
+                TextButton(
+                    onPressed: () {
+                      if (pageFormKey.currentState!.validateAndSave()) {
+                        Navigator.pop(context);
+                        onSubmitted(pageFormKey.currentState!.name);
+                      }
+                    },
+                    child: ActionButtonText(text: locale.add))
               ],
             ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: ActionButtonText(text: locale.cancel)),
-            TextButton(
-                onPressed: () {
-                  if (pageFormKey.currentState!.validateAndSave()) {
-                    Navigator.pop(context);
-                    onSubmitted(pageFormKey.currentState!.name);
-                  }
-                },
-                child: ActionButtonText(text: locale.add))
-          ],
         );
       },
     );
@@ -64,6 +68,7 @@ class PageFormWidgetState extends State<PageFormWidget> {
   final _formKey = GlobalKey<FormState>();
   String name = "";
   late TextEditingController _controller;
+  late FocusNode _focusNode;
 
   bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
@@ -74,6 +79,13 @@ class PageFormWidgetState extends State<PageFormWidget> {
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialName)
@@ -81,6 +93,11 @@ class PageFormWidgetState extends State<PageFormWidget> {
         baseOffset: 0,
         extentOffset: widget.initialName.length,
       );
+    _focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
   }
 
   @override
@@ -96,8 +113,7 @@ class PageFormWidgetState extends State<PageFormWidget> {
             margin: const EdgeInsets.only(bottom: 8),
             child: TextFormField(
               controller: _controller,
-              // initialValue: widget.initialName,
-              autofocus: true,
+              focusNode: _focusNode,
               onSaved: (String? value) => {name = value!},
               validator: (value) {
                 if (value == null || value.isEmpty) {

@@ -22,39 +22,43 @@ class UserRenameFormWidget extends StatefulWidget {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          insetPadding: const EdgeInsets.all(16.0),
-          title: Text(locale.renameUser(startModel.name)),
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                UserRenameFormWidget(
-                  key: userKey,
-                  baseModel: startModel,
+        return Center(
+          child: SingleChildScrollView(
+            child: AlertDialog(
+              actionsPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              insetPadding: const EdgeInsets.all(16.0),
+              title: Text(locale.renameUser(startModel.name)),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    UserRenameFormWidget(
+                      key: userKey,
+                      baseModel: startModel,
+                    ),
+                  ],
                 ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: ActionButtonText(text: locale.cancel)),
+                TextButton(
+                    onPressed: () {
+                      if (userKey.currentState!.validateAndSave()) {
+                        Navigator.pop(context);
+                        onSubmitted(userKey.currentState!.getResult());
+                      }
+                    },
+                    child: ActionButtonText(text: locale.rename))
               ],
             ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: ActionButtonText(text: locale.cancel)),
-            TextButton(
-                onPressed: () {
-                  if (userKey.currentState!.validateAndSave()) {
-                    Navigator.pop(context);
-                    onSubmitted(userKey.currentState!.getResult());
-                  }
-                },
-                child: ActionButtonText(text: locale.rename))
-          ],
         );
       },
     );
@@ -64,6 +68,7 @@ class UserRenameFormWidget extends StatefulWidget {
 class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
   final _formKey = GlobalKey<FormState>();
   String name = "";
+  late FocusNode _focusNode;
 
   bool validateAndSave() {
     if (_formKey.currentState!.validate()) {
@@ -78,6 +83,23 @@ class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+    ;
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     AppLocalizations locale = AppLocalizations.of(context)!;
     return Form(
@@ -89,7 +111,7 @@ class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
             margin: const EdgeInsets.only(bottom: 8),
             child: TextFormField(
               initialValue: widget.baseModel.name,
-              autofocus: true,
+              focusNode: _focusNode,
               onSaved: (String? value) => {name = value!},
               validator: (value) {
                 if (value == null || value.isEmpty) {
