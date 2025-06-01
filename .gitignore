@@ -56,5 +56,6 @@ app.*.map.json
 /android/app/local.properties
 /android/app/.cxx/**
 /ios/Runner/Assets.xcassets/AppIcon.appiconset/**.png
-
+/ios/Runner/Assets.xcassets/LaunchBackground.imageset/**.png
+/ios/Runner/Assets.xcassets/LaunchImage.imageset/launch_image_ios*.png
 
