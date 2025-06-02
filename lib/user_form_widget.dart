@@ -84,6 +84,10 @@ class UserFormWidgetState extends State<UserFormWidget> {
 
   @override
   void dispose() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    }
+
     _focusNode.dispose();
     super.dispose();
   }

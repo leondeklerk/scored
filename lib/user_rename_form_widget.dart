@@ -90,11 +90,14 @@ class UserRenameFormWidgetState extends State<UserRenameFormWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
-    ;
   }
 
   @override
   void dispose() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    }
+
     _focusNode.dispose();
     super.dispose();
   }

@@ -71,8 +71,8 @@ class PointsFormWidget extends StatefulWidget {
 
 class PointsFormWidgetState extends State<PointsFormWidget> {
   final _formKey = GlobalKey<FormState>();
-
-  final _controller = TextEditingController(text: "0");
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
 
   final _pointsRegex = RegExp(r'^-?[0-9]*');
 
@@ -91,11 +91,34 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
   }
 
   @override
+  void dispose() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    }
+
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialPoints.toString())
+      ..selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: widget.initialPoints.toString().length,
+      );
+    _focusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _controller.value = TextEditingValue(text: widget.initialPoints.toString());
     AppLocalizations locale = AppLocalizations.of(context)!;
-    _controller.selection = TextSelection(
-        baseOffset: 0, extentOffset: _controller.value.text.length);
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
@@ -103,10 +126,10 @@ class PointsFormWidgetState extends State<PointsFormWidget> {
         children: <Widget>[
           TextFormField(
             controller: _controller,
+            focusNode: _focusNode,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(_pointsRegex)
             ],
-            autofocus: true,
             keyboardType: const TextInputType.numberWithOptions(
                 decimal: false, signed: true),
             validator: (value) {

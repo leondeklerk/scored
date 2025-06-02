@@ -80,6 +80,10 @@ class PageFormWidgetState extends State<PageFormWidget> {
 
   @override
   void dispose() {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    }
+
     _focusNode.dispose();
     _controller.dispose();
     super.dispose();
