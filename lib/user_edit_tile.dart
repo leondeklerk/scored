@@ -41,21 +41,25 @@ class UserEditTile extends StatelessWidget {
         horizontalTitleGap: 0,
         title:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Semantics(
-            label: locale.semanticEditName,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8.0), // Adjust the ra
-              onTap: () {
-                UserRenameFormWidget.showUserRenameDialog(
-                    context, locale, activeUser, (User model) {
-                  renameUser(model);
-                });
-              },
-              child: Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-                child: Text(
-                  activeUser.name,
+          Expanded(
+            child: Semantics(
+              label: locale.semanticEditName,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8.0), // Adjust the ra
+                onTap: () {
+                  UserRenameFormWidget.showUserRenameDialog(
+                      context, locale, activeUser, (User model) {
+                    renameUser(model);
+                  });
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 8.0),
+                  child: Text(
+                    activeUser.name,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
               ),
             ),

@@ -33,7 +33,11 @@ class PointsFormWidget extends StatefulWidget {
                 actionsPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 insetPadding: const EdgeInsets.all(16.0),
-                title: Text(title),
+                title: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 content: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Column(

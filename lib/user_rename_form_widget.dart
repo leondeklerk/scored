@@ -28,7 +28,11 @@ class UserRenameFormWidget extends StatefulWidget {
               actionsPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               insetPadding: const EdgeInsets.all(16.0),
-              title: Text(locale.renameUser(startModel.name)),
+              title: Text(
+                locale.renameUser(startModel.name),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Column(

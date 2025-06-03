@@ -9,7 +9,7 @@ class User {
     this.rank = 0,
   });
 
-  static const int maxNameLength = 20;
+  static const int maxNameLength = 80;
 
   String name;
   int score = 0;

@@ -38,19 +38,24 @@ class UserTile extends StatelessWidget {
 
     return ListTile(
       title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Wrap(
-          spacing: 16,
-          children: [
-            if (ranked)
-              Semantics(
-                  label: locale.semanticRank,
-                  child: Text("${activeUser.rank}.", style: textStyle)),
-            Semantics(
+        Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: (ranked
+                ? Semantics(
+                    label: locale.semanticRank,
+                    child: Text("${activeUser.rank}.", style: textStyle))
+                : null)),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Semantics(
               label: locale.semanticName,
               child: Text(capitalizeFirstLetter(activeUser.name),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                   style: textStyle),
             ),
-          ],
+          ),
         ),
         Semantics(
             label: locale.semanticScore,

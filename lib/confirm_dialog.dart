@@ -19,7 +19,11 @@ class ConfirmDialog {
           actionsPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           insetPadding: const EdgeInsets.all(16.0),
-          title: Text(title),
+          title: Text(
+            title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
           content: Text(content),
           actions: <Widget>[
             TextButton(
