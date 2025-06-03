@@ -79,7 +79,7 @@ class ScoredApp extends StatelessWidget {
 
       if (newVersion == 7) {}
 
-      if (newVersion == 8) {
+      if (oldVersion < 8 && newVersion >= 8) {
         await db.execute("ALTER TABLE users ADD COLUMN `order` INTEGER;");
         // Get all users from the database:
         final List<Map<String, dynamic>> users = await db.query('users');
@@ -101,12 +101,53 @@ class ScoredApp extends StatelessWidget {
         }
       }
 
-      if (newVersion == 9) {
+      if (oldVersion < 9 && newVersion >= 9) {
         await createDb(db);
-        await db.execute("ALTER TABLE pages ADD COLUMN currentRound INTEGER;");
-        await db.execute("UPDATE pages SET currentRound = 1;");
+
+        final List<Map<String, dynamic>> columns =
+            await db.rawQuery("PRAGMA table_info(pages)");
+        bool hasCurrentRoundColumn =
+            columns.any((column) => column['name'] == 'currentRound');
+
+        // Account for people upgraded to 9 but missing 8 due to issue in 1.4.1
+        if (!hasCurrentRoundColumn) {
+          await db
+              .execute("ALTER TABLE pages ADD COLUMN currentRound INTEGER;");
+          await db.execute("UPDATE pages SET currentRound = 1;");
+        }
       }
-    }, version: 9);
+
+      // This is a repeat of migration 8 to 9 which might have been missed due to incorrect conditions (e.g. from 7 to 9)
+      if (oldVersion < 10 && newVersion >= 10) {
+        final List<Map<String, dynamic>> columns =
+            await db.rawQuery("PRAGMA table_info(users)");
+        bool hasCurrentRoundColumn =
+            columns.any((column) => column['name'] == 'order');
+
+        if (!hasCurrentRoundColumn) {
+          // If the column does not exist, we need to add it
+          await db.execute("ALTER TABLE users ADD COLUMN `order` INTEGER;");
+          // Get all users from the database:
+          final List<Map<String, dynamic>> users = await db.query('users');
+          for (var i = 0; i < users.length; i++) {
+            String id = users[i]['id'];
+            // Get the id and split it based on "-":
+            List<String> idParts = id.split("-");
+
+            String newId = const Uuid().v4();
+
+            // Update the order of the user based on the second part of the id
+            await db.update(
+                'users', {'order': int.parse(idParts[1]), 'id': newId},
+                where: 'id = ?', whereArgs: [id]);
+
+            // Update the user ID in the scores table
+            await db.update('scores', {'userId': newId},
+                where: 'userId = ?', whereArgs: [id]);
+          }
+        }
+      }
+    }, version: 10);
 
     final List<Map<String, dynamic>> configs = await database.query('config');
     final List<Map<String, dynamic>> users =
