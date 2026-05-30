@@ -109,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await widget.db.delete("users", where: "pageId = ?", whereArgs: [pageId]);
     await widget.db.delete("scores", where: "pageId = ?", whereArgs: [pageId]);
+    await widget.db.delete("rounds", where: "pageId = ?", whereArgs: [pageId]);
     await widget.db.delete("config", where: "pageId = ?", whereArgs: [pageId]);
     await widget.db.delete("pages", where: "id = ?", whereArgs: [pageId]);
   }
@@ -342,13 +343,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                                 foregroundColor:
-                                    theme.textTheme.bodyMedium
-                                    ?.color,
+                                    theme.textTheme.bodyMedium?.color,
                                 textStyle: TextStyle(
                                     fontWeight: theme
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.fontWeight)),
+                                        .textTheme.bodyMedium?.fontWeight)),
                             onPressed: _editMode
                                 ? null
                                 : () {

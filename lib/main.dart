@@ -50,12 +50,25 @@ Future<void> createDb(Database db) async {
   );
 }
 
-class ScoredApp extends StatelessWidget {
+class ScoredApp extends StatefulWidget {
   const ScoredApp({
     super.key,
   });
 
-  Future<PersistedState> getState() async {
+  @override
+  State<ScoredApp> createState() => _ScoredAppState();
+}
+
+class _ScoredAppState extends State<ScoredApp> {
+  late Future<PersistedState> _stateFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _stateFuture = _loadState();
+  }
+
+  Future<PersistedState> _loadState() async {
     final database = await openDatabase(
         // Set the path to the database. Note: Using the `join` function from the
         // `path` package is best practice to ensure the path is correctly
@@ -131,7 +144,7 @@ class ScoredApp extends StatelessWidget {
           final List<Map<String, dynamic>> users = await db.query('users');
           for (var i = 0; i < users.length; i++) {
             String id = users[i]['id'];
-            // Get the id and split it based on "-":
+            // Get the id and split it based on "-"):
             List<String> idParts = id.split("-");
 
             String newId = const Uuid().v4();
@@ -147,7 +160,15 @@ class ScoredApp extends StatelessWidget {
           }
         }
       }
-    }, version: 10);
+
+      if (oldVersion < 11 && newVersion >= 11) {
+        // Delete rounds whose pageId no longer refers to an existing page
+        // (orphaned rounds could cause a null crash on startup)
+        await db.execute(
+          "DELETE FROM rounds WHERE pageId NOT IN (SELECT id FROM pages);",
+        );
+      }
+    }, version: 11);
 
     final List<Map<String, dynamic>> configs = await database.query('config');
     final List<Map<String, dynamic>> users =
@@ -242,6 +263,9 @@ class ScoredApp extends StatelessWidget {
       var roundEntry = roundsList[i];
       var key = roundEntry.pageId;
 
+      // Skip rounds that belong to a deleted page (orphaned data)
+      if (state.rounds[key] == null) continue;
+
       var currentRound = state.rounds[key]!;
       // If it is a newer round we need to overwrite the current round (inefficient)
       if (roundEntry.number > currentRound.number) {
@@ -273,9 +297,10 @@ class ScoredApp extends StatelessWidget {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: FutureBuilder(
-                future: getState(),
+                future: _stateFuture,
                 builder: (context, AsyncSnapshot<PersistedState> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.hasData) {
                     return OrientationBuilder(builder: (content, orientation) {
                       return SafeArea(
                         bottom: false,
