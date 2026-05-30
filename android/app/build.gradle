@@ -1,6 +1,5 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -24,16 +23,17 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 android {
     namespace "com.leondeklerk.scored"
     compileSdkVersion 37
-    ndkVersion = '27.1.12297006'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     } 
 
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+	kotlin {
+		compilerOptions {
+			jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+		}
+	}
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

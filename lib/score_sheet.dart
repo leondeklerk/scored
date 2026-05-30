@@ -318,7 +318,7 @@ class _ScoreSheetState extends State<ScoreSheet> {
             child: _isEditMode
                 ? ReorderableListView(
                     buildDefaultDragHandles: false,
-                    onReorder: (int oldIndex, int newIndex) {
+                    onReorderItem: (int oldIndex, int newIndex) {
                       setState(() {
                         if (newIndex > oldIndex) {
                           newIndex -= 1;
@@ -370,10 +370,10 @@ class _ScoreSheetState extends State<ScoreSheet> {
                               child: StepProgress(
                                 margin: EdgeInsets.zero,
                                 padding: EdgeInsets.zero,
-                                totalSteps: widget.users.length + 1,
+                                totalSteps: widget.users.length,
                                 visibilityOptions:
                                     StepProgressVisibilityOptions.lineOnly,
-                                currentStep: widget.round.scores.length,
+                                currentStep: widget.round.scores.length - 1,
                                 theme: StepProgressThemeData(
                                   stepLineSpacing: 4,
                                   defaultForegroundColor:
