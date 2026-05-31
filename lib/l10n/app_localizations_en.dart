@@ -130,10 +130,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get semanticRemovePlayer => 'Remove player.';
 
   @override
-  String get semanticsReverseAsc => 'Rank order - Highest score first';
+  String get semanticsReverseAsc => 'Highest score first';
 
   @override
-  String get semanticsReverseDesc => 'Rang order - Lowest score first';
+  String get semanticsReverseDesc => 'Lowest score first';
 
   @override
   String get standardPageName => 'Score sheet';

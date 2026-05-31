@@ -132,10 +132,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "semanticReorder": MessageLookupByLibrary.simpleMessage("Herorden handvat"),
     "semanticScore": MessageLookupByLibrary.simpleMessage("Score: "),
     "semanticsReverseAsc": MessageLookupByLibrary.simpleMessage(
-      "Rang volgorde - Hoogste score eerst",
+      "Hoogste score eerst",
     ),
     "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
-      "Rang volgorde - Laagste score eerst",
+      "Laagste score eerst",
     ),
     "set": MessageLookupByLibrary.simpleMessage("Instellen"),
     "setPointsUser": m6,

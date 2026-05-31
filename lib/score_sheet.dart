@@ -236,29 +236,24 @@ class _ScoreSheetState extends State<ScoreSheet> {
                                   semantics: locale.semanticRanked),
                               selected: widget.config.ranked,
                               onSelected: _isEditMode ? null : _setRanked,
+                              deleteIcon: widget.config.ranked && !_isEditMode
+                                  ? Icon(widget.config.reversed
+                                      ? Icons.keyboard_arrow_down
+                                      : Icons.keyboard_arrow_up)
+                                  : GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {},
+                                      child: Icon(widget.config.reversed
+                                          ? Icons.keyboard_arrow_down
+                                          : Icons.keyboard_arrow_up),
+                                    ),
+                              onDeleted: widget.config.ranked && !_isEditMode
+                                  ? _reverse
+                                  : () {},
+                              deleteButtonTooltipMessage: widget.config.reversed
+                                  ? locale.semanticsReverseDesc
+                                  : locale.semanticsReverseAsc,
                             ),
-                          ),
-                          Semantics(
-                            label: widget.config.reversed
-                                ? locale.semanticsReverseDesc
-                                : locale.semanticsReverseAsc,
-                            button: true,
-                            child: ActionChip(
-                                onPressed: widget.config.ranked && !_isEditMode
-                                    ? _reverse
-                                    : null,
-                                label: Semantics(
-                                    excludeSemantics: true,
-                                    child: const Text("")),
-                                avatar: (() {
-                                  if (widget.config.reversed) {
-                                    return const Icon(
-                                        Icons.keyboard_arrow_down);
-                                  } else {
-                                    return const Icon(Icons.keyboard_arrow_up);
-                                  }
-                                })(),
-                                labelPadding: EdgeInsets.zero),
                           ),
                           Stack(
                             clipBehavior: Clip.none,

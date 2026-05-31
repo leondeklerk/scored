@@ -133,10 +133,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get semanticRemovePlayer => 'Verwijder de speler.';
 
   @override
-  String get semanticsReverseAsc => 'Rang volgorde - Hoogste score eerst';
+  String get semanticsReverseAsc => 'Hoogste score eerst';
 
   @override
-  String get semanticsReverseDesc => 'Rang volgorde - Laagste score eerst';
+  String get semanticsReverseDesc => 'Laagste score eerst';
 
   @override
   String get standardPageName => 'Scoreblad';

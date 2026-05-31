@@ -323,13 +323,13 @@ abstract class AppLocalizations {
   /// No description provided for @semanticsReverseAsc.
   ///
   /// In en, this message translates to:
-  /// **'Rank order - Highest score first'**
+  /// **'Highest score first'**
   String get semanticsReverseAsc;
 
   /// No description provided for @semanticsReverseDesc.
   ///
   /// In en, this message translates to:
-  /// **'Rang order - Lowest score first'**
+  /// **'Lowest score first'**
   String get semanticsReverseDesc;
 
   /// No description provided for @standardPageName.

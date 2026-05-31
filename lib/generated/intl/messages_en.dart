@@ -121,10 +121,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "semanticReorder": MessageLookupByLibrary.simpleMessage("Reorder handle"),
     "semanticScore": MessageLookupByLibrary.simpleMessage("Score"),
     "semanticsReverseAsc": MessageLookupByLibrary.simpleMessage(
-      "Rank order - Highest score first",
+      "Highest score first",
     ),
     "semanticsReverseDesc": MessageLookupByLibrary.simpleMessage(
-      "Rang order - Lowest score first",
+      "Lowest score first",
     ),
     "set": MessageLookupByLibrary.simpleMessage("Set"),
     "setPointsUser": m6,
